@@ -131,7 +131,7 @@ const Hero = () => {
               </Link>
             </div>
 
-            {/* Metrics */}
+            {/* Metrics
             <div className="mt-12 pt-8 border-t border-slate-200/60 flex items-center justify-center lg:justify-start gap-8">
               <div className="flex flex-col">
                 <span className="text-3xl font-bold text-slate-900">500+</span>
@@ -142,7 +142,7 @@ const Hero = () => {
                 <span className="text-3xl font-bold text-slate-900">$2B+</span>
                 <span className="text-xs text-slate-500 uppercase tracking-wide font-semibold">Revenue Optimized</span>
               </div>
-            </div>
+            </div> */}
           </motion.div>
 
           {/* --- Right Column: Interactive 3D Visual (Hidden on Mobile) --- */}
