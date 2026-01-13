@@ -1,0 +1,481 @@
+
+//  =========================== Testimonial ===========================
+// const App = () => {
+//     const cardsData = [
+//         {
+//             image: 'https://images.unsplash.com/photo-1633332755192-727a05c4013d?q=80&w=200',
+//             name: 'Briar Martin',
+//             handle: '@neilstellar',
+//             date: 'April 20, 2025'
+//         },
+//         {
+//             image: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&w=200',
+//             name: 'Avery Johnson',
+//             handle: '@averywrites',
+//             date: 'May 10, 2025'
+//         },
+//         {
+//             image: 'https://images.unsplash.com/photo-1527980965255-d3b416303d12?w=200&auto=format&fit=crop&q=60',
+//             name: 'Jordan Lee',
+//             handle: '@jordantalks',
+//             date: 'June 5, 2025'
+//         },
+//         {
+//             image: 'https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?w=200&auto=format&fit=crop&q=60',
+//             name: 'Avery Johnson',
+//             handle: '@averywrites',
+//             date: 'May 10, 2025'
+//         },
+//     ];
+
+//     const CreateCard = ({ card }) => (
+//         <div className="p-4 rounded-lg mx-4 shadow hover:shadow-lg transition-all duration-200 w-72 shrink-0">
+//             <div className="flex gap-2">
+//                 <img className="size-11 rounded-full" src={card.image} alt="User Image" />
+//                 <div className="flex flex-col">
+//                     <div className="flex items-center gap-1">
+//                         <p>{card.name}</p>
+//                         <svg className="mt-0.5" width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+//                             <path fillRule="evenodd" clipRule="evenodd" d="M4.555.72a4 4 0 0 1-.297.24c-.179.12-.38.202-.59.244a4 4 0 0 1-.38.041c-.48.039-.721.058-.922.129a1.63 1.63 0 0 0-.992.992c-.071.2-.09.441-.129.922a4 4 0 0 1-.041.38 1.6 1.6 0 0 1-.245.59 3 3 0 0 1-.239.297c-.313.368-.47.551-.56.743-.213.444-.213.96 0 1.404.09.192.247.375.56.743.125.146.187.219.24.297.12.179.202.38.244.59.018.093.026.189.041.38.039.48.058.721.129.922.163.464.528.829.992.992.2.071.441.09.922.129.191.015.287.023.38.041.21.042.411.125.59.245.078.052.151.114.297.239.368.313.551.47.743.56.444.213.96.213 1.404 0 .192-.09.375-.247.743-.56.146-.125.219-.187.297-.24.179-.12.38-.202.59-.244a4 4 0 0 1 .38-.041c.48-.039.721-.058.922-.129.464-.163.829-.528.992-.992.071-.2.09-.441.129-.922a4 4 0 0 1 .041-.38c.042-.21.125-.411.245-.59.052-.078.114-.151.239-.297.313-.368.47-.551.56-.743.213-.444.213-.96 0-1.404-.09-.192-.247-.375-.56-.743a4 4 0 0 1-.24-.297 1.6 1.6 0 0 1-.244-.59 3 3 0 0 1-.041-.38c-.039-.48-.058-.721-.129-.922a1.63 1.63 0 0 0-.992-.992c-.2-.071-.441-.09-.922-.129a4 4 0 0 1-.38-.041 1.6 1.6 0 0 1-.59-.245A3 3 0 0 1 7.445.72C7.077.407 6.894.25 6.702.16a1.63 1.63 0 0 0-1.404 0c-.192.09-.375.247-.743.56m4.07 3.998a.488.488 0 0 0-.691-.69l-2.91 2.91-.958-.957a.488.488 0 0 0-.69.69l1.302 1.302c.19.191.5.191.69 0z" fill="#2196F3" />
+//                         </svg>
+//                     </div>
+//                     <span className="text-xs text-slate-500">{card.handle}</span>
+//                 </div>
+//             </div>
+//             <p className="text-sm py-4 text-gray-800">Radiant made undercutting all of our competitors an absolute
+//                 breeze.</p>
+//             <div className="flex items-center justify-between text-slate-500 text-xs">
+//                 <div className="flex items-center gap-1">
+//                     <span>Posted on</span>
+//                     <a href="https://x.com" target="_blank" className="hover:text-sky-500">
+//                         <svg width="11" height="10" viewBox="0 0 11 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+//                             <path d="m.027 0 4.247 5.516L0 10h.962l3.742-3.926L7.727 10H11L6.514 4.174 10.492 0H9.53L6.084 3.616 3.3 0zM1.44.688h1.504l6.64 8.624H8.082z" fill="currentColor" />
+//                         </svg>
+//                     </a>
+//                 </div>
+//                 <p>{card.date}</p>
+//             </div>
+//         </div>
+//     );
+
+//     return (
+//         <>
+//             <style>{`
+//             @keyframes marqueeScroll {
+//                 0% { transform: translateX(0%); }
+//                 100% { transform: translateX(-50%); }
+//             }
+
+//             .marquee-inner {
+//                 animation: marqueeScroll 25s linear infinite;
+//             }
+
+//             .marquee-reverse {
+//                 animation-direction: reverse;
+//             }
+//         `}</style>
+
+//             <div className="marquee-row w-full mx-auto max-w-5xl overflow-hidden relative">
+//                 <div className="absolute left-0 top-0 h-full w-20 z-10 pointer-events-none bg-gradient-to-r from-white to-transparent"></div>
+//                 <div className="marquee-inner flex transform-gpu min-w-[200%] pt-10 pb-5">
+//                     {[...cardsData, ...cardsData].map((card, index) => (
+//                         <CreateCard key={index} card={card} />
+//                     ))}
+//                 </div>
+//                 <div className="absolute right-0 top-0 h-full w-20 md:w-40 z-10 pointer-events-none bg-gradient-to-l from-white to-transparent"></div>
+//             </div>
+
+//             <div className="marquee-row w-full mx-auto max-w-5xl overflow-hidden relative">
+//                 <div className="absolute left-0 top-0 h-full w-20 z-10 pointer-events-none bg-gradient-to-r from-white to-transparent"></div>
+//                 <div className="marquee-inner marquee-reverse flex transform-gpu min-w-[200%] pt-10 pb-5">
+//                     {[...cardsData, ...cardsData].map((card, index) => (
+//                         <CreateCard key={index} card={card} />
+//                     ))}
+//                 </div>
+//                 <div className="absolute right-0 top-0 h-full w-20 md:w-40 z-10 pointer-events-none bg-gradient-to-l from-white to-transparent"></div>
+//             </div>
+//         </>
+//     )
+// }
+
+
+
+//  =========================== Meet The Team ===========================
+// export default function Example() {
+//     return (
+//         <div className="flex flex-col items-center text-center">
+//             <h3 className="text-lg font-medium text-blue-600 mb-2">Contact Us</h3>
+//             <h1 className="text-3xl md:text-4xl font-semibold mb-4 text-gray-800">Meet Our People</h1>
+//             <p className="w-3/5 mb-14 text-gray-500 text-sm">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text.</p>
+//             <div className="flex flex-wrap gap-6 items-center justify-center">
+//                 <div className="group flex flex-col items-center py-8 text-sm bg-white border border-gray-300/60 w-64 rounded-md cursor-pointer hover:border-blue-600 hover:bg-blue-600 transition">
+//                     <img className="w-24 rounded-full" src="https://images.unsplash.com/photo-1633332755192-727a05c4013d?q=80&w=200" alt="userImage1" />
+//                     <h2 className="text-gray-700 group-hover:text-white text-lg font-medium mt-2">Donald Jackman</h2>
+//                     <p className="text-gray-500 group-hover:text-white/80">Content Creator</p>
+//                     <p className="text-center text-gray-500/60 group-hover:text-white/60 w-3/4 mt-4">Lorem Ipsum is simply dummy text of the printing</p>
+//                     <div className="flex items-center space-x-4 mt-6 text-gray-500 group-hover:text-white">
+//                         <a href="#">
+//                             <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+//                                 <path d="M14.882 0H1.167A1.16 1.16 0 0 0 0 1.161V14.84C0 15.459.519 16 1.167 16H14.83a1.16 1.16 0 0 0 1.166-1.161V1.135C16.048.516 15.53 0 14.882 0M4.744 13.6H2.385V5.987h2.36zM3.552 4.929c-.778 0-1.374-.62-1.374-1.368a1.38 1.38 0 0 1 1.374-1.367 1.38 1.38 0 0 1 1.374 1.367c0 .749-.57 1.368-1.374 1.368M11.33 13.6V9.91c0-.878-.026-2.039-1.245-2.039-1.244 0-1.426.98-1.426 1.961V13.6H6.3V5.987h2.307v1.058h.026c.337-.62 1.09-1.239 2.256-1.239 2.411 0 2.852 1.549 2.852 3.665V13.6z" fill="currentColor"/>
+//                             </svg>
+//                         </a>
+//                         <a href="#">
+//                             <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+//                                 <path d="M14.095 0H1.905C.855 0 0 .854 0 1.905v12.19C0 15.145.854 16 1.905 16h12.19c1.05 0 1.905-.854 1.905-1.905V1.905C16 .855 15.146 0 14.095 0m-1.521 6.98a2.85 2.85 0 0 1-2.651-1.277v4.395A3.248 3.248 0 1 1 6.674 6.85c.068 0 .134.006.201.01v1.6c-.067-.007-.132-.02-.2-.02a1.658 1.658 0 1 0 0 3.316c.915 0 1.724-.721 1.724-1.637l.016-7.465h1.531a2.85 2.85 0 0 0 2.63 2.547v1.78" fill="currentColor"/>
+//                             </svg>
+//                         </a>
+//                         <a href="#">
+//                             <svg width="19" height="16" viewBox="0 0 19 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+//                                 <path d="m16.358 2.613 1.128-1.425c.326-.386.416-.683.445-.832-.89.535-1.722.713-2.256.713h-.208L15.348.95A3.83 3.83 0 0 0 12.795 0c-2.078 0-3.71 1.722-3.71 3.71 0 .12 0 .298.03.417l.088.593-.623-.03C4.78 4.573 1.663 1.307 1.158.743c-.831 1.485-.356 2.91.148 3.8l1.01 1.663-1.603-.89q.044 1.87 1.425 2.938l.801.594-.801.326c.504 1.515 1.632 2.138 2.464 2.375l1.098.297-1.04.713C2.999 13.745.92 13.656 0 13.568c1.87 1.305 4.097 1.602 5.64 1.602 1.158 0 2.02-.118 2.227-.207 8.313-1.96 8.699-9.382 8.699-10.866v-.208l.178-.119c1.01-.95 1.425-1.454 1.662-1.751-.089.03-.208.089-.326.119z" fill="currentColor"/>
+//                             </svg>
+//                         </a>
+//                     </div>
+//                 </div>
+        
+//                 <div className="group flex flex-col items-center py-8 text-sm bg-white border border-gray-300/60 w-64 rounded-md cursor-pointer hover:border-blue-600 hover:bg-blue-600 transition">
+//                     <img className="w-24 rounded-full" src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&w=200" alt="userImage2" />
+//                     <h2 className="text-gray-700 group-hover:text-white text-lg font-medium mt-2">Richard Nelson</h2>
+//                     <p className="text-gray-500 group-hover:text-white/80">Content Writer</p>
+//                     <p className="text-center text-gray-500/60 group-hover:text-white/60 w-3/4 mt-4">Lorem Ipsum is simply dummy text of the printing</p>
+//                     <div className="flex items-center space-x-4 mt-6 text-gray-500 group-hover:text-white">
+//                         <a href="#">
+//                             <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+//                                 <path d="M14.882 0H1.167A1.16 1.16 0 0 0 0 1.161V14.84C0 15.459.519 16 1.167 16H14.83a1.16 1.16 0 0 0 1.166-1.161V1.135C16.048.516 15.53 0 14.882 0M4.744 13.6H2.385V5.987h2.36zM3.552 4.929c-.778 0-1.374-.62-1.374-1.368a1.38 1.38 0 0 1 1.374-1.367 1.38 1.38 0 0 1 1.374 1.367c0 .749-.57 1.368-1.374 1.368M11.33 13.6V9.91c0-.878-.026-2.039-1.245-2.039-1.244 0-1.426.98-1.426 1.961V13.6H6.3V5.987h2.307v1.058h.026c.337-.62 1.09-1.239 2.256-1.239 2.411 0 2.852 1.549 2.852 3.665V13.6z" fill="currentColor"/>
+//                             </svg>
+//                         </a>
+//                         <a href="#">
+//                             <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+//                                 <path d="M14.095 0H1.905C.855 0 0 .854 0 1.905v12.19C0 15.145.854 16 1.905 16h12.19c1.05 0 1.905-.854 1.905-1.905V1.905C16 .855 15.146 0 14.095 0m-1.521 6.98a2.85 2.85 0 0 1-2.651-1.277v4.395A3.248 3.248 0 1 1 6.674 6.85c.068 0 .134.006.201.01v1.6c-.067-.007-.132-.02-.2-.02a1.658 1.658 0 1 0 0 3.316c.915 0 1.724-.721 1.724-1.637l.016-7.465h1.531a2.85 2.85 0 0 0 2.63 2.547v1.78" fill="currentColor"/>
+//                             </svg>
+//                         </a>
+//                         <a href="#">
+//                             <svg width="19" height="16" viewBox="0 0 19 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+//                                 <path d="m16.358 2.613 1.128-1.425c.326-.386.416-.683.445-.832-.89.535-1.722.713-2.256.713h-.208L15.348.95A3.83 3.83 0 0 0 12.795 0c-2.078 0-3.71 1.722-3.71 3.71 0 .12 0 .298.03.417l.088.593-.623-.03C4.78 4.573 1.663 1.307 1.158.743c-.831 1.485-.356 2.91.148 3.8l1.01 1.663-1.603-.89q.044 1.87 1.425 2.938l.801.594-.801.326c.504 1.515 1.632 2.138 2.464 2.375l1.098.297-1.04.713C2.999 13.745.92 13.656 0 13.568c1.87 1.305 4.097 1.602 5.64 1.602 1.158 0 2.02-.118 2.227-.207 8.313-1.96 8.699-9.382 8.699-10.866v-.208l.178-.119c1.01-.95 1.425-1.454 1.662-1.751-.089.03-.208.089-.326.119z" fill="currentColor"/>
+//                             </svg>
+//                         </a>
+//                     </div>
+//                 </div>
+        
+//                 <div className="group flex flex-col items-center py-8 text-sm bg-white border border-gray-300/60 w-64 rounded-md cursor-pointer hover:border-blue-600 hover:bg-blue-600 transition">
+//                     <img className="w-24 rounded-full" src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=200&h=200&auto=format&fit=crop" alt="userImage3" />
+//                     <h2 className="text-gray-700 group-hover:text-white text-lg font-medium mt-2">James Washington</h2>
+//                     <p className="text-gray-500 group-hover:text-white/80">Content Marketing</p>
+//                     <p className="text-center text-gray-500/60 group-hover:text-white/60 w-3/4 mt-4">Lorem Ipsum is simply dummy text of the printing</p>
+//                     <div className="flex items-center space-x-4 mt-6 text-gray-500 group-hover:text-white">
+//                         <a href="#">
+//                             <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+//                                 <path d="M14.882 0H1.167A1.16 1.16 0 0 0 0 1.161V14.84C0 15.459.519 16 1.167 16H14.83a1.16 1.16 0 0 0 1.166-1.161V1.135C16.048.516 15.53 0 14.882 0M4.744 13.6H2.385V5.987h2.36zM3.552 4.929c-.778 0-1.374-.62-1.374-1.368a1.38 1.38 0 0 1 1.374-1.367 1.38 1.38 0 0 1 1.374 1.367c0 .749-.57 1.368-1.374 1.368M11.33 13.6V9.91c0-.878-.026-2.039-1.245-2.039-1.244 0-1.426.98-1.426 1.961V13.6H6.3V5.987h2.307v1.058h.026c.337-.62 1.09-1.239 2.256-1.239 2.411 0 2.852 1.549 2.852 3.665V13.6z" fill="currentColor"/>
+//                             </svg>
+//                         </a>
+//                         <a href="#">
+//                             <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+//                                 <path d="M14.095 0H1.905C.855 0 0 .854 0 1.905v12.19C0 15.145.854 16 1.905 16h12.19c1.05 0 1.905-.854 1.905-1.905V1.905C16 .855 15.146 0 14.095 0m-1.521 6.98a2.85 2.85 0 0 1-2.651-1.277v4.395A3.248 3.248 0 1 1 6.674 6.85c.068 0 .134.006.201.01v1.6c-.067-.007-.132-.02-.2-.02a1.658 1.658 0 1 0 0 3.316c.915 0 1.724-.721 1.724-1.637l.016-7.465h1.531a2.85 2.85 0 0 0 2.63 2.547v1.78" fill="currentColor"/>
+//                             </svg>
+//                         </a>
+//                         <a href="#">
+//                             <svg width="19" height="16" viewBox="0 0 19 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+//                                 <path d="m16.358 2.613 1.128-1.425c.326-.386.416-.683.445-.832-.89.535-1.722.713-2.256.713h-.208L15.348.95A3.83 3.83 0 0 0 12.795 0c-2.078 0-3.71 1.722-3.71 3.71 0 .12 0 .298.03.417l.088.593-.623-.03C4.78 4.573 1.663 1.307 1.158.743c-.831 1.485-.356 2.91.148 3.8l1.01 1.663-1.603-.89q.044 1.87 1.425 2.938l.801.594-.801.326c.504 1.515 1.632 2.138 2.464 2.375l1.098.297-1.04.713C2.999 13.745.92 13.656 0 13.568c1.87 1.305 4.097 1.602 5.64 1.602 1.158 0 2.02-.118 2.227-.207 8.313-1.96 8.699-9.382 8.699-10.866v-.208l.178-.119c1.01-.95 1.425-1.454 1.662-1.751-.089.03-.208.089-.326.119z" fill="currentColor"/>
+//                             </svg>
+//                         </a>
+//                     </div>
+//                 </div>
+//             </div>
+//         </div>
+//     );
+// };
+
+
+//  =========================== Meet The Team Member ===========================
+// import React from 'react';
+// import styled from 'styled-components';
+
+// const Card = () => {
+//   return (
+//     <StyledWrapper>
+//       <div className="card">
+//         <div className="content">
+//           <div className="back">
+//             <div className="back-content">
+//               <svg stroke="#ffffff" xmlnsXlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 50 50" height="50px" width="50px" fill="#ffffff">
+//                 <g strokeWidth={0} id="SVGRepo_bgCarrier" />
+//                 <g strokeLinejoin="round" strokeLinecap="round" id="SVGRepo_tracerCarrier" />
+//                 <g id="SVGRepo_iconCarrier">
+//                   <path d="M20.84375 0.03125C20.191406 0.0703125 19.652344 0.425781 19.21875 1.53125C18.988281 2.117188 18.5 3.558594 18.03125 4.9375C17.792969 5.636719 17.570313 6.273438 17.40625 6.75C17.390625 6.796875 17.414063 6.855469 17.40625 6.90625C17.398438 6.925781 17.351563 6.949219 17.34375 6.96875L17.25 7.25C18.566406 7.65625 19.539063 8.058594 19.625 8.09375C22.597656 9.21875 28.351563 11.847656 33.28125 16.78125C38.5 22 41.183594 28.265625 42.09375 30.71875C42.113281 30.761719 42.375 31.535156 42.75 32.84375C42.757813 32.839844 42.777344 32.847656 42.78125 32.84375C43.34375 32.664063 44.953125 32.09375 46.3125 31.625C47.109375 31.351563 47.808594 31.117188 48.15625 31C49.003906 30.714844 49.542969 30.292969 49.8125 29.6875C50.074219 29.109375 50.066406 28.429688 49.75 27.6875C49.605469 27.347656 49.441406 26.917969 49.25 26.4375C47.878906 23.007813 45.007813 15.882813 39.59375 10.46875C33.613281 4.484375 25.792969 1.210938 22.125 0.21875C21.648438 0.0898438 21.234375 0.0078125 20.84375 0.03125 Z M 16.46875 9.09375L0.0625 48.625C-0.09375 48.996094 -0.00390625 49.433594 0.28125 49.71875C0.472656 49.910156 0.738281 50 1 50C1.128906 50 1.253906 49.988281 1.375 49.9375L40.90625 33.59375C40.523438 32.242188 40.222656 31.449219 40.21875 31.4375C39.351563 29.089844 36.816406 23.128906 31.875 18.1875C27.035156 13.34375 21.167969 10.804688 18.875 9.9375C18.84375 9.925781 17.8125 9.5 16.46875 9.09375 Z M 17 16C19.761719 16 22 18.238281 22 21C22 23.761719 19.761719 26 17 26C15.140625 26 13.550781 24.972656 12.6875 23.46875L15.6875 16.1875C16.101563 16.074219 16.550781 16 17 16 Z M 31 22C32.65625 22 34 23.34375 34 25C34 25.917969 33.585938 26.730469 32.9375 27.28125L32.90625 27.28125C33.570313 27.996094 34 28.949219 34 30C34 32.210938 32.210938 34 30 34C27.789063 34 26 32.210938 26 30C26 28.359375 26.996094 26.960938 28.40625 26.34375L28.3125 26.3125C28.117188 25.917969 28 25.472656 28 25C28 23.34375 29.34375 22 31 22 Z M 21 32C23.210938 32 25 33.789063 25 36C25 36.855469 24.710938 37.660156 24.25 38.3125L20.3125 39.9375C18.429688 39.609375 17 37.976563 17 36C17 33.789063 18.789063 32 21 32 Z M 9 34C10.65625 34 12 35.34375 12 37C12 38.65625 10.65625 40 9 40C7.902344 40 6.960938 39.414063 6.4375 38.53125L8.25 34.09375C8.488281 34.03125 8.742188 34 9 34Z" />
+//                 </g>
+//               </svg>
+//               <strong>Hover Me</strong>
+//             </div>
+//           </div>
+//           <div className="front">
+//             <div className="img">
+//               <div className="circle">
+//               </div>
+//               <div className="circle" id="right">
+//               </div>
+//               <div className="circle" id="bottom">
+//               </div>
+//             </div>
+//             <div className="front-content">
+//               <small className="badge">Pasta</small>
+//               <div className="description">
+//                 <div className="title">
+//                   <p className="title">
+//                     <strong>Spaguetti Bolognese</strong>
+//                   </p>
+//                   <svg fillRule="nonzero" height="15px" width="15px" viewBox="0,0,256,256" xmlnsXlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg"><g style={{mixBlendMode: 'normal'}} textAnchor="none" fontSize="none" fontWeight="none" fontFamily="none" strokeDashoffset={0} strokeDasharray strokeMiterlimit={10} strokeLinejoin="miter" strokeLinecap="butt" strokeWidth={1} stroke="none" fillRule="nonzero" fill="#20c997"><g transform="scale(8,8)"><path d="M25,27l-9,-6.75l-9,6.75v-23h18z" /></g></g></svg>
+//                 </div>
+//                 <p className="card-footer">
+//                   30 Mins &nbsp; | &nbsp; 1 Serving
+//                 </p>
+//               </div>
+//             </div>
+//           </div>
+//         </div>
+//       </div>
+//     </StyledWrapper>
+//   );
+// }
+
+// const StyledWrapper = styled.div`
+//   .card {
+//     overflow: visible;
+//     width: 190px;
+//     height: 254px;
+//   }
+
+//   .content {
+//     width: 100%;
+//     height: 100%;
+//     transform-style: preserve-3d;
+//     transition: transform 300ms;
+//     box-shadow: 0px 0px 10px 1px #000000ee;
+//     border-radius: 5px;
+//   }
+
+//   .front, .back {
+//     background-color: #151515;
+//     position: absolute;
+//     width: 100%;
+//     height: 100%;
+//     backface-visibility: hidden;
+//     -webkit-backface-visibility: hidden;
+//     border-radius: 5px;
+//     overflow: hidden;
+//   }
+
+//   .back {
+//     width: 100%;
+//     height: 100%;
+//     justify-content: center;
+//     display: flex;
+//     align-items: center;
+//     overflow: hidden;
+//   }
+
+//   .back::before {
+//     position: absolute;
+//     content: ' ';
+//     display: block;
+//     width: 160px;
+//     height: 160%;
+//     background: linear-gradient(90deg, transparent, #ff9966, #ff9966, #ff9966, #ff9966, transparent);
+//     animation: rotation_481 5000ms infinite linear;
+//   }
+
+//   .back-content {
+//     position: absolute;
+//     width: 99%;
+//     height: 99%;
+//     background-color: #151515;
+//     border-radius: 5px;
+//     color: white;
+//     display: flex;
+//     flex-direction: column;
+//     justify-content: center;
+//     align-items: center;
+//     gap: 30px;
+//   }
+
+//   .card:hover .content {
+//     transform: rotateY(180deg);
+//   }
+
+//   @keyframes rotation_481 {
+//     0% {
+//       transform: rotateZ(0deg);
+//     }
+
+//     0% {
+//       transform: rotateZ(360deg);
+//     }
+//   }
+
+//   .front {
+//     transform: rotateY(180deg);
+//     color: white;
+//   }
+
+//   .front .front-content {
+//     position: absolute;
+//     width: 100%;
+//     height: 100%;
+//     padding: 10px;
+//     display: flex;
+//     flex-direction: column;
+//     justify-content: space-between;
+//   }
+
+//   .front-content .badge {
+//     background-color: #00000055;
+//     padding: 2px 10px;
+//     border-radius: 10px;
+//     backdrop-filter: blur(2px);
+//     width: fit-content;
+//   }
+
+//   .description {
+//     box-shadow: 0px 0px 10px 5px #00000088;
+//     width: 100%;
+//     padding: 10px;
+//     background-color: #00000099;
+//     backdrop-filter: blur(5px);
+//     border-radius: 5px;
+//   }
+
+//   .title {
+//     font-size: 11px;
+//     max-width: 100%;
+//     display: flex;
+//     justify-content: space-between;
+//   }
+
+//   .title p {
+//     width: 50%;
+//   }
+
+//   .card-footer {
+//     color: #ffffff88;
+//     margin-top: 5px;
+//     font-size: 8px;
+//   }
+
+//   .front .img {
+//     position: absolute;
+//     width: 100%;
+//     height: 100%;
+//     object-fit: cover;
+//     object-position: center;
+//   }
+
+//   .circle {
+//     width: 90px;
+//     height: 90px;
+//     border-radius: 50%;
+//     background-color: #ffbb66;
+//     position: relative;
+//     filter: blur(15px);
+//     animation: floating 2600ms infinite linear;
+//   }
+
+//   #bottom {
+//     background-color: #ff8866;
+//     left: 50px;
+//     top: 0px;
+//     width: 150px;
+//     height: 150px;
+//     animation-delay: -800ms;
+//   }
+
+//   #right {
+//     background-color: #ff2233;
+//     left: 160px;
+//     top: -80px;
+//     width: 30px;
+//     height: 30px;
+//     animation-delay: -1800ms;
+//   }
+
+//   @keyframes floating {
+//     0% {
+//       transform: translateY(0px);
+//     }
+
+//     50% {
+//       transform: translateY(10px);
+//     }
+
+//     100% {
+//       transform: translateY(0px);
+//     }
+//   }`;
+
+// export default Card;
+
+
+//  =========================== About Us Images animations ===========================
+{/* <div class="flex items-center">
+    <button id="prev" class="md:p-2 p-1 bg-black/30 md:mr-6 mr-2 rounded-full hover:bg-black/50">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+        </svg>
+    </button>
+    <div class="w-full max-w-3xl overflow-hidden relative">
+        <div class="flex transition-transform duration-500 ease-in-out" id="slider">
+            <img src="https://raw.githubusercontent.com/prebuiltui/prebuiltui/main/assets/gallery/slide1.png" class="w-full flex-shrink-0" alt="Slide 1">
+            <img src="https://raw.githubusercontent.com/prebuiltui/prebuiltui/main/assets/gallery/slide2.png" class="w-full flex-shrink-0" alt="Slide 2">
+            <img src="https://raw.githubusercontent.com/prebuiltui/prebuiltui/main/assets/gallery/slide3.png" class="w-full flex-shrink-0" alt="Slide 3">
+            <img src="https://raw.githubusercontent.com/prebuiltui/prebuiltui/main/assets/gallery/slide4.png" class="w-full flex-shrink-0" alt="Slide 4">
+            <img src="https://raw.githubusercontent.com/prebuiltui/prebuiltui/main/assets/gallery/slide5.png" class="w-full flex-shrink-0" alt="Slide 5">
+        </div>
+    </div>
+
+    <button id="next" class="p-1 md:p-2 bg-black/30 md:ml-6 ml-2 rounded-full hover:bg-black/50">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+        </svg>
+    </button>
+</div>
+
+<script>
+    const slider = document.getElementById('slider');
+    const nextButton = document.getElementById('next');
+    const prevButton = document.getElementById('prev');
+    let currentSlide = 0;
+    const totalSlides = slider.children.length;
+
+    function goToSlide(index) {
+        const slideWidth = slider.children[0].clientWidth;
+        slider.style.transform = `translateX(-${index * slideWidth}px)`;
+    }
+
+    function nextSlide() {
+        currentSlide = (currentSlide + 1) % totalSlides;
+        goToSlide(currentSlide);
+    }
+
+    function prevSlide() {
+        currentSlide = (currentSlide - 1 + totalSlides) % totalSlides;
+        goToSlide(currentSlide);
+    }
+
+    let slideInterval = setInterval(nextSlide, 3000);
+
+    function resetAutoSlide() {
+        clearInterval(slideInterval);
+        slideInterval = setInterval(nextSlide, 3000);
+    }
+
+    nextButton.addEventListener('click', () => {
+        nextSlide();
+        resetAutoSlide();
+    });
+
+    prevButton.addEventListener('click', () => {
+        prevSlide();
+        resetAutoSlide();
+    });
+    
+    window.addEventListener('resize', () => goToSlide(currentSlide));
+
+    goToSlide(currentSlide);
+</script> */}
