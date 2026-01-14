@@ -4,6 +4,7 @@ import StatsSection from '@/src/components/StatSection';
 import ServicesSection from '../components/services';
 import Testimonials from '../components/testimonial';
 import TeamSection from '../components/meet-the-team';
+import AboutUs from '../components/about-us';
 
 export default function Home() {
   return (
@@ -11,9 +12,11 @@ export default function Home() {
       <Navbar />
       <Hero />
       <StatsSection />
+      <AboutUs />
       <ServicesSection />
       <Testimonials />
       <TeamSection />
+      
     </div>
   );
 }

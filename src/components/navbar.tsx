@@ -25,9 +25,12 @@ const Navbar = () => {
     { name: "About Us", href: "/about" },
     { name: "Services", href: "/services" },
     { name: "Testimonials", href: "/testimonials" },
+    { name: "Blog", href: "/testimonials" },
+    { name: "Team", href: "/team" },
+    { name: "Product", href: "/contact" },
   ];
 
-  // Common glass effect
+  // Common glass effect for Nav and Mobile Toggle only
   const glassPanel =
     "bg-white/70 backdrop-blur-xl border border-white/40 shadow-lg shadow-slate-200/20 rounded-full transition-all duration-300";
 
@@ -42,10 +45,10 @@ const Navbar = () => {
       >
         <div className="max-w-7xl mx-auto px-4 md:px-6 flex items-center justify-between">
 
-          {/* --- 1. Logo Section --- */}
+          {/* --- 1. Logo Section (Clean - No Background) --- */}
           <Link
             href="/"
-            className={`group relative z-50 flex items-center gap-2 px-3 py-2 ${glassPanel}`}
+            className="group relative z-50 flex items-center gap-2 py-2"
           >
             {/* Logo */}
             <motion.div
@@ -67,7 +70,8 @@ const Navbar = () => {
                 Yours Faithfully
               </span>
 
-              <span className="w-full h-[1px] bg-[#FDB913] my-[1px] rounded-full" />
+              {/* Fixed Tailwind Warning: h-px, my-px */}
+              <span className="w-full h-px bg-[#FDB913] my-px rounded-full" />
 
               <span className="font-serif text-[11px] font-bold tracking-[0.18em] text-slate-800 uppercase">
                 Advisors LLP
@@ -107,12 +111,12 @@ const Navbar = () => {
                 href="/contact"
                 className="hidden md:flex items-center gap-2 bg-[#002B49] text-white px-6 py-3 rounded-full text-sm font-bold tracking-wide shadow-lg shadow-blue-900/20 hover:bg-[#00A79D] transition-colors duration-300 group"
               >
-                <span>Let's Talk</span>
+                {/* Fixed ESLint Error: Escaped quote */}
+                <span>Let&apos;s Talk</span>
                 <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
               </Link>
             </motion.div>
 
-            {/* Mobile Toggle Button */}
             <motion.button
               whileTap={{ scale: 0.9 }}
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
@@ -154,7 +158,7 @@ const Navbar = () => {
             transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
             className="fixed inset-0 z-40 bg-[#F5F7FA] md:hidden flex flex-col items-center justify-center space-y-8"
           >
-            {/* Mobile Links */}
+
             <div className="flex flex-col items-center gap-6 w-full px-6">
               {[...navLinks, { name: "Contact", href: "/contact" }].map((link, i) => (
                 <motion.div
@@ -176,7 +180,6 @@ const Navbar = () => {
               ))}
             </div>
 
-            {/* Decorative Element */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
