@@ -22,13 +22,18 @@ const Navbar = () => {
 
   const navLinks = [
     { name: "Home", href: "/" },
-    { name: "About Us", href: "/about" },
-    { name: "Services", href: "/services" },
-    { name: "Testimonials", href: "/testimonials" },
-    { name: "Blog", href: "/testimonials" },
-    { name: "Team", href: "/team" },
-    { name: "Product", href: "/contact" },
+    { name: "About Us", href: "#about" },
+    { name: "Services", href: "#services" },
+    { name: "Testimonials", href: "#testimonials" },
+    { name: "Our Team", href: "#team" },
+    { name: "Product", href: "#products" },
   ];
+
+  // Function to handle Logo Click (Scroll to Top / Hero)
+  const handleLogoClick = () => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+    setIsMobileMenuOpen(false); // Close mobile menu if open
+  };
 
   // Common glass effect for Nav and Mobile Toggle only
   const glassPanel =
@@ -40,15 +45,17 @@ const Navbar = () => {
         initial={{ y: -100 }}
         animate={{ y: 0 }}
         transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-        className={`fixed top-0 z-50 w-full transition-all duration-300 ${scrolled ? "py-2" : "py-4 md:py-6"
-          }`}
+        className={`fixed top-0 z-50 w-full transition-all duration-300 ${
+          scrolled ? "py-2" : "py-4 md:py-6"
+        }`}
       >
         <div className="max-w-7xl mx-auto px-4 md:px-6 flex items-center justify-between">
-
-          {/* --- 1. Logo Section (Clean - No Background) --- */}
+          
+          {/* --- 1. Logo Section (Click to Hero) --- */}
           <Link
             href="/"
-            className="group relative z-50 flex items-center gap-2 py-2"
+            onClick={handleLogoClick} // ADDED: Scrolls to top when clicked
+            className="group relative z-50 flex items-center gap-2 py-2 cursor-pointer"
           >
             {/* Logo */}
             <motion.div
@@ -79,13 +86,16 @@ const Navbar = () => {
             </div>
           </Link>
 
-
           {/* --- 2. Desktop Navigation (Floating Dock) --- */}
-          <nav className={`hidden md:flex items-center p-1.5 gap-1 ${glassPanel}`}>
+          <nav
+            className={`hidden md:flex items-center p-1.5 gap-1 ${glassPanel}`}
+          >
             {navLinks.map((link, index) => (
               <Link
                 key={link.name}
                 href={link.href}
+                // Optional: Make "Home" link also scroll to top
+                onClick={link.name === "Home" ? handleLogoClick : undefined} 
                 onMouseEnter={() => setHoveredIndex(index)}
                 onMouseLeave={() => setHoveredIndex(null)}
                 className="relative px-5 py-2.5 rounded-full text-sm font-medium text-slate-600 transition-colors hover:text-slate-900"
@@ -108,10 +118,9 @@ const Navbar = () => {
             {/* Desktop Contact Button */}
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
               <Link
-                href="/contact"
+                href="#contact"
                 className="hidden md:flex items-center gap-2 bg-[#002B49] text-white px-6 py-3 rounded-full text-sm font-bold tracking-wide shadow-lg shadow-blue-900/20 hover:bg-[#00A79D] transition-colors duration-300 group"
               >
-                {/* Fixed ESLint Error: Escaped quote */}
                 <span>Let&apos;s Talk</span>
                 <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
               </Link>
@@ -158,26 +167,30 @@ const Navbar = () => {
             transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
             className="fixed inset-0 z-40 bg-[#F5F7FA] md:hidden flex flex-col items-center justify-center space-y-8"
           >
-
             <div className="flex flex-col items-center gap-6 w-full px-6">
-              {[...navLinks, { name: "Contact", href: "/contact" }].map((link, i) => (
-                <motion.div
-                  key={link.name}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: 10 }}
-                  transition={{ delay: 0.1 + i * 0.1, duration: 0.4 }}
-                  className="w-full"
-                >
-                  <Link
-                    href={link.href}
-                    onClick={() => setIsMobileMenuOpen(false)}
-                    className="block w-full text-center text-2xl font-serif font-medium text-slate-800 hover:text-[#00A79D] transition-colors"
+              {[...navLinks, { name: "Contact", href: "/contact" }].map(
+                (link, i) => (
+                  <motion.div
+                    key={link.name}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: 10 }}
+                    transition={{ delay: 0.1 + i * 0.1, duration: 0.4 }}
+                    className="w-full"
                   >
-                    {link.name}
-                  </Link>
-                </motion.div>
-              ))}
+                    <Link
+                      href={link.href}
+                      onClick={() => {
+                        setIsMobileMenuOpen(false);
+                        if (link.name === "Home") handleLogoClick();
+                      }}
+                      className="block w-full text-center text-2xl font-serif font-medium text-slate-800 hover:text-[#00A79D] transition-colors"
+                    >
+                      {link.name}
+                    </Link>
+                  </motion.div>
+                )
+              )}
             </div>
 
             <motion.div

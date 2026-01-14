@@ -110,7 +110,7 @@ const StarRating = () => (
 );
 
 const TestimonialCard = ({ card }: { card: Testimonial }) => (
-    <div className="p-6 rounded-2xl mx-4 shadow-sm bg-white border border-gray-100 hover:shadow-lg transition-all duration-300 w-96 shrink-0 select-none flex flex-col justify-between h-full">
+    <div id='testimonials' className="p-6 rounded-2xl mx-4 shadow-sm bg-white border border-gray-100 hover:shadow-lg transition-all duration-300 w-96 shrink-0 select-none flex flex-col justify-between h-full">
         <div>
             <div className="flex gap-3 mb-4">
                 <div className={`w-12 h-12 rounded-full flex items-center justify-center text-white font-bold text-sm shadow-sm ${card.color}`}>

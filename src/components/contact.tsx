@@ -76,7 +76,7 @@ export default function ContactSection() {
   `;
 
   return (
-    <section className="w-full bg-white py-16 px-4 md:px-8 font-sans relative overflow-hidden">
+    <section id="contact" className="w-full bg-white py-16 px-4 md:px-8 font-sans relative overflow-hidden">
       {/* Decorative Background Pattern */}
       <div className="absolute top-0 right-0 w-64 h-64 bg-[#00A79D] opacity-10 rounded-full blur-3xl -z-10 transform translate-x-1/2 -translate-y-1/2"></div>
       

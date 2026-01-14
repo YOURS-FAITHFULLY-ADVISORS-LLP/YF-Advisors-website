@@ -98,7 +98,7 @@ const PhoneMockup = ({ product }: { product: typeof products[0] }) => {
 
 export default function Products() {
   return (
-    <section className="py-24 bg-slate-50 relative overflow-hidden">
+    <section id="products" className="py-24 bg-slate-50 relative overflow-hidden">
       <div className="max-w-7xl mx-auto px-6 lg:px-8">
         
         {/* --- Header --- */}
