@@ -198,3 +198,136 @@
 // };
 
 // export default Navbar;
+
+// "use client";
+
+// import React, { useRef } from "react";
+// import { motion, useScroll, useTransform, useSpring } from "framer-motion";
+// import { 
+//   PieChart, Cpu, Share2, Search, Banknote, 
+//   FileText, Headphones, UserCheck, Settings, Users 
+// } from "lucide-react";
+
+// const services = [
+//   { title: "Finance Consulting", icon: PieChart, color: "#0AA8A3" },
+//   { title: "Back Office Automation", icon: Cpu, color: "#0F172A" },
+//   { title: "Functional Outsourcing", icon: Share2, color: "#0AA8A3" },
+//   { title: "Mystery Audits", icon: Search, color: "#0F172A" },
+//   { title: "Payroll Management", icon: Banknote, color: "#0AA8A3" },
+// ];
+
+// const ServicesSection = () => {
+//   const containerRef = useRef(null);
+  
+//   // Create a longer scroll distance for the "sticky" effect
+//   const { scrollYProgress } = useScroll({
+//     target: containerRef,
+//     offset: ["start start", "end end"],
+//   });
+
+//   return (
+//     <section ref={containerRef} className="relative h-[500vh] bg-white">
+//       <div className="sticky top-0 h-screen w-full flex items-center justify-center overflow-hidden">
+        
+//         {/* --- DYNAMIC BACKGROUND TEXT --- */}
+//         <motion.div 
+//           style={{ opacity: useTransform(scrollYProgress, [0, 0.2, 0.9], [0, 0.05, 0]) }}
+//           className="absolute inset-0 flex items-center justify-center pointer-events-none select-none"
+//         >
+//           <span className="text-[25vw] font-black text-[#0F172A]">ADVISORS</span>
+//         </motion.div>
+
+//         <div className="relative w-full max-w-4xl h-[60vh] flex items-center justify-center">
+//           {services.map((service, index) => (
+//             <ServiceCard 
+//               key={index} 
+//               service={service} 
+//               index={index} 
+//               total={services.length} 
+//               scrollYProgress={scrollYProgress} 
+//             />
+//           ))}
+//         </div>
+
+//         {/* --- SECTION LABEL --- */}
+//         <div className="absolute bottom-10 left-10 overflow-hidden">
+//           <motion.div
+//             initial={{ y: "100%" }}
+//             whileInView={{ y: 0 }}
+//             className="flex items-center gap-4"
+//           >
+//             <div className="h-[1px] w-12 bg-[#0AA8A3]" />
+//             <span className="text-[10px] font-black uppercase tracking-[0.4em] text-[#94A3B8]">
+//               Scroll to Explore Services
+//             </span>
+//           </motion.div>
+//         </div>
+//       </div>
+//     </section>
+//   );
+// };
+
+// const ServiceCard = ({ service, index, total, scrollYProgress }) => {
+//   const Icon = service.icon;
+  
+//   // Calculate when this specific card should animate
+//   const start = index / total;
+//   const end = (index + 1) / total;
+  
+//   // 1. Scale Morphing: Card starts small, grows to full, then shrinks slightly as it's "covered"
+//   const scale = useTransform(scrollYProgress, [start, start + 0.1, end], [0.8, 1, 0.95]);
+  
+//   // 2. 3D Rotation: The "Framer" flip
+//   const rotateX = useTransform(scrollYProgress, [start, start + 0.1], [60, 0]);
+  
+//   // 3. Position: Cards slide up from the bottom
+//   const y = useTransform(scrollYProgress, [start, start + 0.1], ["100vh", "0vh"]);
+  
+//   // 4. Opacity: Fade in quickly, no fade out (stacked look)
+//   const opacity = useTransform(scrollYProgress, [start, start + 0.05], [0, 1]);
+
+//   const smoothScale = useSpring(scale, { stiffness: 100, damping: 20 });
+
+//   return (
+//     <motion.div
+//       style={{
+//         scale: smoothScale,
+//         rotateX,
+//         y,
+//         opacity,
+//         zIndex: index,
+//       }}
+//       className="absolute w-full max-w-2xl aspect-video md:aspect-[21/9] bg-white border border-[#E5E7EB] rounded-[2rem] p-10 md:p-16 shadow-[0_40px_100px_-20px_rgba(0,0,0,0.1)] flex flex-col justify-between"
+//     >
+//       <div className="flex justify-between items-start">
+//         <div className="p-4 rounded-2xl bg-[#F7FAFA] text-[#0AA8A3]">
+//           <Icon size={32} strokeWidth={1.5} />
+//         </div>
+//         <span className="text-[10px] font-black text-[#94A3B8] tracking-widest uppercase">
+//           Service 0{index + 1}
+//         </span>
+//       </div>
+
+//       <div>
+//         <h3 className="text-3xl md:text-5xl font-black text-[#0F172A] uppercase tracking-tighter mb-4">
+//           {service.title}
+//         </h3>
+//         <div className="flex items-center gap-4">
+//           <div className="h-1 w-12 bg-[#0AA8A3]" />
+//           <p className="text-sm font-bold text-[#475569] uppercase tracking-widest">
+//             Excellence in Execution
+//           </p>
+//         </div>
+//       </div>
+
+//       {/* Decorative Brand Element */}
+//       <div className="absolute right-10 bottom-10 opacity-10">
+//         <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
+//           <circle cx="20" cy="20" r="19" stroke="currentColor" strokeWidth="2" strokeDasharray="4 4" />
+//         </svg>
+//       </div>
+//     </motion.div>
+//   );
+// };
+
+// export default ServicesSection;

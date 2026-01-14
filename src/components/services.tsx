@@ -99,7 +99,7 @@ const ServicesSection = () => {
                 className="group relative bg-white rounded-xl p-6 shadow-sm hover:shadow-xl border border-slate-100 transition-all duration-300 flex flex-col items-center text-center h-full"
               >
                 {/* Hover Gradient Border (Top) */}
-                <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#002B49] to-[#00A79D] scale-x-0 group-hover:scale-x-100 transition-transform duration-300 rounded-t-xl origin-left" />
+                <div className="absolute top-0 left-0 w-full h-1 bg-linear-to-r from-[#002B49] to-[#00A79D] scale-x-0 group-hover:scale-x-100 transition-transform duration-300 rounded-t-xl origin-left" />
 
                 {/* Icon Circle */}
                 <div className="mb-4 p-4 bg-slate-50 rounded-full text-[#002B49] group-hover:bg-[#002B49] group-hover:text-white transition-colors duration-300">
