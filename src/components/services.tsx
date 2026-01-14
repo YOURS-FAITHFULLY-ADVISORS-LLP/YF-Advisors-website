@@ -2,7 +2,7 @@
 
 import React, { useRef, useEffect, useState } from "react";
 import { Renderer, Camera, Transform, Plane, Mesh, Program, Texture } from "ogl";
-import { motion } from "framer-motion"; 
+import { motion } from "framer-motion";
 import { 
   PieChart, Cpu, Share2, Search, Banknote, 
   FileText, Headphones, UserMinus, Settings, UserCheck, 
@@ -17,6 +17,40 @@ interface Service {
   icon: LucideIcon;
   color: string;
   description: string;
+}
+
+interface TitleProps {
+  gl: GL;
+  plane: Mesh;
+  renderer: Renderer;
+  text: string;
+  textColor?: string;
+  font?: string;
+}
+
+interface MediaProps {
+  geometry: Plane;
+  gl: GL;
+  service: Service;
+  index: number;
+  length: number;
+  renderer: Renderer;
+  scene: Transform;
+  screen: { width: number; height: number };
+  viewport: { width: number; height: number };
+  bend: number;
+}
+
+interface AppConfig {
+  bend?: number;
+  scrollSpeed?: number;
+  scrollEase?: number;
+}
+
+interface CircularGalleryProps {
+  bend?: number;
+  scrollSpeed?: number;
+  scrollEase?: number;
 }
 
 // --- Data ---
@@ -84,55 +118,54 @@ const services: Service[] = [
 ];
 
 // =========================================
-// 1. MOBILE VIEW COMPONENT (Left-to-Right Slide)
+// 1. MOBILE VIEW COMPONENT (Horizontal Manual Slide)
 // =========================================
 
 const MobileServices = () => {
   return (
-    <div className="w-full px-6 flex flex-col gap-6 pb-20">
+    <div className="w-full overflow-x-auto pb-10 pt-4 px-6 scrollbar-hide snap-x snap-mandatory flex gap-6">
       {services.map((service, index) => {
         const Icon = service.icon;
         return (
-          <motion.div
+          <div
             key={index}
-            // CHANGED: Slide from Left (x: -50) to Center (x: 0)
-            initial={{ opacity: 0, x: -50 }} 
-            whileInView={{ opacity: 1, x: 0 }} 
-            viewport={{ once: true, margin: "-50px" }} // Triggers slightly before element is full view
-            transition={{ duration: 0.5, ease: "easeOut", delay: index * 0.05 }} // Fast, staggered delay
-            className="bg-white rounded-2xl p-8 shadow-md border border-slate-100 relative overflow-hidden group"
+            className="snap-center shrink-0 w-[85vw] max-w-[320px] bg-white rounded-2xl p-8 shadow-lg border border-slate-100 relative overflow-hidden group"
           >
             {/* Background Number */}
-            <span className="absolute -top-4 -right-2 text-[8rem] font-bold text-slate-50 opacity-50 select-none -z-0">
+            <span className="absolute -top-4 -right-2 text-[8rem] font-bold text-slate-50 opacity-50 select-none z-0">
               {(index + 1).toString().padStart(2, '0')}
             </span>
 
-            <div className="relative z-10">
-              {/* Icon Container */}
-              <div 
-                className="w-14 h-14 rounded-2xl flex items-center justify-center mb-6 shadow-sm"
-                style={{ backgroundColor: service.color + "15" }} 
-              >
-                <Icon size={28} color={service.color} strokeWidth={2} />
+            <div className="relative z-10 flex flex-col h-full justify-between">
+              <div>
+                {/* Icon Container */}
+                <div 
+                  className="w-14 h-14 rounded-2xl flex items-center justify-center mb-6 shadow-sm"
+                  style={{ backgroundColor: service.color + "15" }} 
+                >
+                  <Icon size={28} color={service.color} strokeWidth={2} />
+                </div>
+
+                {/* Text Content */}
+                <h3 className="text-2xl font-bold text-slate-900 mb-3 leading-tight">
+                  {service.title}
+                </h3>
+                <p className="text-base text-slate-600 font-medium leading-relaxed line-clamp-4">
+                  {service.description}
+                </p>
               </div>
 
-              {/* Text Content */}
-              <h3 className="text-2xl font-bold text-slate-900 mb-3 leading-tight">
-                {service.title}
-              </h3>
-              <p className="text-base text-slate-600 font-medium leading-relaxed">
-                {service.description}
-              </p>
-
-              {/* Decorative Line */}
+              {/* Bottom Decorative Line */}
               <div 
                 className="w-16 h-1.5 mt-6 rounded-full opacity-80"
                 style={{ backgroundColor: service.color }}
               />
             </div>
-          </motion.div>
+          </div>
         );
       })}
+      {/* Spacer for right padding */}
+      <div className="w-2 shrink-0" />
     </div>
   );
 };
@@ -226,9 +259,9 @@ function generateServiceCardTexture(gl: GL, service: Service, index: number) {
   return { texture, width, height, aspect: width/height };
 }
 
-function debounce<T extends (...args: any[]) => void>(func: T, wait: number) {
+function debounce<T extends (...args: unknown[]) => void>(func: T, wait: number) {
   let timeout: ReturnType<typeof setTimeout>;
-  return function (this: any, ...args: Parameters<T>) {
+  return function (this: unknown, ...args: Parameters<T>) {
     clearTimeout(timeout);
     timeout = setTimeout(() => func.apply(this, args), wait);
   };
@@ -238,19 +271,125 @@ function lerp(p1: number, p2: number, t: number): number {
   return p1 + (p2 - p1) * t;
 }
 
-// --- WebGL Logic Classes ---
+function autoBind(instance: object): void {
+  const proto = Object.getPrototypeOf(instance);
+  Object.getOwnPropertyNames(proto).forEach((key) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const value = (instance as any)[key];
+    if (key !== "constructor" && typeof value === "function") {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (instance as any)[key] = value.bind(instance);
+    }
+  });
+}
 
-interface MediaConfig {
-  geometry: Plane;
+function getFontSize(font: string): number {
+  const match = font.match(/(\d+)px/);
+  return match ? parseInt(match[1], 10) : 30;
+}
+
+function createTextTexture(
+  gl: GL,
+  text: string,
+  font: string = "bold 30px monospace",
+  color: string = "black"
+): { texture: Texture; width: number; height: number } {
+  const canvas = document.createElement("canvas");
+  const context = canvas.getContext("2d");
+  if (!context) throw new Error("Could not get 2d context");
+
+  context.font = font;
+  const metrics = context.measureText(text);
+  const textWidth = Math.ceil(metrics.width);
+  const fontSize = getFontSize(font);
+  const textHeight = Math.ceil(fontSize * 1.2);
+
+  canvas.width = textWidth + 20;
+  canvas.height = textHeight + 20;
+
+  context.font = font;
+  context.fillStyle = color;
+  context.textBaseline = "middle";
+  context.textAlign = "center";
+  context.clearRect(0, 0, canvas.width, canvas.height);
+  context.fillText(text, canvas.width / 2, canvas.height / 2);
+
+  const texture = new Texture(gl, { generateMipmaps: false });
+  texture.image = canvas;
+  return { texture, width: canvas.width, height: canvas.height };
+}
+
+// --- WebGL Classes ---
+
+class Title {
   gl: GL;
-  service: Service;
-  index: number;
-  length: number;
+  plane: Mesh;
   renderer: Renderer;
-  scene: Transform;
-  screen: { width: number; height: number };
-  viewport: { width: number; height: number };
-  bend: number;
+  text: string;
+  textColor: string;
+  font: string;
+  mesh!: Mesh;
+
+  constructor({
+    gl,
+    plane,
+    renderer,
+    text,
+    textColor = "#545050",
+    font = "30px sans-serif",
+  }: TitleProps) {
+    autoBind(this);
+    this.gl = gl;
+    this.plane = plane;
+    this.renderer = renderer;
+    this.text = text;
+    this.textColor = textColor;
+    this.font = font;
+    this.createMesh();
+  }
+
+  createMesh() {
+    const { texture, width, height } = createTextTexture(
+      this.gl,
+      this.text,
+      this.font,
+      this.textColor
+    );
+    const geometry = new Plane(this.gl);
+    const program = new Program(this.gl, {
+      vertex: `
+        attribute vec3 position;
+        attribute vec2 uv;
+        uniform mat4 modelViewMatrix;
+        uniform mat4 projectionMatrix;
+        varying vec2 vUv;
+        void main() {
+          vUv = uv;
+          gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+        }
+      `,
+      fragment: `
+        precision highp float;
+        uniform sampler2D tMap;
+        varying vec2 vUv;
+        void main() {
+          vec4 color = texture2D(tMap, vUv);
+          if (color.a < 0.1) discard;
+          gl_FragColor = color;
+        }
+      `,
+      uniforms: { tMap: { value: texture } },
+      transparent: true,
+    });
+    this.mesh = new Mesh(this.gl, { geometry, program });
+    const aspect = width / height;
+    const textHeightScaled = this.plane.scale.y * 0.15;
+    const textWidthScaled = textHeightScaled * aspect;
+    this.mesh.scale.set(textWidthScaled, textHeightScaled, 1);
+    this.mesh.position.y =
+      -this.plane.scale.y * 0.5 - textHeightScaled * 0.5 - 0.05;
+    this.mesh.setParent(this.plane);
+  }
 }
 
 class Media {
@@ -267,6 +406,7 @@ class Media {
   bend: number;
   program!: Program;
   plane!: Mesh;
+  title!: Title;
   scale!: number;
   padding!: number;
   width!: number;
@@ -276,7 +416,7 @@ class Media {
   isBefore: boolean = false;
   isAfter: boolean = false;
 
-  constructor({ geometry, gl, service, index, length, renderer, scene, screen, viewport, bend }: MediaConfig) {
+  constructor({ geometry, gl, service, index, length, renderer, scene, screen, viewport, bend }: MediaProps) {
     this.geometry = geometry;
     this.gl = gl;
     this.service = service;
@@ -289,6 +429,7 @@ class Media {
     this.bend = bend;
     this.createShader();
     this.createMesh();
+    this.createTitle();
     this.onResize();
   }
 
@@ -338,6 +479,16 @@ class Media {
       program: this.program,
     });
     this.plane.setParent(this.scene);
+  }
+
+  createTitle() {
+    this.title = new Title({
+      gl: this.gl,
+      plane: this.plane,
+      renderer: this.renderer,
+      text: "", // Title is baked into texture now
+      textColor: "#000",
+    });
   }
 
   update(scroll: { current: number; last: number }, direction: "right" | "left") {
@@ -399,17 +550,11 @@ class Media {
   }
 }
 
-interface AppConfig {
-  bend?: number;
-  scrollSpeed?: number;
-  scrollEase?: number;
-}
-
 class App {
   container: HTMLElement;
   scrollSpeed: number;
   scroll: { ease: number; current: number; target: number; last: number; position?: number };
-  onCheckDebounce: (...args: any[]) => void;
+  onCheckDebounce: (...args: unknown[]) => void;
   renderer!: Renderer;
   gl!: GL;
   camera!: Camera;
@@ -535,6 +680,7 @@ class App {
 
   onWheel(e: Event) {
     const wheelEvent = e as WheelEvent;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const delta = wheelEvent.deltaY || (wheelEvent as any).wheelDelta || (wheelEvent as any).detail;
     this.scroll.target += (delta > 0 ? this.scrollSpeed : -this.scrollSpeed) * 0.2;
     this.onCheckDebounce();
@@ -643,12 +789,12 @@ export default function ServicesSection() {
       <div className="absolute top-10 left-0 w-full text-center z-10 pointer-events-none px-4">
          <h2 className="text-4xl md:text-6xl font-black text-slate-200 uppercase tracking-widest">Services</h2>
          <p className="text-sm font-bold text-slate-400 mt-2">
-            {isMobile ? "Scroll to Explore" : "Drag to Explore"}
+            {isMobile ? "Swipe to Explore" : "Drag to Explore"}
          </p>
       </div>
 
       {isMobile ? (
-        // Mobile Layout (Standard vertical scroll with slide animations)
+        // Mobile Layout (Horizontal Manual Slide)
         <div className="mt-24">
           <MobileServices />
         </div>
