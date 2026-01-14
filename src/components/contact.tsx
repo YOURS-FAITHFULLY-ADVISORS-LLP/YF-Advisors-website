@@ -115,8 +115,9 @@ export default function ContactSection() {
                   <div>
                     <h4 className="font-black text-lg text-black">Visit Us</h4>
                     <p className="text-gray-600 font-medium leading-relaxed">
-                      123 Business Park, Tower A,<br />
-                      Financial District, City, 400001
+                      207, 2nd Floor, Bldg No 1, Millenium Business Park,
+                      <br />
+                      Navi Mumbai, 400710
                     </p>
                   </div>
                 </div>
@@ -129,7 +130,7 @@ export default function ContactSection() {
                   <div>
                     <h4 className="font-black text-lg text-black">Email Us</h4>
                     <a href="mailto:hello@yfadvisors.com" className="text-gray-600 font-medium hover:text-[#00A79D] hover:underline decoration-2 underline-offset-2 transition-colors">
-                      hello@yfadvisors.com
+                      info@yfadvisors.com
                     </a>
                   </div>
                 </div>
@@ -142,7 +143,7 @@ export default function ContactSection() {
                   <div>
                     <h4 className="font-black text-lg text-black">Call Us</h4>
                     <a href="tel:+919876543210" className="text-gray-600 font-medium hover:text-[#00A79D] transition-colors">
-                      +91 98765 43210
+                      +91 80805 06185
                     </a>
                   </div>
                 </div>

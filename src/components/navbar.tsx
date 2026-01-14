@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { usePathname } from "next/navigation"; // Import usePathname
 import { Menu, X, ArrowRight } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -10,6 +11,9 @@ const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+  
+  // Get current path to check if we are on Home page
+  const pathname = usePathname();
 
   // Handle Scroll Effect
   useEffect(() => {
@@ -22,20 +26,45 @@ const Navbar = () => {
 
   const navLinks = [
     { name: "Home", href: "/" },
-    { name: "About Us", href: "#about" },
-    { name: "Services", href: "#services" },
-    { name: "Testimonials", href: "#testimonials" },
-    { name: "Our Team", href: "#team" },
-    { name: "Product", href: "#products" },
+    { name: "About Us", href: "/#about" },
+    { name: "Services", href: "/#services" },
+    { name: "Testimonials", href: "/#testimonials" },
+    { name: "Our Team", href: "/#team" },
+    { name: "Product", href: "/#products" },
   ];
 
-  // Function to handle Logo Click (Scroll to Top / Hero)
-  const handleLogoClick = () => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
-    setIsMobileMenuOpen(false); // Close mobile menu if open
+  // --- FIXED: Universal Scroll Handler ---
+  const handleLinkClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+    // 1. Close mobile menu immediately
+    setIsMobileMenuOpen(false);
+
+    // 2. Check if the link is a hash link (e.g., /#contact or #contact)
+    if (href.includes("#")) {
+      const targetId = href.split("#")[1];
+      const elem = document.getElementById(targetId);
+
+      // 3. If element exists on CURRENT page, scroll to it manually
+      if (elem) {
+        e.preventDefault();
+        const headerOffset = 100; // Height of your fixed header + padding
+        const elementPosition = elem.getBoundingClientRect().top;
+        const offsetPosition = elementPosition + window.scrollY - headerOffset;
+
+        window.scrollTo({
+          top: offsetPosition,
+          behavior: "smooth",
+        });
+      } 
+      // 4. If element doesn't exist (different page), let Next.js handle the routing naturally
+    } else if (href === "/") {
+      // Handle Scroll to Top for Home
+      if (pathname === "/") {
+        e.preventDefault();
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
+    }
   };
 
-  // Common glass effect for Nav and Mobile Toggle only
   const glassPanel =
     "bg-white/70 backdrop-blur-xl border border-white/40 shadow-lg shadow-slate-200/20 rounded-full transition-all duration-300";
 
@@ -51,10 +80,10 @@ const Navbar = () => {
       >
         <div className="max-w-7xl mx-auto px-4 md:px-6 flex items-center justify-between">
           
-          {/* --- 1. Logo Section (Click to Hero) --- */}
+          {/* --- 1. Logo Section --- */}
           <Link
             href="/"
-            onClick={handleLogoClick} // ADDED: Scrolls to top when clicked
+            onClick={(e) => handleLinkClick(e, "/")}
             className="group relative z-50 flex items-center gap-2 py-2 cursor-pointer"
           >
             {/* Logo */}
@@ -76,17 +105,14 @@ const Navbar = () => {
               <span className="font-serif text-[10px] font-semibold tracking-widest text-slate-800 uppercase">
                 Yours Faithfully
               </span>
-
-              {/* Fixed Tailwind Warning: h-px, my-px */}
               <span className="w-full h-px bg-[#FDB913] my-px rounded-full" />
-
               <span className="font-serif text-[11px] font-bold tracking-[0.18em] text-slate-800 uppercase">
                 Advisors LLP
               </span>
             </div>
           </Link>
 
-          {/* --- 2. Desktop Navigation (Floating Dock) --- */}
+          {/* --- 2. Desktop Navigation --- */}
           <nav
             className={`hidden md:flex items-center p-1.5 gap-1 ${glassPanel}`}
           >
@@ -94,13 +120,11 @@ const Navbar = () => {
               <Link
                 key={link.name}
                 href={link.href}
-                // Optional: Make "Home" link also scroll to top
-                onClick={link.name === "Home" ? handleLogoClick : undefined} 
+                onClick={(e) => handleLinkClick(e, link.href)}
                 onMouseEnter={() => setHoveredIndex(index)}
                 onMouseLeave={() => setHoveredIndex(null)}
                 className="relative px-5 py-2.5 rounded-full text-sm font-medium text-slate-600 transition-colors hover:text-slate-900"
               >
-                {/* The Sliding Background Animation */}
                 {hoveredIndex === index && (
                   <motion.span
                     layoutId="nav-pill"
@@ -113,12 +137,13 @@ const Navbar = () => {
             ))}
           </nav>
 
-          {/* --- 3. Actions (Contact & Mobile Toggle) --- */}
+          {/* --- 3. Actions --- */}
           <div className="flex items-center gap-3">
             {/* Desktop Contact Button */}
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
               <Link
-                href="#contact"
+                href="/#contact" // Updated to include / for reliability
+                onClick={(e) => handleLinkClick(e, "/#contact")}
                 className="hidden md:flex items-center gap-2 bg-[#002B49] text-white px-6 py-3 rounded-full text-sm font-bold tracking-wide shadow-lg shadow-blue-900/20 hover:bg-[#00A79D] transition-colors duration-300 group"
               >
                 <span>Let&apos;s Talk</span>
@@ -168,7 +193,7 @@ const Navbar = () => {
             className="fixed inset-0 z-40 bg-[#F5F7FA] md:hidden flex flex-col items-center justify-center space-y-8"
           >
             <div className="flex flex-col items-center gap-6 w-full px-6">
-              {[...navLinks, { name: "Contact", href: "/contact" }].map(
+              {[...navLinks, { name: "Contact", href: "/#contact" }].map(
                 (link, i) => (
                   <motion.div
                     key={link.name}
@@ -180,10 +205,7 @@ const Navbar = () => {
                   >
                     <Link
                       href={link.href}
-                      onClick={() => {
-                        setIsMobileMenuOpen(false);
-                        if (link.name === "Home") handleLogoClick();
-                      }}
+                      onClick={(e) => handleLinkClick(e, link.href)}
                       className="block w-full text-center text-2xl font-serif font-medium text-slate-800 hover:text-[#00A79D] transition-colors"
                     >
                       {link.name}
