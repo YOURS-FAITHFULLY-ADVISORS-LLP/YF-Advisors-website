@@ -5,7 +5,6 @@ import ServicesSection from '../components/services';
 import Testimonials from '../components/testimonial';
 import TeamSection from '../components/meet-the-team';
 import AboutUs from '../components/about-us'; 
-// import Carousel from '../components/OurApproach';
 // import Blog from '../components/blog';
 import Products from '../components/product';
 import ContactChat from '../components/contact';
@@ -21,14 +20,6 @@ export default function Home() {
       <ServicesSection />
       <Testimonials />
       <TeamSection />
-      {/* <Carousel 
-         baseWidth={350}      // Correct prop is 'baseWidth', not 'width'
-         autoplay={true}      // Enables automatic sliding
-         autoplayDelay={4000} // Speed of slide
-         loop={true}          // Infinite scrolling
-         pauseOnHover={true}  // Stops moving when user hovers
-         round={false}        // Set to false to keep rectangular cards (better for text)
-      /> */}
       {/* <Blog /> */}
       <Products />
       <ContactChat />
