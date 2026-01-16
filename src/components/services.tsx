@@ -2,7 +2,7 @@
 
 import React, { useRef, useEffect, useState } from "react";
 import { Renderer, Camera, Transform, Plane, Mesh, Program, Texture } from "ogl";
-import { motion } from "framer-motion";
+// import { motion } from "framer-motion";
 import { 
   PieChart, Cpu, Share2, Search, Banknote, 
   FileText, Headphones, UserMinus, Settings, UserCheck, 
@@ -787,7 +787,7 @@ export default function ServicesSection() {
   return (
     <section id="services" className="w-full bg-slate-50 relative py-16 md:py-20">
       <div className="absolute top-10 left-0 w-full text-center z-10 pointer-events-none px-4">
-         <h2 className="text-4xl md:text-6xl font-black text-slate-200 uppercase tracking-widest">Services</h2>
+         <h2 className="text-4xl md:text-6xl font-black text-black uppercase tracking-widest">Services</h2>
          <p className="text-sm font-bold text-slate-400 mt-2">
             {isMobile ? "Swipe to Explore" : "Drag to Explore"}
          </p>
