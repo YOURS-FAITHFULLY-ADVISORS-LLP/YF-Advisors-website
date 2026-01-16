@@ -5,7 +5,6 @@ import ServicesSection from '../components/services';
 import Testimonials from '../components/testimonial';
 import TeamSection from '../components/meet-the-team';
 import AboutUs from '../components/about-us'; 
-// import Blog from '../components/blog';
 import Products from '../components/product';
 import ContactChat from '../components/contact';
 import Footer from '../components/footer';
@@ -20,7 +19,6 @@ export default function Home() {
       <ServicesSection />
       <Testimonials />
       <TeamSection />
-      {/* <Blog /> */}
       <Products />
       <ContactChat />
       <Footer />

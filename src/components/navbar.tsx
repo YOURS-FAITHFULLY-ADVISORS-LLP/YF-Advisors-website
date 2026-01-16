@@ -31,6 +31,7 @@ const Navbar = () => {
     { name: "Testimonials", href: "/#testimonials" },
     { name: "Our Team", href: "/#team" },
     { name: "Product", href: "/#products" },
+    { name: "Blog", href: "/blog" },
   ];
 
   // --- FIXED: Universal Scroll Handler ---
