@@ -1,31 +1,24 @@
 "use client";
 
 import React, { useRef, useEffect, useState } from "react";
-import { Renderer, Camera, Transform, Plane, Mesh, Program, Texture } from "ogl";
-// import { motion } from "framer-motion";
-import { 
-  PieChart, Cpu, Share2, Search, Banknote, 
-  FileText, Headphones, UserMinus, Settings, UserCheck, 
-  LucideIcon 
-} from "lucide-react";
+import { Renderer, Camera, Transform, Plane, Mesh, Program, Texture, Raycast, Vec2 } from "ogl";
+import { ArrowRight, LucideIcon } from "lucide-react";
+import { useRouter } from "next/navigation";
+
+// --- IMPORT DATA ---
+// Ensure this path matches where your data.ts file actually lives.
+// Based on your screenshot, it seems to be in src/data/services/data.ts
+import { servicesData } from "../data/services/data"; 
 
 // --- Types ---
 type GL = Renderer["gl"];
 
 interface Service {
+  id: string;
   title: string;
   icon: LucideIcon;
   color: string;
   description: string;
-}
-
-interface TitleProps {
-  gl: GL;
-  plane: Mesh;
-  renderer: Renderer;
-  text: string;
-  textColor?: string;
-  font?: string;
 }
 
 interface MediaProps {
@@ -41,137 +34,107 @@ interface MediaProps {
   bend: number;
 }
 
-interface AppConfig {
-  bend?: number;
-  scrollSpeed?: number;
-  scrollEase?: number;
-}
-
 interface CircularGalleryProps {
   bend?: number;
   scrollSpeed?: number;
   scrollEase?: number;
 }
 
-// --- Data ---
-const services: Service[] = [
-  { 
-    title: "Finance Consulting", 
-    icon: PieChart, 
-    color: "#0AA8A3",
-    description: "Expert guidance to reduce costs, boost profitability, and navigate complex financial landscapes."
-  },
-  { 
-    title: "Back Office Automation", 
-    icon: Cpu, 
-    color: "#0F172A",
-    description: "Streamline operations using AI & RPA to automate repetitive tasks like data entry and invoice processing."
-  },
-  { 
-    title: "Functional Outsourcing", 
-    icon: Share2, 
-    color: "#0AA8A3",
-    description: "Delegate specific functions like HR and Accounts Payable to specialized experts to improve efficiency."
-  },
-  { 
-    title: "Mystery Audits", 
-    icon: Search, 
-    color: "#0F172A",
-    description: "Gain unfiltered insights into customer experience and compliance through discreet evaluations."
-  },
-  { 
-    title: "Payroll Management", 
-    icon: Banknote, 
-    color: "#0AA8A3",
-    description: "End-to-end cloud-based payroll processing ensuring 100% accuracy and strict compliance."
-  },
-  { 
-    title: "Bookkeeping Services", 
-    icon: FileText, 
-    color: "#0F172A",
-    description: "Accurate tracking of financial transactions to keep your business audit-ready at all times."
-  },
-  { 
-    title: "Virtual Assistant", 
-    icon: Headphones, 
-    color: "#0AA8A3",
-    description: "Dedicated remote administrative support for email management, scheduling, and coordination."
-  },
-  { 
-    title: "Attrition Management", 
-    icon: UserMinus, 
-    color: "#0F172A",
-    description: "Strategic solutions to retain top talent and significantly reduce workforce turnover rates."
-  },
-  { 
-    title: "Process Outsourcing", 
-    icon: Settings, 
-    color: "#0AA8A3",
-    description: "Optimize non-core activities like procurement and supply chain to focus entirely on growth."
-  },
-  { 
-    title: "Manpower Outsourcing", 
-    icon: UserCheck, 
-    color: "#0F172A",
-    description: "Flexible staffing solutions ranging from temporary project-based hires to permanent recruitment."
-  },
-];
+// --- NEW: Missing type definitions ---
+interface TitleProps {
+  gl: GL;
+  plane: Mesh;
+  renderer: Renderer;
+  text: string;
+  textColor?: string;
+  font?: string;
+}
+
+interface AppConfig {
+  bend?: number;
+  scrollSpeed?: number;
+  scrollEase?: number;
+}
+
+interface RaycastHit {
+  distance: number;
+  point: Vec2;
+  [key: string]: unknown;
+}
+
+// --- DATA MAPPING ---
+// Map your rich data to the simple format needed for the slider
+const services: Service[] = servicesData.map((s) => ({
+  id: s.id,
+  title: s.title,
+  icon: s.icon,
+  color: s.color,
+  description: s.shortDescription, 
+}));
 
 // =========================================
-// 1. MOBILE VIEW COMPONENT (Horizontal Manual Slide)
+// 1. MOBILE VIEW COMPONENT
 // =========================================
 
 const MobileServices = () => {
+  const router = useRouter();
+
+  const handleReadMore = (id: string) => {
+    // This string MUST match the folder structure in src/app/
+    router.push(`/services/${id}`);
+  };
+
   return (
     <div className="w-full overflow-x-auto pb-10 pt-4 px-6 scrollbar-hide snap-x snap-mandatory flex gap-6">
       {services.map((service, index) => {
         const Icon = service.icon;
         return (
           <div
-            key={index}
-            className="snap-center shrink-0 w-[85vw] max-w-[320px] bg-white rounded-2xl p-8 shadow-lg border border-slate-100 relative overflow-hidden group"
+            key={service.id}
+            className="snap-center shrink-0 w-[85vw] max-w-[320px] bg-white rounded-2xl p-8 shadow-lg border border-slate-100 relative overflow-hidden group flex flex-col"
           >
             {/* Background Number */}
             <span className="absolute -top-4 -right-2 text-[8rem] font-bold text-slate-50 opacity-50 select-none z-0">
               {(index + 1).toString().padStart(2, '0')}
             </span>
 
-            <div className="relative z-10 flex flex-col h-full justify-between">
-              <div>
-                {/* Icon Container */}
-                <div 
-                  className="w-14 h-14 rounded-2xl flex items-center justify-center mb-6 shadow-sm"
-                  style={{ backgroundColor: service.color + "15" }} 
-                >
-                  <Icon size={28} color={service.color} strokeWidth={2} />
-                </div>
-
-                {/* Text Content */}
-                <h3 className="text-2xl font-bold text-slate-900 mb-3 leading-tight">
-                  {service.title}
-                </h3>
-                <p className="text-base text-slate-600 font-medium leading-relaxed line-clamp-4">
-                  {service.description}
-                </p>
+            <div className="relative z-10 flex flex-col h-full">
+              {/* Icon Container */}
+              <div 
+                className="w-14 h-14 rounded-2xl flex items-center justify-center mb-6 shadow-sm shrink-0"
+                style={{ backgroundColor: service.color + "15" }} 
+              >
+                <Icon size={28} color={service.color} strokeWidth={2} />
               </div>
 
-              {/* Bottom Decorative Line */}
-              <div 
-                className="w-16 h-1.5 mt-6 rounded-full opacity-80"
-                style={{ backgroundColor: service.color }}
-              />
+              {/* Text Content */}
+              <h3 className="text-2xl font-bold text-slate-900 mb-3 leading-tight">
+                {service.title}
+              </h3>
+              <p className="text-base text-slate-600 font-medium leading-relaxed line-clamp-4 mb-6 grow">
+                {service.description}
+              </p>
+              
+              {/* Read More Button */}
+              <button 
+                onClick={() => handleReadMore(service.id)}
+                className="group/btn flex items-center gap-2 text-sm font-bold uppercase tracking-wider py-3 px-0 bg-transparent border-none cursor-pointer transition-all hover:gap-3"
+                style={{ color: service.color }}
+              >
+                Read More
+                <ArrowRight size={16} />
+              </button>
             </div>
           </div>
         );
       })}
-      {/* Spacer for right padding */}
       <div className="w-2 shrink-0" />
     </div>
   );
 };
 
 // =========================================
-// 2. DESKTOP VIEW COMPONENT (WebGL Gallery)
+// 2. DESKTOP VIEW COMPONENT (WebGL Logic)
 // =========================================
 
 function generateServiceCardTexture(gl: GL, service: Service, index: number) {
@@ -184,6 +147,7 @@ function generateServiceCardTexture(gl: GL, service: Service, index: number) {
   canvas.height = height;
 
   if (ctx) {
+    // Card Background
     ctx.fillStyle = '#ffffff';
     ctx.beginPath();
     ctx.roundRect(0, 0, width, height, 40);
@@ -193,22 +157,26 @@ function generateServiceCardTexture(gl: GL, service: Service, index: number) {
     ctx.lineWidth = 6; 
     ctx.stroke();
 
+    // Big Index Number
     ctx.font = 'bold 100px sans-serif';
     ctx.fillStyle = '#f1f5f9'; 
     ctx.textAlign = 'right';
     ctx.fillText((index + 1).toString().padStart(2, '0'), width - 40, 130);
 
+    // Icon Box Background
     ctx.fillStyle = service.color + '20'; 
     ctx.beginPath();
     ctx.roundRect(40, 50, 90, 90, 20);
     ctx.fill();
     
+    // Icon Placeholder
     ctx.font = 'bold 40px sans-serif';
     ctx.fillStyle = service.color;
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
     ctx.fillText('✦', 85, 95);
 
+    // Title
     ctx.textAlign = 'left';
     ctx.textBaseline = 'alphabetic';
     ctx.font = 'bold 52px sans-serif';
@@ -221,6 +189,7 @@ function generateServiceCardTexture(gl: GL, service: Service, index: number) {
         lineY += 65;
     });
 
+    // Description
     ctx.font = '500 30px sans-serif';
     ctx.fillStyle = '#64748b'; 
     const maxWidth = width - 80;
@@ -245,12 +214,27 @@ function generateServiceCardTexture(gl: GL, service: Service, index: number) {
     }
     ctx.fillText(line, x, y);
 
-    ctx.fillStyle = service.color;
-    ctx.fillRect(40, height - 60, 100, 10);
+    // "Read More" Button Visuals
+    const btnY = height - 120;
+    const btnHeight = 60;
+    const btnWidth = 220;
     
+    ctx.fillStyle = service.color;
+    ctx.beginPath();
+    ctx.roundRect(40, btnY, btnWidth, btnHeight, 30);
+    ctx.fill();
+
+    ctx.font = 'bold 24px sans-serif';
+    ctx.fillStyle = '#ffffff';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('READ MORE →', 40 + (btnWidth / 2), btnY + (btnHeight / 2));
+    
+    // Bottom Label
+    ctx.textAlign = 'right';
     ctx.font = 'bold 20px sans-serif';
-    ctx.fillStyle = '#94a3b8';
-    ctx.fillText('PROFESSIONAL SERVICES', 160, height - 50);
+    ctx.fillStyle = '#cbd5e1';
+    ctx.fillText('PROFESSIONAL SERVICES', width - 40, height - 50);
   }
 
   const texture = new Texture(gl, { generateMipmaps: true });
@@ -283,43 +267,7 @@ function autoBind(instance: object): void {
   });
 }
 
-function getFontSize(font: string): number {
-  const match = font.match(/(\d+)px/);
-  return match ? parseInt(match[1], 10) : 30;
-}
-
-function createTextTexture(
-  gl: GL,
-  text: string,
-  font: string = "bold 30px monospace",
-  color: string = "black"
-): { texture: Texture; width: number; height: number } {
-  const canvas = document.createElement("canvas");
-  const context = canvas.getContext("2d");
-  if (!context) throw new Error("Could not get 2d context");
-
-  context.font = font;
-  const metrics = context.measureText(text);
-  const textWidth = Math.ceil(metrics.width);
-  const fontSize = getFontSize(font);
-  const textHeight = Math.ceil(fontSize * 1.2);
-
-  canvas.width = textWidth + 20;
-  canvas.height = textHeight + 20;
-
-  context.font = font;
-  context.fillStyle = color;
-  context.textBaseline = "middle";
-  context.textAlign = "center";
-  context.clearRect(0, 0, canvas.width, canvas.height);
-  context.fillText(text, canvas.width / 2, canvas.height / 2);
-
-  const texture = new Texture(gl, { generateMipmaps: false });
-  texture.image = canvas;
-  return { texture, width: canvas.width, height: canvas.height };
-}
-
-// --- WebGL Classes ---
+// --- WebGL Helper Classes ---
 
 class Title {
   gl: GL;
@@ -345,51 +293,8 @@ class Title {
     this.text = text;
     this.textColor = textColor;
     this.font = font;
-    this.createMesh();
   }
-
-  createMesh() {
-    const { texture, width, height } = createTextTexture(
-      this.gl,
-      this.text,
-      this.font,
-      this.textColor
-    );
-    const geometry = new Plane(this.gl);
-    const program = new Program(this.gl, {
-      vertex: `
-        attribute vec3 position;
-        attribute vec2 uv;
-        uniform mat4 modelViewMatrix;
-        uniform mat4 projectionMatrix;
-        varying vec2 vUv;
-        void main() {
-          vUv = uv;
-          gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
-        }
-      `,
-      fragment: `
-        precision highp float;
-        uniform sampler2D tMap;
-        varying vec2 vUv;
-        void main() {
-          vec4 color = texture2D(tMap, vUv);
-          if (color.a < 0.1) discard;
-          gl_FragColor = color;
-        }
-      `,
-      uniforms: { tMap: { value: texture } },
-      transparent: true,
-    });
-    this.mesh = new Mesh(this.gl, { geometry, program });
-    const aspect = width / height;
-    const textHeightScaled = this.plane.scale.y * 0.15;
-    const textWidthScaled = textHeightScaled * aspect;
-    this.mesh.scale.set(textWidthScaled, textHeightScaled, 1);
-    this.mesh.position.y =
-      -this.plane.scale.y * 0.5 - textHeightScaled * 0.5 - 0.05;
-    this.mesh.setParent(this.plane);
-  }
+  createMesh() { /* Text is baked into texture, no mesh needed */ }
 }
 
 class Media {
@@ -478,6 +383,12 @@ class Media {
       geometry: this.geometry,
       program: this.program,
     });
+    
+    // --- KEY FIX FOR CLICKING ---
+    // Attach the ID to the mesh so we can find it when we click
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (this.plane as any)._serviceId = this.service.id;
+    
     this.plane.setParent(this.scene);
   }
 
@@ -486,7 +397,7 @@ class Media {
       gl: this.gl,
       plane: this.plane,
       renderer: this.renderer,
-      text: "", // Title is baked into texture now
+      text: "",
       textColor: "#000",
     });
   }
@@ -539,7 +450,6 @@ class Media {
     if (screen) this.screen = screen;
     if (viewport) this.viewport = viewport;
 
-    // Desktop logic only here
     this.plane.scale.x = (this.viewport.width * 400) / this.screen.width;
     this.plane.scale.y = this.plane.scale.x / (600 / 900); 
 
@@ -564,7 +474,15 @@ class App {
   screen!: { width: number; height: number };
   viewport!: { width: number; height: number };
   raf: number = 0;
+  
+  // Router instance
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  router: any;
 
+  // Interaction variables
+  raycast!: Raycast;
+  mouse!: Vec2;
+  clickStart: { x: number, y: number } = { x: 0, y: 0 };
   isDown: boolean = false;
   start: number = 0;
 
@@ -572,18 +490,21 @@ class App {
   boundOnWheel!: (e: Event) => void;
   boundOnTouchDown!: (e: MouseEvent | TouchEvent) => void;
   boundOnTouchMove!: (e: MouseEvent | TouchEvent) => void;
-  boundOnTouchUp!: () => void;
+  boundOnTouchUp!: (e: MouseEvent | TouchEvent) => void;
 
-  constructor(container: HTMLElement, { bend = 1, scrollSpeed = 2, scrollEase = 0.05 }: AppConfig) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  constructor(container: HTMLElement, { bend = 1, scrollSpeed = 2, scrollEase = 0.05 }: AppConfig, router: any) {
     this.container = container;
     this.scrollSpeed = scrollSpeed;
     this.scroll = { ease: scrollEase, current: 0, target: 0, last: 0 };
     this.onCheckDebounce = debounce(this.onCheck.bind(this), 200);
+    this.router = router;
     
     this.createRenderer();
     this.createCamera();
     this.createScene();
     this.createGeometry();
+    this.createInteraction();
     this.onResize();
     this.createMedias(bend);
     this.update();
@@ -624,6 +545,12 @@ class App {
     this.planeGeometry = new Plane(this.gl, { heightSegments: 50, widthSegments: 100 });
   }
 
+  createInteraction() {
+    if(!this.gl) return;
+    this.raycast = new Raycast(this.gl);
+    this.mouse = new Vec2();
+  }
+
   createMedias(bend: number) {
     if(!this.gl) return;
     this.medias = services.map((service, index) => {
@@ -660,10 +587,30 @@ class App {
     }
   }
 
+  updateMouse(e: MouseEvent | TouchEvent) {
+    const x = "touches" in e ? e.touches[0].clientX : e.clientX;
+    const y = "touches" in e ? e.touches[0].clientY : e.clientY;
+    
+    // Normalize mouse coordinates for Raycast (-1 to +1)
+    const rect = this.renderer.gl.canvas.getBoundingClientRect();
+    const localX = x - rect.left;
+    const localY = y - rect.top;
+
+    this.mouse.set(
+      (localX / this.renderer.width) * 2 - 1,
+      -(localY / this.renderer.height) * 2 + 1
+    );
+  }
+
   onTouchDown(e: MouseEvent | TouchEvent) {
     this.isDown = true;
     this.scroll.position = this.scroll.current;
     this.start = "touches" in e ? e.touches[0].clientX : e.clientX;
+    const startY = "touches" in e ? e.touches[0].clientY : e.clientY;
+    
+    // Track click vs drag
+    this.clickStart = { x: this.start, y: startY };
+    this.updateMouse(e);
   }
 
   onTouchMove(e: MouseEvent | TouchEvent) {
@@ -673,9 +620,51 @@ class App {
     this.scroll.target = (this.scroll.position ?? 0) + distance;
   }
 
-  onTouchUp() {
+  onTouchUp(e: MouseEvent | TouchEvent) {
     this.isDown = false;
     this.onCheck();
+    
+    // Calculate if user dragged or clicked
+    const endX = "changedTouches" in e ? e.changedTouches[0].clientX : e.clientX;
+    const endY = "changedTouches" in e ? e.changedTouches[0].clientY : e.clientY;
+    
+    const dist = Math.sqrt(Math.pow(endX - this.clickStart.x, 2) + Math.pow(endY - this.clickStart.y, 2));
+    
+    // If moved less than 5px, treat as a click
+    if (dist < 5) {
+        this.handleClick(e);
+    }
+  }
+  
+  handleClick(e: MouseEvent | TouchEvent) {
+     if(!this.raycast || !this.medias) return;
+     
+     const x = "changedTouches" in e ? e.changedTouches[0].clientX : e.clientX;
+     const y = "changedTouches" in e ? e.changedTouches[0].clientY : e.clientY;
+     const rect = this.renderer.gl.canvas.getBoundingClientRect();
+     
+     this.mouse.set(
+       ((x - rect.left) / this.renderer.width) * 2 - 1,
+       -((y - rect.top) / this.renderer.height) * 2 + 1
+     );
+
+     this.raycast.castMouse(this.camera, this.mouse);
+     
+     const meshes = this.medias.map(m => m.plane);
+     const hits = this.raycast.intersectBounds(meshes) as unknown as RaycastHit[];
+
+     if(hits && hits.length) {
+         hits.sort((a, b) => a.distance - b.distance);
+         const hitMesh = hits[0] as unknown as Mesh;
+         // Retrieve the ID stored on the mesh
+         // eslint-disable-next-line @typescript-eslint/no-explicit-any
+         const id = (hitMesh as any)._serviceId;
+         
+         if(id) {
+             // --- NAVIGATE ---
+             this.router.push(`/services/${id}`);
+         }
+     }
   }
 
   onWheel(e: Event) {
@@ -758,18 +747,20 @@ class App {
 // --- Desktop Gallery Component ---
 const DesktopGallery = ({ bend = 3, scrollSpeed = 2, scrollEase = 0.05 }: CircularGalleryProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
+  const router = useRouter(); // Use Router
   
   useEffect(() => {
     if (!containerRef.current) return;
-    const app = new App(containerRef.current, { bend, scrollSpeed, scrollEase });
+    // Pass router to the App logic
+    const app = new App(containerRef.current, { bend, scrollSpeed, scrollEase }, router);
     return () => app.destroy();
-  }, [bend, scrollSpeed, scrollEase]);
+  }, [bend, scrollSpeed, scrollEase, router]);
 
   return <div className="w-full h-full overflow-hidden cursor-grab active:cursor-grabbing" ref={containerRef} />;
 };
 
 // =========================================
-// 3. MAIN EXPORT (Conditional Rendering)
+// 3. MAIN EXPORT
 // =========================================
 
 export default function ServicesSection() {
@@ -789,17 +780,17 @@ export default function ServicesSection() {
       <div className="absolute top-10 left-0 w-full text-center z-10 pointer-events-none px-4">
          <h2 className="text-4xl md:text-6xl font-black text-black uppercase tracking-widest">Services</h2>
          <p className="text-sm font-bold text-slate-400 mt-2">
-            {isMobile ? "Swipe to Explore" : "Drag to Explore"}
+            {isMobile ? "Swipe to Explore" : "Drag to Explore • Click Card for Details"}
          </p>
       </div>
 
       {isMobile ? (
-        // Mobile Layout (Horizontal Manual Slide)
+        // Mobile Layout
         <div className="mt-24">
           <MobileServices />
         </div>
       ) : (
-        // Desktop Layout (WebGL Gallery)
+        // Desktop Layout
         <div style={{ height: "800px", position: "relative" }}>
           <DesktopGallery bend={3} scrollEase={0.05} />
         </div>
