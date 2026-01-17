@@ -11,7 +11,8 @@ import {
   Facebook, 
   ChevronDown, 
   Check,
-  ArrowRight
+  ArrowRight,
+  Send
 } from "lucide-react";
 
 const SERVICES = [
@@ -39,9 +40,7 @@ export default function ContactSection() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
-    // Simulate API call
     setTimeout(() => {
-      console.log("Form Data:", formData);
       setIsSubmitting(false);
       setIsSuccess(true);
       setTimeout(() => {
@@ -51,98 +50,95 @@ export default function ContactSection() {
     }, 1500);
   };
 
-  // --- Theme Colors ---
-  // Teal: #00A79D
-  // White: #FFFFFF
-  // Black: #000000 (Borders/Shadows)
-
-  const cardStyle = "bg-white border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] p-6 rounded-lg";
-  
-  const inputStyle = `
-    w-full bg-white border-2 border-black text-black 
-    placeholder-gray-500 font-bold text-sm rounded-md h-12 px-4
-    shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]
-    focus:outline-none focus:border-black focus:shadow-[4px_4px_0px_0px_#00A79D]
-    transition-all duration-200
+  // --- Styles ---
+  const inputBaseStyle = `
+    w-full bg-teal-800/20 text-white placeholder-teal-200/60
+    border border-teal-500/30 rounded-xl px-4 py-3.5
+    focus:outline-none focus:bg-teal-900/40 focus:border-teal-300 focus:ring-1 focus:ring-teal-300
+    transition-all duration-300 backdrop-blur-sm
   `;
 
   const socialBtnStyle = `
-    w-12 h-12 flex items-center justify-center 
-    bg-white border-2 border-black rounded-full 
-    shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]
-    hover:-translate-y-1 hover:shadow-[5px_5px_0px_0px_#00A79D]
-    active:translate-y-0 active:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]
-    transition-all duration-200 cursor-pointer group
+    w-10 h-10 flex items-center justify-center 
+    bg-white border border-gray-100 rounded-full text-gray-500 shadow-sm
+    hover:bg-[#00A79D] hover:text-white hover:shadow-lg hover:shadow-teal-500/30 hover:-translate-y-1
+    transition-all duration-300
   `;
 
   return (
-    <section id="contact" className="w-full bg-white py-16 px-4 md:px-8 font-sans relative overflow-hidden">
-      {/* Decorative Background Pattern */}
-      <div className="absolute top-0 right-0 w-64 h-64 bg-[#00A79D] opacity-10 rounded-full blur-3xl -z-10 transform translate-x-1/2 -translate-y-1/2"></div>
+    <section className="relative w-full py-24 px-4 md:px-8 font-sans overflow-hidden bg-gray-50">
       
-      <div className="max-w-6xl mx-auto">
+      {/* Background Pattern (Dot Grid) */}
+      <div className="absolute inset-0 opacity-[0.03]" 
+        style={{ backgroundImage: 'radial-linear(#000 1px, transparent 1px)', backgroundSize: '24px 24px' }}>
+      </div>
+
+      {/* Ambient Glows */}
+      <div className="absolute top-0 left-1/4 w-96 h-96 bg-teal-200/20 rounded-full blur-3xl -translate-y-1/2"></div>
+      <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-blue-200/20 rounded-full blur-3xl translate-y-1/2"></div>
+
+      <div className="relative max-w-7xl mx-auto z-10">
         
-        {/* Section Header */}
+        {/* Header */}
         <div className="text-center mb-16">
-          <h2 className="text-4xl md:text-5xl font-black text-black mb-4 uppercase tracking-tight relative inline-block">
-            Get In Touch
-            {/* Underline Decoration */}
-            <span className="absolute bottom-1 left-0 w-full h-3 bg-[#00A79D] -z-10 opacity-30 transform -skew-x-12"></span>
+          <span className="inline-block py-1 px-3 rounded-full bg-teal-100 text-[#00A79D] text-xs font-bold tracking-wider uppercase mb-4">
+            Contact Us
+          </span>
+          <h2 className="text-4xl md:text-5xl font-extrabold text-gray-900 tracking-tight mb-4">
+            Let&apos;s Start a Conversation
           </h2>
-          <p className="text-lg text-gray-600 font-bold max-w-2xl mx-auto mt-2">
-            Ready to grow your business? Drop us a line or visit our office.
+          <p className="text-lg text-gray-500 max-w-2xl mx-auto">
+            Ready to scale your business? We are here to provide the financial expertise you need.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 lg:gap-12">
           
-          {/* --- LEFT SIDE: Contact Info & Socials --- */}
-          <div className="flex flex-col gap-8">
+          {/* --- LEFT SIDE: Cards & Info --- */}
+          <div className="lg:col-span-2 space-y-6">
             
-            {/* Contact Details Card */}
-            <div className={cardStyle}>
-              <h3 className="text-2xl font-black text-black mb-8 flex items-center gap-2">
-                Contact Info
-                <div className="h-1 w-12 bg-[#00A79D] ml-2"></div>
-              </h3>
+            {/* Info Card */}
+            <div className="bg-white p-8 rounded-3xl shadow-xl shadow-gray-200/50 border border-white relative overflow-hidden group">
+              {/* Hover Effect linear Bar */}
+              <div className="absolute top-0 left-0 w-1 h-full bg-linear-to-b from-[#00A79D] to-teal-600 transition-all duration-300 group-hover:w-2"></div>
+
+              <h3 className="text-xl font-bold text-gray-900 mb-8">Contact Details</h3>
               
               <div className="space-y-8">
-                {/* Address */}
-                <div className="flex items-start gap-4 group">
-                  <div className="bg-[#00A79D] text-white p-3 border-2 border-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] rounded-md group-hover:translate-x-1 group-hover:translate-y-1 group-hover:shadow-none transition-all">
-                    <MapPin size={24} />
+                {/* Item 1 */}
+                <div className="flex items-start gap-5">
+                  <div className="shrink-0 w-12 h-12 rounded-2xl bg-linear-to-br from-[#00A79D] to-teal-600 text-white flex items-center justify-center shadow-lg shadow-teal-500/20">
+                    <MapPin size={22} />
                   </div>
                   <div>
-                    <h4 className="font-black text-lg text-black">Visit Us</h4>
-                    <p className="text-gray-600 font-medium leading-relaxed">
-                      207, 2nd Floor, Bldg No 1, Millenium Business Park,
-                      <br />
-                      Navi Mumbai, 400710
+                    <h4 className="font-bold text-gray-900 text-lg">Our Office</h4>
+                    <p className="text-gray-500 text-sm leading-relaxed mt-1">
+                      207, 2nd Floor, Bldg No 1,<br/>Millenium Business Park,<br/>Navi Mumbai, 400710
                     </p>
                   </div>
                 </div>
 
-                {/* Email */}
-                <div className="flex items-start gap-4 group">
-                  <div className="bg-[#00A79D] text-white p-3 border-2 border-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] rounded-md group-hover:translate-x-1 group-hover:translate-y-1 group-hover:shadow-none transition-all">
-                    <Mail size={24} />
+                {/* Item 2 */}
+                <div className="flex items-start gap-5">
+                  <div className="shrink-0 w-12 h-12 rounded-2xl bg-linear-to-br from-[#00A79D] to-teal-600 text-white flex items-center justify-center shadow-lg shadow-teal-500/20">
+                    <Mail size={22} />
                   </div>
                   <div>
-                    <h4 className="font-black text-lg text-black">Email Us</h4>
-                    <a href="mailto:hello@yfadvisors.com" className="text-gray-600 font-medium hover:text-[#00A79D] hover:underline decoration-2 underline-offset-2 transition-colors">
+                    <h4 className="font-bold text-gray-900 text-lg">Email Us</h4>
+                    <a href="mailto:info@yfadvisors.com" className="text-gray-500 text-sm mt-1 block hover:text-[#00A79D] transition-colors">
                       info@yfadvisors.com
                     </a>
                   </div>
                 </div>
 
-                {/* Phone */}
-                <div className="flex items-start gap-4 group">
-                  <div className="bg-[#00A79D] text-white p-3 border-2 border-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] rounded-md group-hover:translate-x-1 group-hover:translate-y-1 group-hover:shadow-none transition-all">
-                    <Phone size={24} />
+                {/* Item 3 */}
+                <div className="flex items-start gap-5">
+                  <div className="shrink-0 w-12 h-12 rounded-2xl bg-linear-to-br from-[#00A79D] to-teal-600 text-white flex items-center justify-center shadow-lg shadow-teal-500/20">
+                    <Phone size={22} />
                   </div>
                   <div>
-                    <h4 className="font-black text-lg text-black">Call Us</h4>
-                    <a href="tel:+919876543210" className="text-gray-600 font-medium hover:text-[#00A79D] transition-colors">
+                    <h4 className="font-bold text-gray-900 text-lg">Call Us</h4>
+                    <a href="tel:+918080506185" className="text-gray-500 text-sm mt-1 block hover:text-[#00A79D] transition-colors">
                       +91 80805 06185
                     </a>
                   </div>
@@ -150,122 +146,140 @@ export default function ContactSection() {
               </div>
             </div>
 
-            {/* Social Links */}
-            <div className={cardStyle}>
-              <h3 className="text-xl font-black text-black mb-6">Follow Us</h3>
-              <div className="flex gap-4 flex-wrap">
-                <a href="#" className={socialBtnStyle}> <Linkedin className="text-black group-hover:text-[#00A79D] transition-colors" size={20} /> </a>
-                <a href="#" className={socialBtnStyle}> <Twitter className="text-black group-hover:text-[#00A79D] transition-colors" size={20} /> </a>
-                <a href="#" className={socialBtnStyle}> <Instagram className="text-black group-hover:text-[#00A79D] transition-colors" size={20} /> </a>
-                <a href="#" className={socialBtnStyle}> <Facebook className="text-black group-hover:text-[#00A79D] transition-colors" size={20} /> </a>
+            {/* Social Card */}
+            <div className="bg-white p-6 rounded-3xl shadow-lg shadow-gray-200/50 border border-white flex items-center justify-between">
+              <span className="font-bold text-gray-900 ml-2">Follow our socials</span>
+              <div className="flex gap-2">
+                <a href="#" className={socialBtnStyle}> <Linkedin size={18} /> </a>
+                <a href="#" className={socialBtnStyle}> <Twitter size={18} /> </a>
+                <a href="#" className={socialBtnStyle}> <Instagram size={18} /> </a>
+                <a href="#" className={socialBtnStyle}> <Facebook size={18} /> </a>
               </div>
             </div>
           </div>
 
           {/* --- RIGHT SIDE: The Form --- */}
-          {/* Main Container: TEAL Background */}
-          <div className={`bg-[#00A79D] border-2 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] p-6 md:p-10 rounded-xl h-full flex flex-col justify-center relative`}>
-            
-            {/* Decorative Corner Element */}
-            <div className="absolute top-4 right-4 w-8 h-8 border-t-4 border-r-4 border-white opacity-50"></div>
+          <div className="lg:col-span-3">
+            <div className="h-full bg-linear-to-br from-gray-900 via-gray-800 to-black p-1 rounded-3xl shadow-2xl shadow-gray-900/20">
+              <div className="h-full bg-[#002825] rounded-[22px] relative overflow-hidden p-8 md:p-12">
+                
+                {/* Decorative linears inside the card */}
+                <div className="absolute top-0 right-0 w-64 h-64 bg-[#00A79D] opacity-20 blur-[80px] rounded-full pointer-events-none"></div>
+                <div className="absolute bottom-0 left-0 w-48 h-48 bg-blue-600 opacity-10 blur-[60px] rounded-full pointer-events-none"></div>
 
-            <div className="mb-8">
-              <h3 className="text-white font-black text-3xl md:text-4xl">Send a Message</h3>
-              <p className="text-teal-50 font-bold mt-2 text-lg opacity-90">We usually respond within 24 hours.</p>
-            </div>
-
-            {!isSuccess ? (
-              <form onSubmit={handleSubmit} className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                  <div className="space-y-1">
-                    <input
-                      name="name"
-                      placeholder="Your Name"
-                      required
-                      value={formData.name}
-                      onChange={handleChange}
-                      className={inputStyle}
-                    />
+                <div className="relative z-10">
+                  <div className="mb-10">
+                    <h3 className="text-white font-bold text-3xl flex items-center gap-3">
+                      Send a Message 
+                      <Send className="text-[#00A79D]" size={24} />
+                    </h3>
+                    <p className="text-gray-400 mt-2">
+                      Fill out the form below and our team will get back to you within 24 hours.
+                    </p>
                   </div>
-                  <div className="space-y-1">
-                    <input
-                      name="contact"
-                      placeholder="Phone Number"
-                      required
-                      value={formData.contact}
-                      onChange={handleChange}
-                      className={inputStyle}
-                    />
-                  </div>
-                </div>
 
-                <input
-                  name="email"
-                  type="email"
-                  placeholder="Your Email"
-                  required
-                  value={formData.email}
-                  onChange={handleChange}
-                  className={inputStyle}
-                />
+                  {!isSuccess ? (
+                    <form onSubmit={handleSubmit} className="space-y-5">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                        <div className="space-y-2">
+                          <label className="text-xs font-semibold text-teal-300 ml-1 uppercase tracking-wider">Your Name</label>
+                          <input
+                            name="name"
+                            required
+                            value={formData.name}
+                            onChange={handleChange}
+                            className={inputBaseStyle}
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <label className="text-xs font-semibold text-teal-300 ml-1 uppercase tracking-wider">Phone Number</label>
+                          <input
+                            name="contact"
+                            required
+                            value={formData.contact}
+                            onChange={handleChange}
+                            className={inputBaseStyle}
+                          />
+                        </div>
+                      </div>
 
-                <div className="relative">
-                  <select
-                    name="service"
-                    required
-                    value={formData.service}
-                    onChange={handleChange}
-                    className={`${inputStyle} appearance-none cursor-pointer bg-white`}
-                  >
-                    <option value="" disabled>Select a Service</option>
-                    {SERVICES.map((s) => (
-                      <option key={s} value={s}>{s}</option>
-                    ))}
-                  </select>
-                  <ChevronDown className="absolute right-4 top-4 text-black pointer-events-none" size={18} />
-                </div>
+                      <div className="space-y-2">
+                        <label className="text-xs font-semibold text-teal-300 ml-1 uppercase tracking-wider">Email Address</label>
+                        <input
+                          name="email"
+                          type="email"
+                          required
+                          value={formData.email}
+                          onChange={handleChange}
+                          className={inputBaseStyle}
+                        />
+                      </div>
 
-                <textarea
-                  name="message"
-                  placeholder="How can we help you?"
-                  rows={4}
-                  value={formData.message}
-                  onChange={handleChange}
-                  className={`${inputStyle} h-auto py-3 resize-none`}
-                />
+                      <div className="space-y-2 relative">
+                        <label className="text-xs font-semibold text-teal-300 ml-1 uppercase tracking-wider">Service Interested In</label>
+                        <div className="relative">
+                          <select
+                            name="service"
+                            required
+                            value={formData.service}
+                            onChange={handleChange}
+                            className={`${inputBaseStyle} appearance-none cursor-pointer bg-transparent`}
+                          >
+                            <option value="" disabled className="bg-gray-800 text-gray-400">Select a Service</option>
+                            {SERVICES.map((s) => (
+                              <option key={s} value={s} className="bg-gray-800 text-white">{s}</option>
+                            ))}
+                          </select>
+                          <ChevronDown className="absolute right-4 top-4 text-teal-300 pointer-events-none" size={16} />
+                        </div>
+                      </div>
 
-                {/* Submit Button: White on Teal */}
-                <button
-                  type="submit"
-                  disabled={isSubmitting}
-                  className="
-                    w-full py-4 mt-2
-                    bg-white border-2 border-black text-black
-                    font-black text-lg uppercase tracking-wider
-                    shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]
-                    hover:bg-black hover:text-white hover:-translate-y-1 hover:shadow-[6px_6px_0px_0px_rgba(255,255,255,1)]
-                    active:translate-y-0 active:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]
-                    disabled:opacity-70 disabled:cursor-not-allowed
-                    transition-all duration-200
-                    flex items-center justify-center gap-2
-                  "
-                >
-                  {isSubmitting ? "Sending..." : (
-                    <>
-                      Let&apos;s Talk <ArrowRight size={20} strokeWidth={3} />
-                    </>
+                      <div className="space-y-2">
+                        <label className="text-xs font-semibold text-teal-300 ml-1 uppercase tracking-wider">Message</label>
+                        <textarea
+                          name="message"
+                          rows={4}
+                          value={formData.message}
+                          onChange={handleChange}
+                          className={`${inputBaseStyle} resize-none h-32`}
+                        />
+                      </div>
+
+                      <button
+                        type="submit"
+                        disabled={isSubmitting}
+                        className="
+                          w-full py-4 mt-4
+                          bg-linear-to-r from-[#00A79D] to-teal-600
+                          text-white font-bold text-lg tracking-wide
+                          rounded-xl shadow-lg shadow-teal-900/50
+                          hover:shadow-teal-500/40 hover:scale-[1.01]
+                          active:scale-[0.98]
+                          disabled:opacity-70 disabled:cursor-not-allowed
+                          transition-all duration-300
+                          flex items-center justify-center gap-2 group
+                        "
+                      >
+                        {isSubmitting ? "Sending..." : (
+                          <>
+                            Send Message 
+                            <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
+                          </>
+                        )}
+                      </button>
+                    </form>
+                  ) : (
+                    <div className="flex col items-center justify-center text-center py-20 animate-in fade-in zoom-in duration-500">
+                      <div className="w-20 h-20 bg-linear-to-tr from-[#00A79D] to-green-500 rounded-full flex items-center justify-center mb-6 shadow-lg shadow-teal-500/30">
+                        <Check size={40} className="text-white" strokeWidth={3} />
+                      </div>
+                      <h3 className="text-3xl font-bold text-white mb-2">Message Sent!</h3>
+                      <p className="text-gray-300">We&apos;ve received your inquiry and will get back to you shortly.</p>
+                    </div>
                   )}
-                </button>
-              </form>
-            ) : (
-              <div className="flex flex-col items-center justify-center text-center h-100 animate-in fade-in zoom-in duration-300">
-                <div className="w-24 h-24 bg-white border-2 border-black rounded-full flex items-center justify-center shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] mb-6 animate-bounce">
-                  <Check size={48} className="text-[#00A79D]" strokeWidth={3} />
                 </div>
-                <h3 className="text-3xl font-black text-white mb-2">Message Sent!</h3>
-                <p className="text-teal-50 font-medium text-lg">Thank you for reaching out. <br/>We will get back to you shortly.</p>
               </div>
-            )}
+            </div>
           </div>
 
         </div>
