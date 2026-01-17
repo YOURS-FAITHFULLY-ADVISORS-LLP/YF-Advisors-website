@@ -547,7 +547,7 @@ class App {
 
   createInteraction() {
     if(!this.gl) return;
-    this.raycast = new Raycast(this.gl);
+    this.raycast = new Raycast();
     this.mouse = new Vec2();
   }
 
