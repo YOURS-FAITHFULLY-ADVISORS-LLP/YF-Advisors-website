@@ -31,7 +31,7 @@ const teamData = [
     description: "Post Graduate IIM. Specialization: International offshoring & Op Excellence.",
     experience: "Experience: 26+ years",
     image: "/meet-team/saket.png",
-    linkedin: "#"
+    linkedin: "https://www.linkedin.com/in/saket-drona-30b0571/"
   },
   {
     id: 4,
