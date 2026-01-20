@@ -49,7 +49,7 @@ const teamData = [
     description: "Specializes in Internal Audits, Data Analytics & Outsourcing Ops.",
     experience: "Experience: 15+ years",
     image: "/meet-team/deepak.png", 
-    linkedin: "#"
+    linkedin: "https://www.linkedin.com/in/deepak-babel-1b576722b/"
   },
   {
     id: 6,
@@ -58,7 +58,7 @@ const teamData = [
     description: "Masters, IIM Calcutta. Specialization: Operations & Delivery Quality.",
     experience: "Experience: 30+ years",
     image: "/meet-team/sanjay.png", 
-    linkedin: "#"
+    linkedin: "https://www.linkedin.com/in/sanjay-kumar-choudhary-10a5b516/"
   },
   {
     id: 7,
