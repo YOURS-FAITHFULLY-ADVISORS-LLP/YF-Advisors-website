@@ -145,7 +145,7 @@ export default function ContactSection() {
                   <div>
                     <h4 className="font-bold text-gray-900 text-lg">Email Us</h4>
                     <a href="mailto:info@yfadvisors.com" className="text-gray-500 text-sm mt-1 block hover:text-[#00A79D] transition-colors">
-                      info@yfadvisors.com
+                      info@yfadvisors.in
                     </a>
                   </div>
                 </div>
