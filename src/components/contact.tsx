@@ -44,6 +44,7 @@ const SOCIAL_LINKS = [
 export default function ContactSection() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -52,24 +53,52 @@ export default function ContactSection() {
     message: "",
   });
 
+  // Fixed: Added explicit type for the change event
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
+    setErrorMessage("");
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  // Fixed: Added explicit type for the form submit event
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
-    setTimeout(() => {
-      setIsSubmitting(false);
+    setErrorMessage("");
+
+    try {
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || "Failed to send message");
+      }
+
       setIsSuccess(true);
+      setFormData({ name: "", email: "", contact: "", service: "", message: "" });
+      
       setTimeout(() => {
         setIsSuccess(false);
-        setFormData({ name: "", email: "", contact: "", service: "", message: "" });
-      }, 3000);
-    }, 1500);
+      }, 5000);
+
+    } catch (error) {
+      // Fixed: Type narrowing for 'unknown' error type
+      if (error instanceof Error) {
+        setErrorMessage(error.message);
+      } else {
+        setErrorMessage("An unexpected error occurred. Please try again.");
+      }
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
-  // --- Styles ---
   const inputBaseStyle = `
     w-full bg-teal-800/20 text-white placeholder-teal-200/60
     border border-teal-500/30 rounded-xl px-4 py-3.5
@@ -87,18 +116,15 @@ export default function ContactSection() {
   return (
     <section className="relative w-full py-24 px-4 md:px-8 font-sans overflow-hidden bg-gray-50">
       
-      {/* Background Pattern (Dot Grid) */}
       <div className="absolute inset-0 opacity-[0.03]" 
         style={{ backgroundImage: 'radial-linear(#000 1px, transparent 1px)', backgroundSize: '24px 24px' }}>
       </div>
 
-      {/* Ambient Glows */}
       <div className="absolute top-0 left-1/4 w-96 h-96 bg-teal-200/20 rounded-full blur-3xl -translate-y-1/2"></div>
       <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-blue-200/20 rounded-full blur-3xl translate-y-1/2"></div>
 
       <div className="relative max-w-7xl mx-auto z-10">
         
-        {/* Header */}
         <div className="text-center mb-16">
           <span className="inline-block py-1 px-3 rounded-full bg-teal-100 text-[#00A79D] text-xs font-bold tracking-wider uppercase mb-4">
             Contact Us
@@ -113,18 +139,14 @@ export default function ContactSection() {
 
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 lg:gap-12">
           
-          {/* --- LEFT SIDE: Cards & Info --- */}
           <div className="lg:col-span-2 space-y-6">
             
-            {/* Info Card */}
             <div className="bg-white p-8 rounded-3xl shadow-xl shadow-gray-200/50 border border-white relative overflow-hidden group">
-              {/* Hover Effect linear Bar */}
               <div className="absolute top-0 left-0 w-1 h-full bg-linear-to-b from-[#00A79D] to-teal-600 transition-all duration-300 group-hover:w-2"></div>
 
               <h3 className="text-xl font-bold text-gray-900 mb-8">Contact Details</h3>
               
               <div className="space-y-8">
-                {/* Item 1 */}
                 <div className="flex items-start gap-5">
                   <div className="shrink-0 w-12 h-12 rounded-2xl bg-linear-to-br from-[#00A79D] to-teal-600 text-white flex items-center justify-center shadow-lg shadow-teal-500/20">
                     <MapPin size={22} />
@@ -137,7 +159,6 @@ export default function ContactSection() {
                   </div>
                 </div>
 
-                {/* Item 2 */}
                 <div className="flex items-start gap-5">
                   <div className="shrink-0 w-12 h-12 rounded-2xl bg-linear-to-br from-[#00A79D] to-teal-600 text-white flex items-center justify-center shadow-lg shadow-teal-500/20">
                     <Mail size={22} />
@@ -164,7 +185,6 @@ export default function ContactSection() {
               </div>
             </div>
 
-            {/* Social Card */}
             <div className="bg-white p-6 rounded-3xl shadow-lg shadow-gray-200/50 border border-white flex items-center justify-between">
               <span className="font-bold text-gray-900 ml-2">Follow our socials</span>
               <div className="flex gap-2">
@@ -183,12 +203,10 @@ export default function ContactSection() {
             </div>
           </div>
 
-          {/* --- RIGHT SIDE: The Form --- */}
           <div className="lg:col-span-3">
             <div className="h-full bg-linear-to-br from-gray-900 via-gray-800 to-black p-1 rounded-3xl shadow-2xl shadow-gray-900/20">
               <div className="h-full bg-[#002825] rounded-[22px] relative overflow-hidden p-8 md:p-12">
                 
-                {/* Decorative linears inside the card */}
                 <div className="absolute top-0 right-0 w-64 h-64 bg-[#00A79D] opacity-20 blur-[80px] rounded-full pointer-events-none"></div>
                 <div className="absolute bottom-0 left-0 w-48 h-48 bg-blue-600 opacity-10 blur-[60px] rounded-full pointer-events-none"></div>
 
@@ -269,6 +287,12 @@ export default function ContactSection() {
                           className={`${inputBaseStyle} resize-none h-32`}
                         />
                       </div>
+                      
+                      {errorMessage && (
+                        <div className="text-red-400 text-sm bg-red-900/20 p-3 rounded-lg border border-red-500/20">
+                          {errorMessage}
+                        </div>
+                      )}
 
                       <button
                         type="submit"
@@ -294,12 +318,19 @@ export default function ContactSection() {
                       </button>
                     </form>
                   ) : (
-                    <div className="flex col items-center justify-center text-center py-20 animate-in fade-in zoom-in duration-500">
+                    <div className="flex flex-col items-center justify-center text-center py-20 animate-in fade-in zoom-in duration-500">
                       <div className="w-20 h-20 bg-linear-to-tr from-[#00A79D] to-green-500 rounded-full flex items-center justify-center mb-6 shadow-lg shadow-teal-500/30">
                         <Check size={40} className="text-white" strokeWidth={3} />
                       </div>
                       <h3 className="text-3xl font-bold text-white mb-2">Message Sent!</h3>
                       <p className="text-gray-300">We&apos;ve received your inquiry and will get back to you shortly.</p>
+                      
+                      <button 
+                        onClick={() => setIsSuccess(false)}
+                        className="mt-8 text-teal-300 hover:text-white transition-colors text-sm underline underline-offset-4"
+                      >
+                        Send another message
+                      </button>
                     </div>
                   )}
                 </div>
