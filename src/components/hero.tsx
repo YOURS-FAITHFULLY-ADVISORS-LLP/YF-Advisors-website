@@ -84,7 +84,7 @@ const Hero = () => {
               href="/#services" 
               className="group flex items-center justify-between gap-3 bg-white text-slate-900 border border-slate-200 px-8 py-4 rounded-full font-semibold transition-all hover:border-slate-400 hover:shadow-lg w-full sm:w-auto min-w-50"
             >
-              <span>See How it works</span>
+              <span>Our Servcies</span>
               <PlayCircle size={22} className="text-slate-900 group-hover:scale-110 transition-transform" />
             </Link>
           </motion.div>
