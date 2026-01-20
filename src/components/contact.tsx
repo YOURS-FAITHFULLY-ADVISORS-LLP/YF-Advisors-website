@@ -149,8 +149,7 @@ export default function ContactSection() {
                     </a>
                   </div>
                 </div>
-
-                {/* Item 3 */}
+                
                 <div className="flex items-start gap-5">
                   <div className="shrink-0 w-12 h-12 rounded-2xl bg-linear-to-br from-[#00A79D] to-teal-600 text-white flex items-center justify-center shadow-lg shadow-teal-500/20">
                     <Phone size={22} />
