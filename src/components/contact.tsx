@@ -5,7 +5,7 @@ import {
   Mail, 
   MapPin, 
   Phone, 
-  Twitter, 
+  YoutubeIcon, 
   Linkedin, 
   Instagram, 
   Facebook, 
@@ -20,6 +20,25 @@ const SERVICES = [
   "PayVeda",
   "Financial Consulting",
   "General Inquiry",
+];
+
+const SOCIAL_LINKS = [
+  {
+    icon: Linkedin,
+    url: "https://www.linkedin.com/company/yfadvisors",
+  },
+  {
+    icon: YoutubeIcon,
+    url: "https://www.youtube.com/channel/UCn9WNGp3sJi7YcbofSFh6pA",
+  },
+  {
+    icon: Instagram,
+    url: "https://www.instagram.com/yoursfaithfullyadvisors/",
+  },
+  {
+    icon: Facebook,
+    url: "https://www.facebook.com/yfadvisors",
+  },
 ];
 
 export default function ContactSection() {
@@ -150,10 +169,17 @@ export default function ContactSection() {
             <div className="bg-white p-6 rounded-3xl shadow-lg shadow-gray-200/50 border border-white flex items-center justify-between">
               <span className="font-bold text-gray-900 ml-2">Follow our socials</span>
               <div className="flex gap-2">
-                <a href="#" className={socialBtnStyle}> <Linkedin size={18} /> </a>
-                <a href="#" className={socialBtnStyle}> <Twitter size={18} /> </a>
-                <a href="#" className={socialBtnStyle}> <Instagram size={18} /> </a>
-                <a href="#" className={socialBtnStyle}> <Facebook size={18} /> </a>
+                {SOCIAL_LINKS.map((item, index) => (
+                  <a 
+                    key={index} 
+                    href={item.url} 
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={socialBtnStyle}
+                  > 
+                    <item.icon size={18} /> 
+                  </a>
+                ))}
               </div>
             </div>
           </div>
