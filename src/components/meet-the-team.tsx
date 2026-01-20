@@ -13,7 +13,7 @@ const teamData = [
     description: "Chartered Accountant. Specialization: Business Process Re-engineering & Advisory.",
     experience: "Experience: 14+ years",
     image: "/meet-team/vishal.png",
-    linkedin: "#"
+    linkedin: "https://www.linkedin.com/in/vishal777/"
   },
   {
     id: 2,
@@ -22,7 +22,7 @@ const teamData = [
     description: "Chartered Accountant. Specialization: Finance and legal operations in MNCs.",
     experience: "Experience: 12+ years",
     image: "/meet-team/kirti.png",
-    linkedin: "#"
+    linkedin: "https://www.linkedin.com/in/kkirti-aggarwal-a14a20125/"
   },
   {
     id: 3,
