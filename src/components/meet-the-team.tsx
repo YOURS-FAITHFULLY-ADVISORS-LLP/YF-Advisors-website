@@ -67,7 +67,7 @@ const teamData = [
     description: "Masters in Marketing & HR. Specialization: Talent Mgmt & Acquisition.",
     experience: "Experience: 27+ years",
     image: "/meet-team/jyoti.png", 
-    linkedin: "#"
+    linkedin: "https://www.linkedin.com/in/jyoti-mittal-99a2794/"
   },
   {
     id: 8,
@@ -76,7 +76,7 @@ const teamData = [
     description: "B.E. (CS). Specialization: IT Projects, Banking & Capital Markets.",
     experience: "Experience: 25+ years",
     image: "/meet-team/ritesh.png", 
-    linkedin: "#"
+    linkedin: "https://www.linkedin.com/in/dr-ritesh-verma-81ab5018/"
   }
 ];
 
