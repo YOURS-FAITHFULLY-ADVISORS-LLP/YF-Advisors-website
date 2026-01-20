@@ -9,7 +9,7 @@ import Image from "next/image";
 const products = [
   {
     id: 1,
-    name: "Audit Veda",
+    name: "AuditVeda",
     tagline: "Audit Management Simplified",
     description:
       "A comprehensive web solution designed to streamline your audit processes. Track compliance, manage checklists, and generate real-time reports directly from your dashboard—enhancing efficiency and accuracy.",
