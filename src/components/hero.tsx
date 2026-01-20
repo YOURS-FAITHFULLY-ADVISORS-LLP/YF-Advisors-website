@@ -70,7 +70,7 @@ const Hero = () => {
           >
             {/* Primary Button */}
             <Link 
-              href="/connect" 
+              href="https://wa.me/918080506185" 
               className="group flex items-center justify-between gap-3 bg-black text-white px-8 py-4 rounded-full font-semibold transition-all hover:scale-105 hover:shadow-xl hover:shadow-slate-500/20 w-full sm:w-auto min-w-50"
             >
               <span>Connect Now</span>
@@ -81,7 +81,7 @@ const Hero = () => {
 
             {/* Secondary Button */}
             <Link 
-              href="/how-it-works" 
+              href="/#services" 
               className="group flex items-center justify-between gap-3 bg-white text-slate-900 border border-slate-200 px-8 py-4 rounded-full font-semibold transition-all hover:border-slate-400 hover:shadow-lg w-full sm:w-auto min-w-50"
             >
               <span>See How it works</span>
