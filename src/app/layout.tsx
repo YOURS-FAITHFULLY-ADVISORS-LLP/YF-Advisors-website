@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import StyledComponentsRegistry from "./registry";
+import ChatWidget from "@/src/components/chatbot"
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -32,6 +33,10 @@ export default function RootLayout({
         <StyledComponentsRegistry>
           {children}
         </StyledComponentsRegistry>
+
+        {/* 2. Add the ChatWidget here */}
+        <ChatWidget />
+        
       </body>
     </html>
   );
