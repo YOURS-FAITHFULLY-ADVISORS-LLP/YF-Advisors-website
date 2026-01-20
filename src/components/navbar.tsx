@@ -75,17 +75,14 @@ const Navbar = () => {
       >
         <div className="max-w-7xl mx-auto px-4 md:px-6 flex items-center justify-between">
           
-          {/* --- 1. Logo Section (Fixed Size & Visibility) --- */}
+          {/* --- 1. Logo Section (No Animation, Uniform Font) --- */}
           <Link
             href="/"
             onClick={(e) => handleLinkClick(e, "/")}
             className="group relative z-50 flex items-center gap-3 py-2 cursor-pointer"
           >
-            {/* Logo Image Wrapper - Increased size for better visibility */}
-            <motion.div
-              whileHover={{ rotate: 3, scale: 1.04 }}
-              className="relative h-12 w-16 md:h-14 md:w-20 shrink-0" 
-            >
+            {/* Logo Image Wrapper - Standard div (No motion/animation) */}
+            <div className="relative h-12 w-16 md:h-14 md:w-20 shrink-0">
               <Image
                 src="/logo copy.png"
                 alt="YF Advisors"
@@ -93,16 +90,16 @@ const Navbar = () => {
                 className="object-contain"
                 priority
               />
-            </motion.div>
+            </div>
 
-            {/* Logo Text - Increased font size & improved spacing */}
-            <div className="flex flex-col justify-center leading-none select-none">
-              <span className="font-serif text-[10px] md:text-xs font-semibold tracking-widest text-slate-800 uppercase mb-0.5">
+            {/* Logo Text - Uniform Style */}
+            <div className="flex flex-col justify-center leading-none select-none text-slate-900">
+              <span className="font-serif text-[10px] md:text-xs font-bold tracking-widest uppercase mb-0.5">
                 Yours Faithfully
               </span>
               <span className="w-full h-[1.5px] bg-[#FDB913] my-px rounded-full" />
-              <span className="font-serif text-[11px] md:text-sm font-bold tracking-[0.2em] text-slate-900 uppercase text-center">
-              Advisors
+              <span className="font-serif text-[11px] md:text-sm font-bold tracking-widest uppercase text-center">
+                Advisors
               </span>
             </div>
           </Link>
@@ -118,7 +115,6 @@ const Navbar = () => {
                 onClick={(e) => handleLinkClick(e, link.href)}
                 onMouseEnter={() => setHoveredIndex(index)}
                 onMouseLeave={() => setHoveredIndex(null)}
-                // Added tracking-wide to match the logo aesthetic better
                 className="relative px-5 py-2.5 rounded-full text-sm font-medium tracking-wide text-slate-600 transition-colors hover:text-slate-900"
               >
                 {hoveredIndex === index && (
