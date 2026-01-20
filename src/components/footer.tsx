@@ -8,7 +8,7 @@ import {
   MapPin,
   Phone,
   Mail,
-  Youtube
+  YoutubeIcon
 } from "lucide-react";
 
 const socialLinks = [
@@ -17,7 +17,7 @@ const socialLinks = [
     url: "https://www.linkedin.com/company/yfadvisors",
   },
   {
-    icon: Youtube,
+    icon: YoutubeIcon,
     url: "https://www.youtube.com/channel/UCn9WNGp3sJi7YcbofSFh6pA",
   },
   {
