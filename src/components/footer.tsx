@@ -3,7 +3,6 @@
 import React from "react";
 import {
   Linkedin,
-  Twitter,
   Instagram,
   Facebook,
   MapPin,
