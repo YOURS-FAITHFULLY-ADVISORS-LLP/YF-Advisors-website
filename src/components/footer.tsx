@@ -11,6 +11,25 @@ import {
   Mail
 } from "lucide-react";
 
+const socialLinks = [
+  {
+    icon: Linkedin,
+    url: "https://www.linkedin.com/company/yfadvisors",
+  },
+  {
+    icon: Twitter,
+    url: "https://twitter.com/yfadvisors",
+  },
+  {
+    icon: Instagram,
+    url: "https://www.instagram.com/yfadvisors",
+  },
+  {
+    icon: Facebook,
+    url: "https://www.facebook.com/yfadvisors",
+  },
+];
+
 export default function Footer() {
   const currentYear = new Date().getFullYear();
 
@@ -31,10 +50,12 @@ export default function Footer() {
             </p>
             {/* Social Icons */}
             <div className="flex gap-3">
-              {[Linkedin, Twitter, Instagram, Facebook].map((Icon, idx) => (
+              {socialLinks.map(({ icon: Icon, url }, idx) => (
                 <a
                   key={idx}
-                  href="#"
+                  href={url}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="w-10 h-10 flex items-center justify-center rounded-full bg-white text-slate-500 border border-slate-200 hover:bg-[#00A79D] hover:text-white hover:border-[#00A79D] transition-all duration-300 shadow-sm"
                 >
                   <Icon size={18} />
