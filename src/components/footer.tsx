@@ -8,7 +8,8 @@ import {
   Facebook,
   MapPin,
   Phone,
-  Mail
+  Mail,
+  Youtube
 } from "lucide-react";
 
 const socialLinks = [
@@ -17,12 +18,12 @@ const socialLinks = [
     url: "https://www.linkedin.com/company/yfadvisors",
   },
   {
-    icon: Twitter,
-    url: "https://twitter.com/yfadvisors",
+    icon: Youtube,
+    url: "https://www.youtube.com/channel/UCn9WNGp3sJi7YcbofSFh6pA",
   },
   {
     icon: Instagram,
-    url: "https://www.instagram.com/yfadvisors",
+    url: "https://www.instagram.com/yoursfaithfullyadvisors/",
   },
   {
     icon: Facebook,
