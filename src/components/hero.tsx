@@ -6,6 +6,18 @@ import { ArrowUpRight, PlayCircle } from "lucide-react";
 import { motion } from "framer-motion";
 
 const Hero = () => {
+  
+  // Custom handler for smooth scrolling
+  const handleScrollToServices = (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
+    const servicesSection = document.getElementById("services");
+    
+    // If we are on the homepage and the section exists, scroll to it manually
+    if (servicesSection) {
+      e.preventDefault(); // Stop Next.js from just updating the URL
+      servicesSection.scrollIntoView({ behavior: "smooth" });
+    }
+  };
+
   return (
     <section className="relative w-full pt-32 pb-40 md:pt-48 md:pb-48 overflow-hidden bg-white">
       
@@ -14,7 +26,7 @@ const Hero = () => {
         {/* Grid Pattern */}
         <div className="absolute inset-0 bg-[linear-gradient(to_right,#8080800a_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] bg-size-[24px_24px]"></div>
         
-        {/* Soft Gradient Mesh (Purple/Blue Left, Teal Right) */}
+        {/* Soft Gradient Mesh */}
         <div className="absolute top-0 left-0 right-0 h-200 opacity-60">
             <div className="absolute top-[-20%] left-[-10%] w-[60%] h-[80%] rounded-full bg-indigo-200/40 blur-[120px]" />
             <div className="absolute top-[-10%] right-[-10%] w-[50%] h-[80%] rounded-full bg-teal-200/40 blur-[120px]" />
@@ -79,12 +91,13 @@ const Hero = () => {
               </div>
             </Link>
 
-            {/* Secondary Button */}
+            {/* Secondary Button - FIXED */}
             <Link 
-              href="/#services" 
+              href="/#services"
+              onClick={handleScrollToServices}
               className="group flex items-center justify-between gap-3 bg-white text-slate-900 border border-slate-200 px-8 py-4 rounded-full font-semibold transition-all hover:border-slate-400 hover:shadow-lg w-full sm:w-auto min-w-50"
             >
-              <span>Our Servcies</span>
+              <span>Our Services</span>
               <PlayCircle size={22} className="text-slate-900 group-hover:scale-110 transition-transform" />
             </Link>
           </motion.div>
