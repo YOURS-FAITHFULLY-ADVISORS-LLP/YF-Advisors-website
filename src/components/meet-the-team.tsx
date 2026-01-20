@@ -40,7 +40,7 @@ const teamData = [
     description: "Specializes in Strategic Financial Management, Cash Flow & Systems.",
     experience: "Experience: 21+ years",
     image: "/meet-team/shiv.png", 
-    linkedin: "#"
+    linkedin: "https://www.linkedin.com/in/shiv-mittal-02227344/"
   },
   {
     id: 5,
