@@ -11,7 +11,7 @@ const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
-  
+
   const pathname = usePathname();
 
   // Handle Scroll Effect
@@ -34,7 +34,10 @@ const Navbar = () => {
   ];
 
   // Universal Scroll Handler
-  const handleLinkClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+  const handleLinkClick = (
+    e: React.MouseEvent<HTMLAnchorElement>,
+    href: string
+  ) => {
     setIsMobileMenuOpen(false);
 
     if (href.includes("#")) {
@@ -43,22 +46,27 @@ const Navbar = () => {
 
       if (elem) {
         e.preventDefault();
+
         const headerOffset = 100;
         const elementPosition = elem.getBoundingClientRect().top;
-        const offsetPosition = elementPosition + window.scrollY - headerOffset;
+        const offsetPosition =
+          elementPosition + window.scrollY - headerOffset;
 
         window.scrollTo({
           top: offsetPosition,
           behavior: "smooth",
         });
-      } 
-    } else if (href === "/") {
-      if (pathname === "/") {
-        e.preventDefault();
-        window.scrollTo({ top: 0, behavior: "smooth" });
+
+        // ✅ THIS IS THE MISSING LINE
+        window.history.pushState(null, "", `#${targetId}`);
       }
+    } else if (href === "/" && pathname === "/") {
+      e.preventDefault();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      window.history.pushState(null, "", "/");
     }
   };
+
 
   const glassPanel =
     "bg-white/80 backdrop-blur-xl border border-white/40 shadow-lg shadow-slate-200/20 rounded-full transition-all duration-300";
@@ -69,12 +77,11 @@ const Navbar = () => {
         initial={{ y: -100 }}
         animate={{ y: 0 }}
         transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-        className={`fixed top-0 z-50 w-full transition-all duration-300 ${
-          scrolled ? "py-2 bg-white/50 backdrop-blur-md" : "py-4 md:py-6"
-        }`}
+        className={`fixed top-0 z-50 w-full transition-all duration-300 ${scrolled ? "py-2 bg-white/50 backdrop-blur-md" : "py-4 md:py-6"
+          }`}
       >
         <div className="max-w-7xl mx-auto px-4 md:px-6 flex items-center justify-between">
-          
+
           {/* --- 1. Logo Section (No Animation, Uniform Font) --- */}
           <Link
             href="/"
