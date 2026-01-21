@@ -25,7 +25,7 @@ export const blogPosts = [
     category: "Services",
     date: "August 26, 2024",
     excerpt: "Managing finances is a cornerstone of running a successful business. Learn how professional bookkeeping services can help small businesses grow.",
-    image: "/blog/bookkeeping-services.jpg "
+    image: "/blog/bk-services.png "
   },
   {
     id: 4,
