@@ -22,7 +22,7 @@ import {
   ArrowUpRight,
   Zap
 } from "lucide-react";
-
+import Link from "next/link"
 // ==========================================
 // SHARED DATA
 // ==========================================
@@ -493,12 +493,14 @@ export default function AboutUs() {
 
         {/* --- CTA (Shared) --- */}
         <div className="text-center mt-20">
-          <button className="group relative inline-flex items-center gap-3 px-10 py-5 bg-[#002B49] text-white font-bold rounded-full overflow-hidden shadow-2xl shadow-blue-900/30 hover:scale-105 active:scale-95 transition-transform">
+          <Link href="/#contact" className="inline-block">
+            <button className="group relative inline-flex items-center gap-3 px-10 py-5 bg-[#002B49] text-white font-bold rounded-full overflow-hidden shadow-2xl shadow-blue-900/30 hover:scale-105 active:scale-95 transition-transform">
             {/* Shimmer Effect */}
             <div className="absolute inset-0 w-full h-full bg-linear-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:animate-[shimmer_1.5s_infinite]" />
             <Zap size={20} className="fill-amber-400 text-amber-400" />
             <span className="relative z-10">Start Your Journey With Us</span>
           </button>
+          </Link>
         </div>
 
       </div>
