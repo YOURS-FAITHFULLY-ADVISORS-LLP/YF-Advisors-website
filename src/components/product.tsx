@@ -2,7 +2,7 @@
 
 import React, { useRef, useEffect } from "react";
 import { motion, useInView } from "framer-motion";
-import { Check, Star, Globe, ArrowRight, Smartphone, Laptop } from "lucide-react";
+import { Check, ArrowRight, Smartphone, Laptop } from "lucide-react";
 
 const products = [
   {
@@ -69,7 +69,7 @@ const ProductVideo = ({ src }: { src: string }) => {
 const DeviceFrame = ({ product }: { product: (typeof products)[0] }) => {
   if (product.type === "mobile") {
     return (
-      <div className="relative mx-auto border-gray-800 bg-gray-800 border-[12px] rounded-[2.5rem] h-[500px] w-[250px] shadow-2xl overflow-hidden">
+      <div className="relative mx-auto border-gray-800 bg-gray-800 border-12 rounded-[2.5rem] h-125 w-62.5 shadow-2xl overflow-hidden">
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-6 bg-gray-800 rounded-b-2xl z-20" />
         <div className={`w-full h-full relative ${product.mockupColor}`}>
           <ProductVideo src={product.video} />
@@ -80,7 +80,7 @@ const DeviceFrame = ({ product }: { product: (typeof products)[0] }) => {
 
   return (
     <div className="relative w-full max-w-2xl mx-auto">
-      <div className="relative rounded-t-xl bg-gray-900 border-x-[8px] border-t-[8px] border-gray-800 pt-2 shadow-2xl overflow-hidden">
+      <div className="relative rounded-t-xl bg-gray-900 border-x-8 border-t-8p border-gray-800 pt-2 shadow-2xl overflow-hidden">
         <div className="flex items-center gap-1.5 px-4 pb-2 border-b border-gray-800">
           <div className="w-2 h-2 rounded-full bg-red-500/80" />
           <div className="w-2 h-2 rounded-full bg-amber-500/80" />
