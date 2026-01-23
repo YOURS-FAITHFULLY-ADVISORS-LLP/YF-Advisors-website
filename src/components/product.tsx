@@ -2,10 +2,8 @@
 
 import React, { useRef, useEffect } from "react";
 import { motion, useInView } from "framer-motion";
-import { Check, Smartphone, Star, Globe, ArrowRight } from "lucide-react";
-import Image from "next/image";
+import { Check, Star, Globe, ArrowRight, Laptop } from "lucide-react";
 
-// --- Product Data ---
 const products = [
   {
     id: 1,
@@ -19,12 +17,9 @@ const products = [
       "Instant Report Generation",
     ],
     webLink: "https://www.auditveda.com/",
-    color: "#00A79D", // Teal
+    color: "#00A79D",
     mockupColor: "bg-teal-50",
-    // Changed to video property
     video: "/product/auditveda.mp4",
-    // Keep image as fallback/poster if needed, or null if strictly video
-    image: "/product/auditveda.png", 
   },
   {
     id: 2,
@@ -38,13 +33,11 @@ const products = [
       "Tax & Compliance Alerts",
     ],
     webLink: "https://www.payveda.co.in/",
-    color: "#002B49", // Navy
+    color: "#002B49",
     mockupColor: "bg-blue-50",
-    image: "/product/payveda.png",
+    video: "/product/payveda.mp4",
   },
 ];
-
-// --- Sub-Components ---
 
 const WebAppButton = ({ href }: { href: string }) => (
   <a
@@ -71,22 +64,14 @@ const WebAppButton = ({ href }: { href: string }) => (
   </a>
 );
 
-// Helper component for Video handling
-const ProductVideo = ({ src, poster }: { src: string; poster?: string }) => {
+const ProductVideo = ({ src }: { src: string }) => {
   const videoRef = useRef<HTMLVideoElement>(null);
-  // Detect if the video element is in the viewport (0.5 means 50% visible)
-  const isInView = useInView(videoRef, { amount: 0.5 });
+  const isInView = useInView(videoRef, { amount: 0.3 });
 
   useEffect(() => {
     if (!videoRef.current) return;
-
     if (isInView) {
-      const playPromise = videoRef.current.play();
-      if (playPromise !== undefined) {
-        playPromise.catch((error) => {
-          console.log("Autoplay prevented:", error);
-        });
-      }
+      videoRef.current.play().catch(() => {});
     } else {
       videoRef.current.pause();
     }
@@ -96,58 +81,50 @@ const ProductVideo = ({ src, poster }: { src: string; poster?: string }) => {
     <video
       ref={videoRef}
       src={src}
-      poster={poster}
       muted
       loop
       playsInline
-      className="object-cover w-full h-full absolute inset-0 z-10"
+      className="w-full h-full object-cover"
     />
   );
 };
 
-const PhoneMockup = ({ product }: { product: (typeof products)[0] }) => {
+const WebMockup = ({ product }: { product: (typeof products)[0] }) => {
   return (
-    <div className="relative mx-auto border-gray-800 bg-gray-800 border-14 rounded-[2.5rem] h-125 w-70 shadow-2xl flex flex-col justify-center items-center overflow-hidden">
-      {/* Notch Buttons */}
-      <div className="h-8 w-0.75 bg-gray-800 absolute -start-4.25 top-18 rounded-s-lg"></div>
-      <div className="h-11.5 w-0.75 bg-gray-800 absolute -start-4.25 top-31 rounded-s-lg"></div>
-      <div className="h-11.5 w-0.75 bg-gray-800 absolute -start-4.25 top-44.5 rounded-s-lg"></div>
-      <div className="h-16 w-0.75 bg-gray-800 absolute -end-4.25 top-35.5 rounded-e-lg"></div>
-
-      {/* Screen Content */}
-      <div
-        className={`rounded-4xl overflow-hidden w-full h-full bg-white relative flex flex-col items-center justify-center ${product.mockupColor}`}
-      >
-        {/* Conditional Rendering: Video or Image */}
-        {product.video ? (
-          <ProductVideo src={product.video} poster={product.image} />
-        ) : (
-          <Image
-            src={product.image || ""}
-            alt={product.name}
-            fill
-            className="object-cover"
-            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-          />
-        )}
-
-        {/* Fallback Overlay (Hidden if content loads) */}
-        <div className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-0">
-          <Smartphone size={48} className="text-gray-300" />
+    <div className="relative w-full max-w-2xl mx-auto">
+      {/* Browser/Laptop Frame */}
+      <div className="relative rounded-t-xl bg-gray-900 border-x-8 border-t-8 border-gray-800 pt-2 shadow-2xl overflow-hidden">
+        {/* Browser Top Bar */}
+        <div className="flex items-center gap-1.5 px-4 pb-2 border-b border-gray-800">
+          <div className="w-2.5 h-2.5 rounded-full bg-red-500/80" />
+          <div className="w-2.5 h-2.5 rounded-full bg-amber-500/80" />
+          <div className="w-2.5 h-2.5 rounded-full bg-emerald-500/80" />
+          <div className="ml-4 flex-1 h-4 bg-gray-800 rounded-md max-w-40" />
+        </div>
+        
+        {/* Screen Content */}
+        <div className={`aspect-video w-full relative overflow-hidden bg-white ${product.mockupColor}`}>
+          {product.video ? (
+            <ProductVideo src={product.video} />
+          ) : (
+            <div className="flex items-center justify-center h-full">
+              <Laptop size={64} className="text-gray-200" />
+            </div>
+          )}
         </div>
       </div>
+      
+      {/* Laptop Base */}
+      <div className="relative h-3 w-[105%] -left-[2.5%] bg-gray-800 rounded-b-xl shadow-xl" />
+      <div className="relative h-1 w-1/4 mx-auto bg-gray-700 rounded-b-xl" />
     </div>
   );
 };
 
 export default function Products() {
   return (
-    <section
-      id="products"
-      className="py-24 bg-slate-50 relative overflow-hidden"
-    >
+    <section id="products" className="py-24 bg-slate-50 relative overflow-hidden">
       <div className="max-w-7xl mx-auto px-6 lg:px-8">
-        {/* --- Header --- */}
         <div className="text-center mb-24">
           <h3 className="text-sm font-bold tracking-widest text-[#00A79D] uppercase mb-2">
             Our Products
@@ -157,8 +134,7 @@ export default function Products() {
           </h2>
         </div>
 
-        {/* --- Products List --- */}
-        <div className="flex flex-col gap-24 md:gap-32">
+        <div className="flex flex-col gap-24 md:gap-40">
           {products.map((product, index) => {
             const isEven = index % 2 === 0;
 
@@ -171,32 +147,28 @@ export default function Products() {
                 transition={{ duration: 0.7 }}
                 className={`flex flex-col ${
                   isEven ? "lg:flex-row" : "lg:flex-row-reverse"
-                } items-center gap-12 lg:gap-24`}
+                } items-center gap-12 lg:gap-20`}
               >
-                {/* 1. Mobile Mockup Side */}
-                <div className="relative group">
-                  {/* Decorative Blob behind phone */}
+                {/* Visual Side */}
+                <div className="w-full lg:w-1/2 relative group">
                   <div
-                    className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 h-80 rounded-full blur-[80px] opacity-40 group-hover:opacity-60 transition-opacity duration-500"
+                    className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full aspect-square max-w-sm rounded-full blur-[100px] opacity-30 group-hover:opacity-50 transition-opacity duration-500"
                     style={{ backgroundColor: product.color }}
                   />
                   <motion.div
-                    whileHover={{ scale: 1.02, rotate: isEven ? -2 : 2 }}
-                    transition={{ type: "spring", stiffness: 300 }}
+                    whileHover={{ scale: 1.02 }}
+                    transition={{ type: "spring", stiffness: 200 }}
                   >
-                    <PhoneMockup product={product} />
+                    <WebMockup product={product} />
                   </motion.div>
                 </div>
 
-                {/* 2. Content Side */}
-                <div className="flex-1 text-center lg:text-left">
+                {/* Text Side */}
+                <div className="w-full lg:w-1/2 text-center lg:text-left">
                   <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white border border-slate-200 shadow-sm mb-6">
-                    <Star
-                      size={14}
-                      className="text-amber-400 fill-amber-400"
-                    />
+                    <Star size={14} className="text-amber-400 fill-amber-400" />
                     <span className="text-xs font-bold text-slate-600 uppercase tracking-wide">
-                      Rated 4.8/5
+                      Top Rated Solution
                     </span>
                   </div>
 
@@ -214,10 +186,7 @@ export default function Products() {
 
                   <ul className="flex flex-col gap-3 mb-10 max-w-md mx-auto lg:mx-0">
                     {product.features.map((feature, i) => (
-                      <li
-                        key={i}
-                        className="flex items-center gap-3 text-slate-700"
-                      >
+                      <li key={i} className="flex items-center gap-3 text-slate-700">
                         <div className="p-1 rounded-full bg-teal-50 text-[#00A79D]">
                           <Check size={16} strokeWidth={3} />
                         </div>
