@@ -60,11 +60,11 @@ const products: Product[] = [
     tagline: "Last-Mile Excellence & On-Ground Activation",
     type: "btl",
     description:
-      "Comprehensive on-ground activations and brand promotions designed to recreate real-world conditions for last-mile excellence and operational intelligence. [cite: 5, 31]",
+      "Comprehensive on-ground activations and brand promotions designed to recreate real-world conditions for last-mile excellence and operational intelligence.",
     features: [
-      "On-ground activations & brand promotions [cite: 7]",
-      "Retail and market audits [cite: 8]",
-      "End-to-end field-led & last-mile execution initiatives [cite: 11]",
+      "On-ground activations & brand promotions",
+      "Retail and market audits ",
+      "End-to-end field-led & last-mile execution initiatives.",
     ],
     webLink: "#",
     color: "#f59e0b",
