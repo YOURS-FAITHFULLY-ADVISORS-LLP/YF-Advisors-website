@@ -14,7 +14,6 @@ const Navbar = () => {
 
   const pathname = usePathname();
 
-  // Handle Scroll Effect
   useEffect(() => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 20);
@@ -33,7 +32,6 @@ const Navbar = () => {
     { name: "Blog", href: "/blog" },
   ];
 
-  // Universal Scroll Handler
   const handleLinkClick = (
     e: React.MouseEvent<HTMLAnchorElement>,
     href: string
@@ -46,18 +44,15 @@ const Navbar = () => {
 
       if (elem) {
         e.preventDefault();
-
         const headerOffset = 100;
         const elementPosition = elem.getBoundingClientRect().top;
-        const offsetPosition =
-          elementPosition + window.scrollY - headerOffset;
+        const offsetPosition = elementPosition + window.scrollY - headerOffset;
 
         window.scrollTo({
           top: offsetPosition,
           behavior: "smooth",
         });
 
-        // ✅ THIS IS THE MISSING LINE
         window.history.pushState(null, "", `#${targetId}`);
       }
     } else if (href === "/" && pathname === "/") {
@@ -66,7 +61,6 @@ const Navbar = () => {
       window.history.pushState(null, "", "/");
     }
   };
-
 
   const glassPanel =
     "bg-white/80 backdrop-blur-xl border border-white/40 shadow-lg shadow-slate-200/20 rounded-full transition-all duration-300";
@@ -82,13 +76,12 @@ const Navbar = () => {
       >
         <div className="max-w-7xl mx-auto px-4 md:px-6 flex items-center justify-between">
 
-          {/* --- 1. Logo Section (No Animation, Uniform Font) --- */}
+          {/* --- 1. Logo Section (Refined Uniform Font Styles) --- */}
           <Link
             href="/"
             onClick={(e) => handleLinkClick(e, "/")}
             className="group relative z-50 flex items-center gap-3 py-2 cursor-pointer"
           >
-            {/* Logo Image Wrapper - Standard div (No motion/animation) */}
             <div className="relative h-12 w-16 md:h-14 md:w-20 shrink-0">
               <Image
                 src="/logo copy.png"
@@ -99,22 +92,22 @@ const Navbar = () => {
               />
             </div>
 
-            {/* Logo Text - Uniform Style */}
             <div className="flex flex-col justify-center leading-none select-none text-slate-900">
-              <span className="font-serif text-[10px] md:text-xs font-bold tracking-widest uppercase mb-0.5">
+              {/* Standardized "Yours Faithfully" */}
+              <span className="font-serif text-[10px] md:text-[11px] font-bold tracking-[0.2em] uppercase mb-1">
                 Yours Faithfully
               </span>
-              <span className="w-full h-[1.5px] bg-[#FDB913] my-px rounded-full" />
-              <span className="font-serif text-[10px] md:text-sm font-bold tracking-widest uppercase text-center">
+              {/* Divider */}
+              <div className="w-full h-[1.5px] bg-[#FDB913] rounded-full" />
+              {/* Standardized "Advisors" - Same weight and tracking */}
+              <span className="font-serif text-[10px] md:text-[11px] font-bold tracking-[0.2em] uppercase mt-1 text-center">
                 Advisors
               </span>
             </div>
           </Link>
 
           {/* --- 2. Desktop Navigation --- */}
-          <nav
-            className={`hidden md:flex items-center p-1.5 gap-1 ${glassPanel}`}
-          >
+          <nav className={`hidden md:flex items-center p-1.5 gap-1 ${glassPanel}`}>
             {navLinks.map((link, index) => (
               <Link
                 key={link.name}
@@ -138,7 +131,6 @@ const Navbar = () => {
 
           {/* --- 3. Actions --- */}
           <div className="flex items-center gap-3">
-            {/* Desktop Contact Button */}
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
               <Link
                 href="/#contact"
@@ -181,7 +173,7 @@ const Navbar = () => {
         </div>
       </motion.header>
 
-      {/* --- Mobile Full Screen Menu Overlay --- */}
+      {/* --- Mobile Menu --- */}
       <AnimatePresence>
         {isMobileMenuOpen && (
           <motion.div
@@ -213,7 +205,6 @@ const Navbar = () => {
                 )
               )}
             </div>
-
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
