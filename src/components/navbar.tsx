@@ -94,13 +94,13 @@ const Navbar = () => {
 
             <div className="flex flex-col justify-center leading-none select-none text-slate-900">
               {/* Standardized "Yours Faithfully" */}
-              <span className="font-serif text-[10px] md:text-[11px] font-bold tracking-[0.2em] uppercase mb-1">
+              <span className="font-serif text-[10px] md:text-[13px] font-bold tracking-[0.2em] uppercase mb-1">
                 Yours Faithfully
               </span>
               {/* Divider */}
               <div className="w-full h-[1.5px] bg-[#FDB913] rounded-full" />
               {/* Standardized "Advisors" - Same weight and tracking */}
-              <span className="font-serif text-[10px] md:text-[11px] font-bold tracking-[0.2em] uppercase mt-1 text-center">
+              <span className="font-serif text-[10px] md:text-[13px] font-bold tracking-[0.2em] uppercase mt-1 text-center">
                 Advisors
               </span>
             </div>
