@@ -105,7 +105,7 @@ const Navbar = () => {
                 Yours Faithfully
               </span>
               <span className="w-full h-[1.5px] bg-[#FDB913] my-px rounded-full" />
-              <span className="font-serif text-[11px] md:text-sm font-bold tracking-widest uppercase text-center">
+              <span className="font-serif text-[10px] md:text-sm font-bold tracking-widest uppercase text-center">
                 Advisors
               </span>
             </div>
