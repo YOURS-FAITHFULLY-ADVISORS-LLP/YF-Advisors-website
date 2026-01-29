@@ -8,11 +8,14 @@ import {
   Loader2, 
   Sparkles, 
   RefreshCw, 
-  X, 
   MessageCircle,
-  ChevronDown
+  ChevronDown,
+  MoreVertical,
+  Trash2,
+  Minimize2
 } from "lucide-react";
 
+// --- TYPES ---
 type Message = {
   id: string;
   role: "user" | "bot";
@@ -22,7 +25,6 @@ type Message = {
 
 type ChatState = "init" | "name_verification" | "chatting";
 
-// Correctly typing the API responses to remove "any"
 interface ServerMessage {
   _id?: string;
   id?: string;
@@ -48,11 +50,12 @@ interface ApiResponse {
   };
 }
 
+// --- CONSTANTS ---
 const API_BASE = "https://telegram-chatbot-gmq4.onrender.com/api/chat";
 
+// --- API UTILITY ---
 async function apiCall(endpoint: string, options: RequestInit = {}) {
   const url = `${API_BASE}${endpoint}`;
-  console.log(`🌐 API Call: ${options.method || 'GET'} ${url}`, options.body ? JSON.parse(options.body as string) : '');
   
   try {
     const fetchOptions = {
@@ -72,7 +75,6 @@ async function apiCall(endpoint: string, options: RequestInit = {}) {
       data = { message: text };
     }
     
-    console.log(`📥 Response [${response.status}]:`, data);
     return { response, data, ok: response.ok };
   } catch (error) {
     console.error(`❌ API Error:`, error);
@@ -80,8 +82,10 @@ async function apiCall(endpoint: string, options: RequestInit = {}) {
   }
 }
 
+// --- COMPONENT ---
 export default function ChatWidget() {
   const [isOpen, setIsOpen] = useState(false);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -89,14 +93,31 @@ export default function ChatWidget() {
   const [sessionId, setSessionId] = useState<string | null>(null);
   const [userId, setUserId] = useState<string | null>(null);
   const [userName, setUserName] = useState<string>("");
+  
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const pollingIntervalRef = useRef<NodeJS.Timeout | null>(null);
+  const pollingIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const initRef = useRef(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
+  // Scroll to bottom helper
   const scrollToBottom = useCallback(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: "smooth", block: "end" });
+    }
   }, []);
 
+  // --- CLICK OUTSIDE HANDLER (For Dropdown) ---
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsDropdownOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  // --- POLLING LOGIC ---
   const fetchMessages = useCallback(async () => {
     if (!userId) return;
 
@@ -114,7 +135,7 @@ export default function ChatWidget() {
           let role: "user" | "bot" = "bot";
           if (msg.sender === "user" || msg.role === "user" || msg.from === "user") {
             role = "user";
-          } else if (msg.sender === "owner" || msg.sender === "bot" || msg.sender === "admin" || msg.sender === "assistant") {
+          } else if (["owner", "bot", "admin", "assistant"].includes(msg.sender || "")) {
             role = "bot";
           }
           
@@ -124,12 +145,13 @@ export default function ChatWidget() {
             content: msg.text || msg.content || msg.message || "",
             timestamp: new Date(msg.timestamp || msg.createdAt || Date.now()),
           };
-        }).filter(msg => msg.content);
+        }).filter(msg => msg.content); 
 
         setMessages((prevMessages) => {
           const systemMessages = prevMessages.filter(m => 
             (m.content.includes("What's your name") || 
              m.content.includes("Nice to meet you") ||
+             m.content.includes("assist you") ||
              m.content.includes("Welcome back")) &&
             m.role === "bot"
           );
@@ -141,9 +163,8 @@ export default function ChatWidget() {
           const filteredServer = serverMessages.filter(sm => !existingContentMap.has(sm.content.trim().toLowerCase()));
           
           if (filteredServer.length > 0) {
-            return [...systemMessages, ...serverMessages].sort(
-              (a, b) => a.timestamp.getTime() - b.timestamp.getTime()
-            );
+            const merged = [...systemMessages, ...serverMessages];
+            return merged.sort((a, b) => a.timestamp.getTime() - b.timestamp.getTime());
           }
           return prevMessages;
         });
@@ -167,6 +188,7 @@ export default function ChatWidget() {
     }
   }, []);
 
+  // --- INITIALIZATION ---
   const initChat = useCallback(async () => {
     try {
       setIsLoading(true);
@@ -183,7 +205,7 @@ export default function ChatWidget() {
       if (data?.success) {
         setSessionId(newSessionId);
         setChatState("name_verification");
-        const welcomeMessage = data?.message || "Hey there! 👋 Welcome to YF Advisors. What's your name?";
+        const welcomeMessage = data?.message || "Hey there! 👋 Welcome to Client Support. What's your name?";
         
         setMessages([{
           id: Date.now().toString(),
@@ -205,15 +227,25 @@ export default function ChatWidget() {
     }
   }, []);
 
+  // --- EFFECTS ---
   useEffect(() => {
     if (isOpen) {
       setTimeout(scrollToBottom, 100);
-      if (window.innerWidth < 768) document.body.style.overflow = 'hidden';
+      if (window.innerWidth < 768) {
+        document.body.style.overflow = 'hidden'; 
+      }
     } else {
       document.body.style.overflow = 'unset';
     }
     return () => { document.body.style.overflow = 'unset'; };
   }, [messages, isLoading, isOpen, scrollToBottom]);
+
+  useEffect(() => {
+    if (!isOpen) return;
+    const handleResize = () => setTimeout(scrollToBottom, 100);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, [isOpen, scrollToBottom]);
 
   useEffect(() => {
     if (isOpen && chatState === "init" && !initRef.current) {
@@ -231,6 +263,7 @@ export default function ChatWidget() {
     return () => stopPolling();
   }, [chatState, userId, startPolling, stopPolling]);
 
+  // --- ACTIONS ---
   const verifyName = async (name: string) => {
     if (!sessionId) return;
     try {
@@ -249,12 +282,21 @@ export default function ChatWidget() {
         setUserId(extractedUserId);
         setChatState("chatting");
         
-        setMessages((prev) => [...prev, {
-          id: Date.now().toString(),
-          role: "bot",
-          content: data?.message || `Great to meet you, ${name}! 🎉`,
-          timestamp: new Date(),
-        }]);
+        setMessages((prev) => [
+          ...prev, 
+          {
+            id: `bot-greet-${Date.now()}`,
+            role: "bot",
+            content: data?.message || `Nice to meet you, ${name}!`,
+            timestamp: new Date(),
+          },
+          {
+            id: `bot-ask-${Date.now() + 1}`,
+            role: "bot",
+            content: "How can I assist you today?",
+            timestamp: new Date(Date.now() + 100),
+          }
+        ]);
       }
     } catch (error: unknown) {
       const msg = error instanceof Error ? error.message : 'Error';
@@ -296,12 +338,14 @@ export default function ChatWidget() {
     if (!input.trim()) return;
 
     const messageText = input.trim();
+    
     setMessages((prev) => [...prev, {
       id: `user-${Date.now()}`,
       role: "user",
       content: messageText,
       timestamp: new Date(),
     }]);
+    
     setInput("");
     setIsLoading(true);
 
@@ -311,6 +355,14 @@ export default function ChatWidget() {
       await sendMessage(messageText);
     }
     setIsLoading(false);
+    setTimeout(scrollToBottom, 100);
+  };
+
+  const handleManualRefresh = () => {
+    if (chatState === "chatting") {
+      setIsLoading(true);
+      fetchMessages().finally(() => setIsLoading(false));
+    }
   };
 
   const clearChat = () => {
@@ -321,26 +373,45 @@ export default function ChatWidget() {
     setSessionId(null);
     setUserId(null);
     setUserName("");
-    if (isOpen) initChat();
+    setIsDropdownOpen(false);
+    
+    if (isOpen) {
+        setTimeout(() => {
+            initChat();
+        }, 300);
+    }
+  };
+
+  const temporaryClose = () => {
+    setIsDropdownOpen(false);
+    setIsOpen(false);
   };
 
   return (
     <>
       <div 
         className={`
-          fixed z-9999 transition-all duration-400 cubic-bezier(0.16, 1, 0.3, 1) bg-white/95 backdrop-blur-md shadow-2xl overflow-hidden flex flex-col border border-white/20 ring-1 ring-black/5
-          ${isOpen ? "opacity-100 pointer-events-auto translate-y-0 scale-100" : "opacity-0 pointer-events-none translate-y-10 scale-95"}
-          inset-0 w-full h-dvh rounded-none md:inset-auto md:bottom-24 md:right-8 md:w-100 md:h-162.5 md:max-h-[85vh] md:rounded-4xl
+          fixed z-9999 transition-all duration-400 cubic-bezier(0.16, 1, 0.3, 1) 
+          bg-white/95 backdrop-blur-md shadow-2xl overflow-hidden flex flex-col 
+          border border-white/20 ring-1 ring-black/5
+          ${isOpen 
+            ? "opacity-100 pointer-events-auto translate-y-0 scale-100" 
+            : "opacity-0 pointer-events-none translate-y-10 scale-95"
+          }
+          inset-0 w-full h-dvh rounded-none 
+          md:inset-auto md:bottom-24 md:right-8 md:w-100 md:h-162.5 md:max-h-[85vh] md:rounded-4xl
         `}
       >
-        <div className="bg-linear-to-br from-[#00A79D] to-teal-800 p-5 flex items-center justify-between shrink-0 relative overflow-hidden">
+        {/* HEADER */}
+        <div className="bg-linear-to-br from-[#00A79D] to-teal-800 p-5 flex items-center justify-between shrink-0 relative overflow-visible z-50">
           <div className="absolute top-[-50%] right-[-10%] w-32 h-32 bg-white/10 rounded-full blur-2xl pointer-events-none"></div>
+          
           <div className="flex items-center gap-3.5 relative z-10">
             <div className="bg-white/20 p-2.5 rounded-xl backdrop-blur-md shadow-inner">
               <Bot className="text-white w-6 h-6" strokeWidth={2.5} />
             </div>
             <div>
-              <h1 className="text-white font-bold text-lg tracking-tight">YF Assistant</h1>
+              <h1 className="text-white font-bold text-lg tracking-tight">Client Support</h1>
               <div className="flex items-center gap-2">
                 <span className="relative flex h-2 w-2">
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-300 opacity-75"></span>
@@ -352,18 +423,52 @@ export default function ChatWidget() {
               </div>
             </div>
           </div>
-          <div className="flex gap-1 relative z-10">
-            <button onClick={clearChat} className="text-white/70 hover:text-white hover:bg-white/10 p-2 rounded-full transition-all duration-200" title="Clear Chat">
+
+          <div className="flex gap-1 relative z-10 items-center">
+            <button 
+              onClick={handleManualRefresh} 
+              className={`text-white/70 hover:text-white hover:bg-white/10 p-2 rounded-full transition-all duration-200 ${isLoading ? 'animate-spin' : ''}`} 
+              title="Check for new messages"
+            >
               <RefreshCw size={18} />
             </button>
-            <button onClick={() => setIsOpen(false)} className="text-white/70 hover:text-white hover:bg-white/10 p-2 rounded-full transition-all duration-200">
-              <ChevronDown className="md:hidden" size={24} />
-              <X className="hidden md:block" size={22} />
+
+            <div className="relative" ref={dropdownRef}>
+                <button 
+                  onClick={() => setIsDropdownOpen(!isDropdownOpen)} 
+                  className="text-white/70 hover:text-white hover:bg-white/10 p-2 rounded-full transition-all duration-200"
+                >
+                  <MoreVertical size={20} />
+                </button>
+
+                {isDropdownOpen && (
+                  <div className="absolute right-0 top-full mt-2 w-48 bg-white rounded-xl shadow-xl border border-slate-100 overflow-hidden origin-top-right animate-in fade-in zoom-in-95 duration-200">
+                    <button 
+                      onClick={clearChat}
+                      className="w-full text-left px-4 py-3 text-sm text-red-600 hover:bg-red-50 flex items-center gap-2 transition-colors border-b border-slate-50"
+                    >
+                      <Trash2 size={16} />
+                      Clear Chat
+                    </button>
+                    <button 
+                      onClick={temporaryClose}
+                      className="w-full text-left px-4 py-3 text-sm text-slate-700 hover:bg-slate-50 flex items-center gap-2 transition-colors"
+                    >
+                      <Minimize2 size={16} />
+                      Minimize
+                    </button>
+                  </div>
+                )}
+            </div>
+
+            <button onClick={() => setIsOpen(false)} className="text-white/70 hover:text-white hover:bg-white/10 p-2 rounded-full transition-all duration-200 md:hidden">
+              <ChevronDown size={24} />
             </button>
           </div>
         </div>
 
-        <div className="flex-1 overflow-y-auto p-5 space-y-6 bg-slate-50 scroll-smooth">
+        {/* MESSAGES AREA */}
+        <div className="flex-1 overflow-y-auto p-5 space-y-6 bg-slate-50 scroll-smooth min-h-0">
           {messages.map((msg) => (
             <div key={msg.id} className={`flex items-end gap-3 ${msg.role === "user" ? "flex-row-reverse" : "flex-row"} group`}>
               <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 shadow-sm border border-black/5 ${msg.role === "user" ? "bg-gray-900 text-white" : "bg-white text-[#00A79D]"}`}>
@@ -388,26 +493,30 @@ export default function ChatWidget() {
               </div>
             </div>
           )}
-          <div ref={messagesEndRef} />
+          <div ref={messagesEndRef} className="h-1" />
         </div>
 
-        <div className="bg-white p-4 md:p-5 border-t border-slate-100 shrink-0">
+        {/* INPUT AREA */}
+        <div className="bg-white p-4 md:p-5 border-t border-slate-100 shrink-0 pb-safe">
           <form onSubmit={handleSend} className="flex items-center gap-2 bg-slate-100/80 hover:bg-slate-100 border border-transparent hover:border-slate-200 focus-within:bg-white focus-within:ring-2 focus-within:ring-[#00A79D]/20 focus-within:border-[#00A79D] rounded-full px-1.5 py-1.5 transition-all duration-200 shadow-sm">
             <div className="pl-3 text-slate-400"><Sparkles size={18} strokeWidth={2} /></div>
             <input
-              type="text" value={input} onChange={(e) => setInput(e.target.value)}
+              type="text" 
+              value={input} 
+              onChange={(e) => setInput(e.target.value)}
+              onFocus={() => setTimeout(scrollToBottom, 300)}
               placeholder={chatState === "name_verification" ? "Enter your name..." : "Ask anything..."}
-              className="flex-1 bg-transparent border-none focus:ring-0 text-slate-800 placeholder-slate-400 text-sm md:text-[15px] h-11 font-medium px-2"
+              className="flex-1 bg-transparent border-none focus:ring-0 text-slate-800 placeholder-slate-400 text-sm md:text-[15px] h-11 font-medium px-2 min-w-0"
               disabled={isLoading || chatState === "init"}
             />
             <button type="submit" disabled={!input.trim() || isLoading || chatState === "init"} className={`w-10 h-10 rounded-full flex items-center justify-center transition-all duration-200 ${!input.trim() || isLoading || chatState === "init" ? "bg-slate-200 text-slate-400 cursor-not-allowed" : "bg-[#00A79D] text-white hover:bg-teal-700 hover:scale-105 shadow-md"}`}>
               {isLoading ? <Loader2 size={18} className="animate-spin" /> : <Send size={18} className="ml-0.5" strokeWidth={2.5} />}
             </button>
           </form>
-         
         </div>
       </div>
 
+      {/* TOGGLE BUTTON */}
       <button
         onClick={() => setIsOpen(true)}
         className={`fixed bottom-6 right-6 z-9990 group flex items-center justify-center w-14 h-14 md:w-16 md:h-16 rounded-[1.2rem] shadow-xl shadow-[#00A79D]/30 transition-all duration-500 bg-[#00A79D] hover:bg-teal-700 hover:-translate-y-1 ${isOpen ? "scale-0 opacity-0 pointer-events-none rotate-90" : "scale-100 opacity-100 rotate-0"}`}
