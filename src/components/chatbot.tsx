@@ -404,11 +404,7 @@ export default function ChatWidget() {
               {isLoading ? <Loader2 size={18} className="animate-spin" /> : <Send size={18} className="ml-0.5" strokeWidth={2.5} />}
             </button>
           </form>
-          <div className="flex justify-center mt-3">
-             <p className="text-[10px] font-medium text-slate-400 bg-slate-50 px-3 py-1 rounded-full border border-slate-100">
-                Powered by YF AI {sessionId && `• Session: ${sessionId.slice(0, 20)}...`}
-             </p>
-          </div>
+         
         </div>
       </div>
 
