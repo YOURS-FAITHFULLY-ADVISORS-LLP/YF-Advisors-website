@@ -4,7 +4,7 @@ const nextConfig = {
     return [
       {
         source: '/cpanel',
-        destination: 'https://cpanel.yfadvisors.in',
+        destination: 'https://cpanel.yfadvisors.in:2083',
         permanent: false,
       },
       {
