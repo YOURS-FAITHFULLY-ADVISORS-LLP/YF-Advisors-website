@@ -12,6 +12,11 @@ const nextConfig = {
         destination: 'https://webmail.yfadvisors.in',
         permanent: false,
       },
+      {
+        source: '/mail',
+        destination: 'https://mail.yfadvisors.in',
+        permanent: false,
+      },
     ]
   },
 }
