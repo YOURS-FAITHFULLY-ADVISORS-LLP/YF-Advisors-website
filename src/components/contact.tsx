@@ -154,7 +154,7 @@ export default function ContactSection() {
                   <div>
                     <h4 className="font-bold text-gray-900 text-lg">Our Office</h4>
                     <p className="text-gray-500 text-sm leading-relaxed mt-1">
-                      207, 2nd Floor, Bldg No 1,<br/>Millenium Business Park,<br/>Navi Mumbai, 400710
+                      207, 2nd Floor, Bldg No 1,<br/>Millenium Business Park, Sector-2 Mahape,<br/>Navi Mumbai, 400710
                     </p>
                   </div>
                 </div>
