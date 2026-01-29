@@ -100,7 +100,7 @@ export default function Footer() {
                 <MapPin className="text-[#00A79D] shrink-0 mt-0.5" size={18} />
                 <span className="text-slate-600 text-sm leading-relaxed">
                   207, 2nd Floor, Bldg No 1,<br />
-                  Millenium Business Park,<br />
+                  Millenium Business Park, Sector-2 Mahape,<br />
                   Navi Mumbai, 400710
                 </span>
               </li>
