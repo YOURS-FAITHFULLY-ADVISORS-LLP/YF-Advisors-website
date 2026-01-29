@@ -1,14 +1,19 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  images: {
-    remotePatterns: [
+  async redirects() {
+    return [
       {
-        protocol: 'https',
-        hostname: 'images.unsplash.com',
-        pathname: '**',
+        source: '/cpanel',
+        destination: 'https://cpanel.yfadvisors.in',
+        permanent: false,
       },
-    ],
+      {
+        source: '/webmail',
+        destination: 'https://webmail.yfadvisors.in',
+        permanent: false,
+      },
+    ]
   },
-};
+}
 
-export default nextConfig;
+module.exports = nextConfig
