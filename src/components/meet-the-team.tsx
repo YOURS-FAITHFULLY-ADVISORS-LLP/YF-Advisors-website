@@ -39,7 +39,7 @@ const teamData = [
     role: "Partner",
     description: "Specializes in Strategic Financial Management, Cash Flow & Systems.",
     experience: "Experience: 21+ years",
-    image: "/meet-team/shiv.png", 
+    image: "/meet-team/shiv.png",
     linkedin: "https://www.linkedin.com/in/shiv-mittal-02227344/"
   },
   {
@@ -48,7 +48,7 @@ const teamData = [
     role: "Partner",
     description: "Specializes in Internal Audits, Data Analytics & Outsourcing Ops.",
     experience: "Experience: 15+ years",
-    image: "/meet-team/deepak.png", 
+    image: "/meet-team/deepak.png",
     linkedin: "https://www.linkedin.com/in/deepak-babel-1b576722b/"
   },
   {
@@ -57,7 +57,7 @@ const teamData = [
     role: "Growth Partner",
     description: "Masters, IIM Calcutta. Specialization: Operations & Delivery Quality.",
     experience: "Experience: 30+ years",
-    image: "/meet-team/sanjay.png", 
+    image: "/meet-team/sanjay.png",
     linkedin: "https://www.linkedin.com/in/sanjay-kumar-choudhary-10a5b516/"
   },
   {
@@ -66,17 +66,26 @@ const teamData = [
     role: "Growth Partner",
     description: "Masters in Marketing & HR. Specialization: Talent Mgmt & Acquisition.",
     experience: "Experience: 27+ years",
-    image: "/meet-team/jyoti.png", 
+    image: "/meet-team/jyoti.png",
     linkedin: "https://www.linkedin.com/in/jyoti-mittal-99a2794/"
   },
   {
     id: 8,
-    name: "Ritesh Verma",
-    role: "Growth Partner",
-    description: "B.E. (CS). Specialization: IT Projects, Banking & Capital Markets.",
+    name: "CS. Pawan Kumar Laddha",
+    role: "Advocate",
+    description: "B.E., CS. | Fintech, e-Commerce & Blockchain Lawyer",
     experience: "Experience: 25+ years",
-    image: "/meet-team/ritesh.png", 
-    linkedin: "https://www.linkedin.com/in/dr-ritesh-verma-81ab5018/"
+    image: "/meet-team/pawan.png",
+    linkedin: "https://www.linkedin.com/in/pawan-l-0b82716/"
+  },
+  {
+    id: 9,
+    name: "Nipun Khanna",
+    role: "Chartered Accountant",
+    description: "Specialization: Income Tax & GST Litigation, Appeal Matters",
+    experience: "Experience: 15+ years",
+    image: "/meet-team/nipun.png",
+    linkedin: "https://www.linkedin.com/in/ca-nipun-khanna-5875ba3a/"
   }
 ];
 
@@ -88,7 +97,7 @@ const TeamSections = () => {
         <h2 className="text-3xl md:text-4xl font-bold text-[#002B49] mb-4">Meet Our People</h2>
         <p className="text-slate-500">Hover over the cards to see their expertise</p>
       </div>
-      
+
       {/* Fixed: Replaced max-w-[1400px] with standard Tailwind class max-w-screen-2xl 
          to fix the linter warning while maintaining width for 4 columns.
       */}
@@ -108,19 +117,19 @@ const Card = ({ member }: { member: typeof teamData[0] }) => {
     <StyledWrapper>
       <div className="card">
         <div className="content">
-          
+
           {/* --- SIDE 1: INITIAL VIEW (Photo & Name) --- */}
           <div className="back">
             <div className="back-content">
               <div className="img-container">
-                <Image 
-                  src={member.image} 
-                  alt={member.name} 
-                  width={100} 
-                  height={100} 
+                <Image
+                  src={member.image}
+                  alt={member.name}
+                  width={100}
+                  height={100}
                   className="profile-img"
                   priority // Boolean prop shorthand
-                  unoptimized 
+                  unoptimized
                 />
               </div>
               <strong className="name-text">{member.name}</strong>
@@ -136,7 +145,7 @@ const Card = ({ member }: { member: typeof teamData[0] }) => {
               <div className="circle" id="right"></div>
               <div className="circle" id="bottom"></div>
             </div>
-            
+
             <div className="front-content">
               <small className="badge">{member.role}</small>
               <div className="description">
@@ -151,7 +160,7 @@ const Card = ({ member }: { member: typeof teamData[0] }) => {
                 </div>
                 {/* LinkedIn Button */}
                 <a href={member.linkedin} target="_blank" rel="noopener noreferrer" className="linkedin-btn">
-                   LinkedIn &rarr;
+                  LinkedIn &rarr;
                 </a>
               </div>
             </div>
