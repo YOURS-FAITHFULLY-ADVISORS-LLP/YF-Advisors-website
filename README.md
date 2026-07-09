@@ -28,7 +28,7 @@
 | **Efficiency Increase** | 23% |
 | **Client Retention** | 98% |
 
----
+--
 
 ## 🛠️ Tech Stack
 
