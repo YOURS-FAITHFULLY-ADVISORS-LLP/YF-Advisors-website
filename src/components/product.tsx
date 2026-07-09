@@ -49,7 +49,7 @@ const products: Product[] = [
       "Leave & Attendance Management",
       "Tax & Compliance Alerts",
     ],
-    webLink: "https://www.payveda.co.in/",
+    webLink: "https://payveda.co.in/",
     color: "#002B49",
     mockupColor: "bg-blue-50",
     video: "/product/payveda.mp4",
