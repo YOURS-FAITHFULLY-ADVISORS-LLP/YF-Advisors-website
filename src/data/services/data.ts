@@ -28,7 +28,7 @@ export interface ServiceDetail {
 
 export const servicesData: ServiceDetail[] = [
   { 
-    id: "service1", 
+    id: "finance-consulting", 
     title: "Finance Consulting", 
     icon: PieChart, 
     color: "#0AA8A3",
@@ -211,7 +211,7 @@ export const servicesData: ServiceDetail[] = [
     ]
   },
   { 
-    id: "service2", 
+    id: "back-office-automation", 
     title: "Back Office Automation", 
     icon: Cpu, 
     color: "#0F172A", 
@@ -339,7 +339,7 @@ export const servicesData: ServiceDetail[] = [
     ]
   },
   { 
-    id: "service3", 
+    id: "functional-outsourcing", 
     title: "Functional Outsourcing", 
     icon: Share2, 
     color: "#0AA8A3", 
@@ -463,7 +463,7 @@ export const servicesData: ServiceDetail[] = [
     ]
   },
   { 
-    id: "service4", 
+    id: "mystery-audits", 
     title: "Mystery Audits", 
     icon: Search, 
     color: "#0F172A", 
@@ -598,7 +598,7 @@ export const servicesData: ServiceDetail[] = [
     ]
   },
   { 
-    id: "service5", 
+    id: "payroll-management", 
     title: "Payroll Management", 
     icon: Banknote, 
     color: "#0AA8A3", 
@@ -728,7 +728,7 @@ export const servicesData: ServiceDetail[] = [
     ]
   },
   { 
-    id: "service6", 
+    id: "bookkeeping-services", 
     title: "Bookkeeping Services", 
     icon: FileText, 
     color: "#0F172A", 
@@ -863,7 +863,7 @@ export const servicesData: ServiceDetail[] = [
     ]
   },
   { 
-    id: "service7", 
+    id: "virtual-assistant-services", 
     title: "Virtual Assistant Services", 
     icon: Headphones, 
     color: "#0AA8A3", 
@@ -985,7 +985,7 @@ export const servicesData: ServiceDetail[] = [
     ]
   },
   { 
-    id: "service8", 
+    id: "attrition-management", 
     title: "Attrition Management", 
     icon: UserMinus, 
     color: "#0F172A", 
@@ -1243,7 +1243,7 @@ export const servicesData: ServiceDetail[] = [
     ]
   },
   { 
-    id: "service10", 
+    id: "manpower-outsourcing", 
     title: "Manpower Outsourcing", 
     icon: UserCheck, 
     color: "#0F172A", 
