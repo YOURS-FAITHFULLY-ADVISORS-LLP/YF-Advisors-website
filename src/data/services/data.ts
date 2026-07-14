@@ -57,7 +57,7 @@ export const servicesData: ServiceDetail[] = [
         description: "Our functional outsourcing services provide businesses with the expertise they need to manage their finances effectively. Our team of experienced professionals can help with tasks such as financial planning, budgeting, and financial analysis."
       },
       {
-        title: "Mystery Audits",
+        title: "Mystery Audits Services",
         description: "Our mystery audit services help businesses identify areas of improvement in their financial processes. Our team of experienced auditors can conduct discrete audits to identify areas of risk and provide recommendations for improvement."
       },
       {
