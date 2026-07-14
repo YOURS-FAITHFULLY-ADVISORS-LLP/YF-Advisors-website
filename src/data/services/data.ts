@@ -463,7 +463,7 @@ export const servicesData: ServiceDetail[] = [
     ]
   },
   { 
-    id: "mystery-audits", 
+    id: "mystery-audit-services", 
     title: "Mystery Audits", 
     icon: Search, 
     color: "#0F172A", 

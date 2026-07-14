@@ -3,6 +3,11 @@ const nextConfig = {
   async redirects() {
     return [
       {
+        source: '/services/mystery-audits',
+        destination: '/services/mystery-audit-services',
+        permanent: true,
+      },
+      {
         source: '/cpanel',
         destination: 'https://cpanel.yfadvisors.in:2083',
         permanent: false,
