@@ -15,6 +15,7 @@ interface Service {
   color: string;
   shortDescription: string;
   detailedServices: { title: string; description: string }[];
+  benefitsDetail?: { title: string; description: string }[];
 }
 
 const services: Service[] = servicesData;
@@ -150,6 +151,16 @@ const StickyServiceCard = ({
               ))}
             </div>
           </div>
+
+          {/* Key Value Highlight (Desktop only, sits at the bottom of the right column) */}
+          {service.benefitsDetail?.[0] && (
+            <div className="hidden md:block border-t border-slate-100 pt-4 mt-6">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-1">Key Value</span>
+              <p className="text-[11px] font-semibold text-slate-500 leading-normal line-clamp-3">
+                {service.benefitsDetail[0].description}
+              </p>
+            </div>
+          )}
 
           {/* Read more button (shown on mobile at bottom) */}
           <div className="block md:hidden mt-6">
