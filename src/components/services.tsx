@@ -14,6 +14,7 @@ interface Service {
   icon: LucideIcon;
   color: string;
   shortDescription: string;
+  detailedServices: { title: string; description: string }[];
 }
 
 const services: Service[] = servicesData;
@@ -72,13 +73,13 @@ const StickyServiceCard = ({
       // isolate creates a new stacking context so this card's contents
       // can never visually bleed into (or be bled into by) a sibling card
       style={{ zIndex: i + 1 }}
-      className="sticky top-0 isolate flex h-screen items-start justify-center pt-10"  
+      className="sticky top-0 isolate flex h-screen items-start justify-center pt-16"  
     >
       <motion.div
         style={{ scale }}
         onClick={() => router.push(`/services/${service.id}`)}
-        className="group relative flex h-[420px] w-[min(90vw,560px)] origin-center cursor-pointer flex-col overflow-hidden rounded-[2.5rem] border border-slate-100 bg-white p-10 shadow-2xl"
-      >
+        className="group relative flex h-[480px] w-[min(90vw,560px)] origin-center cursor-pointer flex-col overflow-hidden rounded-[2.5rem] border border-slate-100 bg-white p-10 shadow-2xl transition-all duration-300"
+      > 
         {/* Hover / ambient gradient */}
         <div
           className="pointer-events-none absolute inset-0 z-0 opacity-60 transition-opacity duration-500 group-hover:opacity-100"
@@ -89,7 +90,7 @@ const StickyServiceCard = ({
 
         {/* Big background number */}
         <span
-          className="pointer-events-none absolute -top-8 -right-4 z-0 select-none text-[9rem] font-black leading-none text-slate-50"
+          className="pointer-events-none absolute -top-8 -right-4 z-0 select-none text-[9rem] font-black leading-none text-slate-50 transition-colors duration-500 group-hover:text-slate-100/50"
           aria-hidden="true"
         >
           {(i + 1).toString().padStart(2, "0")}
@@ -98,33 +99,52 @@ const StickyServiceCard = ({
         <div className="relative z-10 flex h-full flex-col">
           {/* Icon */}
           <div
-            className="mb-8 flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl shadow-sm transition-transform duration-500 group-hover:scale-110 group-hover:rotate-6"
+            className="mb-6 flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl shadow-sm transition-transform duration-500 group-hover:scale-110 group-hover:rotate-6"
             style={{ backgroundColor: service.color + "15" }}
           >
             <Icon size={30} color={service.color} strokeWidth={2} />
           </div>
 
           {/* Title */}
-          <h3 className="mb-4 font-serif text-3xl font-bold leading-tight text-slate-900 md:text-4xl">
+          <h3 className="mb-3 font-serif text-3xl font-bold leading-tight text-slate-900 md:text-4xl">
             {service.title}
           </h3>
 
           {/* Description */}
-          <p className="mb-8 line-clamp-3 max-w-md text-base font-medium leading-relaxed text-slate-500">
+          <p className="mb-4 line-clamp-2 max-w-md text-sm font-medium leading-relaxed text-slate-500">
             {service.shortDescription}
           </p>
 
-          {/* Read more */}
-          <button
-            className="mt-auto flex w-fit items-center gap-2 text-xs font-bold uppercase tracking-wider transition-all duration-300 group-hover:gap-3"
-            style={{ color: service.color }}
-          >
-            Read More
-            <ArrowRight
-              size={16}
-              className="transition-transform duration-300 group-hover:translate-x-1"
-            />
-          </button>
+          {/* Key Features/Sub-services */}
+          <div className="mb-6 flex flex-col gap-2">
+            <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Core Capabilities</span>
+            <div className="grid grid-cols-1 gap-2">
+              {service.detailedServices.slice(0, 3).map((item, idx) => (
+                <div key={idx} className="flex items-center gap-2 text-xs font-semibold text-slate-600">
+                  <span className="w-1.5 h-1.5 rounded-full shrink-0" style={{ backgroundColor: service.color }} />
+                  <span className="line-clamp-1">{item.title}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Read more button */}
+          <div className="mt-auto">
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                router.push(`/services/${service.id}`);
+              }}
+              className="flex items-center justify-center gap-2 px-6 py-2.5 rounded-full text-xs font-bold uppercase tracking-wider text-white shadow-md transition-all duration-300 hover:shadow-lg transform active:scale-95 cursor-pointer"
+              style={{ backgroundColor: service.color }}
+            >
+              Read More
+              <ArrowRight
+                size={14}
+                className="transition-transform duration-300 group-hover:translate-x-1"
+              />
+            </button>
+          </div>
         </div>
 
         {/* Bottom accent bar */}
