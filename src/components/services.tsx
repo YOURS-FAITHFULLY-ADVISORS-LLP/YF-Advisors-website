@@ -21,12 +21,14 @@ const services: Service[] = servicesData;
 // --- Single sticky/stacking card ---
 const StickyServiceCard = ({
   i,
+  totalCards,
   service,
   progress,
   range,
   targetScale,
 }: {
   i: number;
+  totalCards: number;
   service: Service;
   progress: MotionValue<number>;
   range: [number, number];
@@ -37,26 +39,49 @@ const StickyServiceCard = ({
   const Icon = service.icon;
 
   const scale = useTransform(progress, range, [1, targetScale]);
-  // fade the card slightly as the next one lands on top of it
-  const opacity = useTransform(progress, range, [1, 0.6]);
+
+  // The LAST card has no sibling stacking on top of it, so it should never
+  // darken — otherwise it sits there permanently grey with unreadable text.
+  const isLast = i === totalCards - 1;
+
+  // IMPORTANT: we no longer fade the card's own opacity. Fading opacity on a
+  // fully-opaque-background card is exactly what caused the "ghosting" —
+  // the card behind shows through a semi-transparent card in front of it.
+  // Instead we dim the receding card with an OPAQUE dark overlay layered
+  // on top of it. That darkens the card without making it see-through.
+  //
+  // Previously this used the SAME wide `range` prop ([i/n, 1]) as the scale
+  // animation, which meant every card kept accumulating darkness across the
+  // ENTIRE rest of the scroll — so a card would already look grey while it
+  // was still the front-and-center card, long before anything was actually
+  // covering it. Instead, the dim should only ramp up during the short
+  // window when the NEXT card is arriving, then hold steady (clamped) once
+  // that next card has settled on top of it.
+  const step = 1 / totalCards;
+  const nextCardArrives = (i + 1) * step;
+  const nextCardSettles = Math.min(nextCardArrives + step * 0.5, 1);
+  const dimOpacity = useTransform(
+    progress,
+    isLast ? [1, 1] : [nextCardArrives, nextCardSettles],
+    [0, 0.35]
+  );
 
   return (
     <div
       ref={container}
-      className="sticky top-0 flex h-screen items-center justify-center"
+      // isolate creates a new stacking context so this card's contents
+      // can never visually bleed into (or be bled into by) a sibling card
+      style={{ zIndex: i + 1 }}
+      className="sticky top-0 isolate flex h-screen items-center justify-center pt-20"
     >
       <motion.div
-        style={{
-          scale,
-          opacity,
-          top: `calc(-5vh + ${i * 20}px)`,
-        }}
+        style={{ scale }}
         onClick={() => router.push(`/services/${service.id}`)}
-        className="group relative -top-1/4 flex h-[420px] w-[min(90vw,560px)] origin-top cursor-pointer flex-col overflow-hidden rounded-[2.5rem] border border-slate-100 bg-white p-10 shadow-2xl"
+        className="group relative flex h-[420px] w-[min(90vw,560px)] origin-center cursor-pointer flex-col overflow-hidden rounded-[2.5rem] border border-slate-100 bg-white p-10 shadow-2xl"
       >
         {/* Hover / ambient gradient */}
         <div
-          className="pointer-events-none absolute inset-0 opacity-60 transition-opacity duration-500 group-hover:opacity-100"
+          className="pointer-events-none absolute inset-0 z-0 opacity-60 transition-opacity duration-500 group-hover:opacity-100"
           style={{
             background: `linear-gradient(135deg, ${service.color}12 0%, transparent 55%)`,
           }}
@@ -64,7 +89,7 @@ const StickyServiceCard = ({
 
         {/* Big background number */}
         <span
-          className="pointer-events-none absolute -top-8 -right-4 select-none text-[9rem] font-black leading-none text-slate-50"
+          className="pointer-events-none absolute -top-8 -right-4 z-0 select-none text-[9rem] font-black leading-none text-slate-50"
           aria-hidden="true"
         >
           {(i + 1).toString().padStart(2, "0")}
@@ -104,9 +129,22 @@ const StickyServiceCard = ({
 
         {/* Bottom accent bar */}
         <div
-          className="absolute bottom-0 left-0 h-1.5 w-0 transition-all duration-500 group-hover:w-full"
+          className="absolute bottom-0 left-0 z-10 h-1.5 w-0 transition-all duration-500 group-hover:w-full"
           style={{ backgroundColor: service.color }}
         />
+
+        {/* Opaque dimming overlay — replaces the old opacity fade.
+            This sits ABOVE the card's own content (z-20) and darkens the
+            card as the next one is about to land on top of it, WITHOUT
+            letting the card behind show through. The last card has no
+            successor, so it's excluded entirely — it stays fully white
+            with fully readable text the whole time it's in view. */}
+        {!isLast && (
+          <motion.div
+            style={{ opacity: dimOpacity }}
+            className="pointer-events-none absolute inset-0 z-20 bg-slate-900"
+          />
+        )}
       </motion.div>
     </div>
   );
@@ -125,14 +163,21 @@ export default function StickyServicesSection() {
       <section id="services" className="relative w-full bg-slate-50">
         <main
           ref={container}
-          className="relative flex w-full flex-col items-center justify-center pb-[50vh] pt-[30vh]"
+          className="relative flex w-full flex-col items-center justify-center"
         >
-          <div className="sticky top-[8%] z-50 grid w-full content-start justify-items-center gap-6 text-center">
+          {/*
+            Header is now a normal, in-flow block — NOT sticky, NOT fixed,
+            NO z-50. It sits above the first sticky card in the DOM, so it
+            scrolls up and away naturally as the user scrolls into the
+            cards, and it will never re-pin itself over card content.
+          */}
+          <div className="grid w-full content-start justify-items-center gap-5 py-[1vh] text-center">
             <h2 className="text-4xl font-black uppercase tracking-widest text-black md:text-6xl">
               Services
             </h2>
-            <span className="after:from-slate-400 after:to-transparent relative max-w-[16ch] text-xs uppercase leading-tight tracking-wider text-slate-400 after:absolute after:left-1/2 after:top-full after:h-16 after:w-px after:bg-gradient-to-b after:content-['']">
-              Scroll down to explore
+            <span className="relative max-w-[16ch] text-xs uppercase leading-tight tracking-wider text-slate-400">
+              Scroll down
+              
             </span>
           </div>
 
@@ -142,6 +187,7 @@ export default function StickyServicesSection() {
               <StickyServiceCard
                 key={service.id}
                 i={i}
+                totalCards={services.length}
                 service={service}
                 progress={scrollYProgress}
                 range={[i * (1 / services.length), 1]}
