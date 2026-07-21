@@ -72,7 +72,7 @@ const StickyServiceCard = ({
       // isolate creates a new stacking context so this card's contents
       // can never visually bleed into (or be bled into by) a sibling card
       style={{ zIndex: i + 1 }}
-      className="sticky top-0 isolate flex h-screen items-center justify-center "
+      className="sticky top-0 isolate flex h-screen items-start justify-center pt-10"  
     >
       <motion.div
         style={{ scale }}
