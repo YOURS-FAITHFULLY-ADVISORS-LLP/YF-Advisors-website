@@ -134,7 +134,7 @@ export default function AccountingPage() {
 
 // --- Styles ---
 const ArticleWrapper = styled.article`
-  background-color: #f8fafc; min-height: 100vh; padding-bottom: 80px; font-family: 'Inter', sans-serif;
+  background-color: #f8fafc; min-height: 100vh; padding-bottom: 80px;
   .hero-section { position: relative; height: 50vh; min-height: 400px; display: flex; align-items: center; justify-content: center; text-align: center; color: white; }
   .hero-img { object-fit: cover; z-index: 1; }
   .hero-overlay { position: absolute; inset: 0; background: linear-gradient(to bottom, rgba(0,43,73,0.6), rgba(0,43,73,0.9)); z-index: 2; }

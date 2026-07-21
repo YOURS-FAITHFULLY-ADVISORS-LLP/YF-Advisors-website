@@ -158,7 +158,7 @@ function generateServiceCardTexture(gl: GL, service: Service, index: number) {
     ctx.stroke();
 
     // Big Index Number
-    ctx.font = 'bold 100px sans-serif';
+    ctx.font = 'bold 100px Montserrat, sans-serif';
     ctx.fillStyle = '#f1f5f9'; 
     ctx.textAlign = 'right';
     ctx.fillText((index + 1).toString().padStart(2, '0'), width - 40, 130);
@@ -170,7 +170,7 @@ function generateServiceCardTexture(gl: GL, service: Service, index: number) {
     ctx.fill();
     
     // Icon Placeholder
-    ctx.font = 'bold 40px sans-serif';
+    ctx.font = 'bold 40px Montserrat, sans-serif';
     ctx.fillStyle = service.color;
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
@@ -179,7 +179,7 @@ function generateServiceCardTexture(gl: GL, service: Service, index: number) {
     // Title
     ctx.textAlign = 'left';
     ctx.textBaseline = 'alphabetic';
-    ctx.font = 'bold 52px sans-serif';
+    ctx.font = 'bold 52px "Playfair Display", serif';
     ctx.fillStyle = '#0f172a';
     
     const words = service.title.split(' ');
@@ -190,7 +190,7 @@ function generateServiceCardTexture(gl: GL, service: Service, index: number) {
     });
 
     // Description
-    ctx.font = '500 30px sans-serif';
+    ctx.font = '500 30px Montserrat, sans-serif';
     ctx.fillStyle = '#64748b'; 
     const maxWidth = width - 80;
     const lineHeight = 42;
@@ -224,7 +224,7 @@ function generateServiceCardTexture(gl: GL, service: Service, index: number) {
     ctx.roundRect(40, btnY, btnWidth, btnHeight, 30);
     ctx.fill();
 
-    ctx.font = 'bold 24px sans-serif';
+    ctx.font = 'bold 24px Montserrat, sans-serif';
     ctx.fillStyle = '#ffffff';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
@@ -232,7 +232,7 @@ function generateServiceCardTexture(gl: GL, service: Service, index: number) {
     
     // Bottom Label
     ctx.textAlign = 'right';
-    ctx.font = 'bold 20px sans-serif';
+    ctx.font = 'bold 20px Montserrat, sans-serif';
     ctx.fillStyle = '#cbd5e1';
     ctx.fillText('PROFESSIONAL SERVICES', width - 40, height - 50);
   }
@@ -284,7 +284,7 @@ class Title {
     renderer,
     text,
     textColor = "#545050",
-    font = "30px sans-serif",
+    font = "30px Montserrat, sans-serif",
   }: TitleProps) {
     autoBind(this);
     this.gl = gl;

@@ -8,7 +8,8 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
+  --font-sans: var(--font-montserrat), sans-serif;
+  --font-serif: var(--font-playfair), serif;
   --font-mono: var(--font-geist-mono);
 }
 
@@ -22,5 +23,25 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-montserrat), sans-serif !important;
+}
+
+/* Headings: Playfair Display serif font with bold weights and elegant styling */
+h1, h2, h3,
+body h1, body h2, body h3,
+.font-serif, [class*="font-serif"] {
+  font-family: var(--font-playfair), serif !important;
+  font-weight: 700 !important;
+  letter-spacing: -0.02em !important;
+  line-height: 1.25 !important;
+}
+
+/* Nested elements in headings should inherit the serif font */
+h1 *, h2 *, h3 * {
+  font-family: inherit !important;
+}
+
+/* Ensure buttons, inputs, selects, textareas use Montserrat */
+button, input, select, textarea {
+  font-family: var(--font-montserrat), sans-serif !important;
 }

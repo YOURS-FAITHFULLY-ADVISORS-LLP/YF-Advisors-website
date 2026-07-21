@@ -107,7 +107,6 @@ const SectionWrapper = styled.section`
   padding: 100px 20px;
   background: #f8fafc;
   min-height: 100vh;
-  font-family: 'Inter', sans-serif;
 
   .container {
     max-width: 1280px;

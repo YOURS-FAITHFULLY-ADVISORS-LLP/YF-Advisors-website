@@ -137,7 +137,7 @@ const ArticleWrapper = styled.article`
   background-color: #f8fafc;
   min-height: 100vh;
   padding-bottom: 80px;
-  font-family: 'Inter', sans-serif;
+ 
 
   /* Hero Section */
   .hero-section {

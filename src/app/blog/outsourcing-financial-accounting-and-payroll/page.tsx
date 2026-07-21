@@ -103,7 +103,7 @@ export default function OutsourcingPage() {
 // --- Styles ---
 
 const ArticleWrapper = styled.article`
-  background-color: #f8fafc; min-height: 100vh; padding-bottom: 80px; font-family: 'Inter', sans-serif;
+  background-color: #f8fafc; min-height: 100vh; padding-bottom: 80px;
 
   .hero-section { position: relative; height: 50vh; min-height: 400px; display: flex; align-items: center; justify-content: center; text-align: center; color: white; }
   .hero-img { object-fit: cover; z-index: 1; }
