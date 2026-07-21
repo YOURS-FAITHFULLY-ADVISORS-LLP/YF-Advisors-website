@@ -19,8 +19,7 @@ import {
   Globe,
   Shield,
   TrendingUp,
-  ArrowUpRight,
-  Zap
+  ArrowUpRight
 } from "lucide-react";
 import Link from "next/link"
 // ==========================================
@@ -450,7 +449,7 @@ const AboutGrid = () => {
 
 export default function AboutUs() {
   return (
-    <section id="about-us" className="py-24 md:py-32 bg-slate-50 relative overflow-hidden">
+    <section id="about-us" className="pt-24 pb-12 md:pt-32 md:pb-16 bg-slate-50 relative overflow-hidden">
       
       {/* --- Background Effects --- */}
       <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
@@ -491,19 +490,7 @@ export default function AboutUs() {
           <AboutCarousel />
         </div>
 
-        {/* --- CTA (Shared) --- */}
-        <div className="text-center mt-20">
-          <Link href="/#contact" className="inline-block">
-            <button className="group relative inline-flex items-center gap-3 px-10 py-5 bg-[#002B49] text-white font-bold rounded-full overflow-hidden shadow-2xl shadow-blue-900/30 hover:scale-105 active:scale-95 transition-transform">
-            {/* Shimmer Effect */}
-            <div className="absolute inset-0 w-full h-full bg-linear-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:animate-[shimmer_1.5s_infinite]" />
-            <Zap size={20} className="fill-amber-400 text-amber-400" />
-            <span className="relative z-10">Start Your Journey With Us</span>
-          </button>
-          </Link>
         </div>
-
-      </div>
 
       {/* Global CSS for Tailwind v4 compatibility if needed for custom animations */}
       <style jsx global>{`
