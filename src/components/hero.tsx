@@ -19,7 +19,7 @@ const Hero = () => {
   };
 
   return (
-    <section className="relative w-full pt-32 pb-40 md:pt-48 md:pb-48 overflow-hidden bg-white">
+    <section className="relative w-full pt-24 pb-40 md:pt-32 md:pb-48 overflow-hidden bg-white">
       
       {/* --- Background Elements --- */}
       <div className="absolute inset-0 pointer-events-none">
@@ -36,21 +36,7 @@ const Hero = () => {
       <div className="max-w-5xl mx-auto px-6 relative z-10">
         <div className="flex flex-col items-center text-center">
           
-          {/* --- Badge --- */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="mb-8"
-          >
-            <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white border border-slate-200 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] text-xs font-bold tracking-widest uppercase text-slate-800">
-              <span className="relative flex h-2 w-2">
-                <span className="absolute inline-flex h-full w-full rounded-full bg-teal-400 opacity-75 animate-ping"></span>
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-teal-500"></span>
-              </span>
-              Strategic Advisory 2.0
-            </span>
-          </motion.div>
+
 
           {/* --- Headline --- */}
           <motion.h1 
