@@ -6,7 +6,6 @@ import {
   Bot, 
   User, 
   Loader2, 
-  Sparkles, 
   RefreshCw, 
   MessageCircle,
   ChevronDown,
@@ -524,7 +523,7 @@ export default function ChatWidget() {
         {/* INPUT AREA */}
         <div className="bg-white p-3 md:p-5 border-t border-slate-100 shrink-0 z-50">
           <form onSubmit={handleSend} className="flex items-center gap-2 bg-slate-100/80 hover:bg-slate-100 border border-transparent hover:border-slate-200 focus-within:bg-white focus-within:ring-2 focus-within:ring-[#00A79D]/20 focus-within:border-[#00A79D] rounded-full px-1.5 py-1.5 transition-all duration-200 shadow-sm">
-            <div className="pl-3 text-slate-400"><Sparkles size={18} strokeWidth={2} /></div>
+            <div className="pl-3 text-slate-400"><MessageCircle size={18} strokeWidth={2} /></div>
             <input
               type="text" 
               value={input} 

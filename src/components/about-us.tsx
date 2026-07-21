@@ -14,12 +14,13 @@ import {
   Users,
   Lightbulb,
   Target,
-  Sparkles,
   Check,
   Globe,
   Shield,
   TrendingUp,
-  ArrowUpRight
+  ArrowUpRight,
+  Award,
+  Star
 } from "lucide-react";
 import Link from "next/link"
 // ==========================================
@@ -69,7 +70,7 @@ const FEATURES_DATA = [
     id: 4,
     title: "Why Choose Us?",
     description: "We offer a fresh, practical approach to tax planning and financial maintenance. Our solutions are customized, innovative, and cost-effective—designed to make your life simpler.",
-    icon: <Sparkles className="h-6 w-6 text-white" />,
+    icon: <Award className="h-6 w-6 text-white" />,
     colSpan: "md:col-span-2",
     bg: "bg-linear-to-br from-teal-50 to-white border border-teal-100",
     iconBg: "bg-teal-100",
@@ -462,7 +463,7 @@ export default function AboutUs() {
         {/* --- Header (Shared) --- */}
         <div className="text-center mb-16 md:mb-20">
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white border border-teal-100 shadow-sm text-teal-700 mb-6">
-            <Sparkles size={14} className="fill-current" />
+            <Star size={14} className="fill-current" />
             <span className="text-xs font-bold uppercase tracking-widest">
               About YF Advisors
             </span>
