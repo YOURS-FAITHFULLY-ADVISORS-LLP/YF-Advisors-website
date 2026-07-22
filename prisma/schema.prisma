@@ -77,7 +77,8 @@ model Service {
   benefits            ServiceBenefit[]
   whyChooseUs         WhyChoosePoint[]
   workSteps           WorkStep[]
-  relatedServices     RelatedService[]
+  relatedServices     RelatedService[] @relation("CurrentService")
+  referencedBy        RelatedService[] @relation("RelatedService")
 
   createdAt           DateTime @default(now())
   updatedAt           DateTime @updatedAt
