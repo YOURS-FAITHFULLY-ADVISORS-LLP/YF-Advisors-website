@@ -84,7 +84,7 @@ const Navbar = () => {
           >
             <div className="relative h-12 w-16 md:h-14 md:w-20 shrink-0">
               <Image
-                src="/logo copy.png"
+                src="/logo.png"
                 alt="YF Advisors"
                 fill
                 className="object-contain"

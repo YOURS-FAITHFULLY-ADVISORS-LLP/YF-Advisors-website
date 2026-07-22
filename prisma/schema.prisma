@@ -3,7 +3,281 @@ generator client {
 }
 
 datasource db {
-  provider  = "postgresql"
-  url       = env("DATABASE_URL")
-  directUrl = env("DIRECT_URL")
+  provider = "postgresql"
+}
+
+enum BlogStatus {
+  DRAFT
+  PUBLISHED
+}
+
+enum ServiceStatus {
+  DRAFT
+  PUBLISHED
+}
+
+enum TestimonialStatus {
+  DRAFT
+  PUBLISHED
+}
+
+model Blog {
+  id          String     @id @default(cuid())
+
+  title       String
+  slug        String     @unique
+
+  excerpt     String
+  content     String     @db.Text
+
+  image       String?
+
+  category    String?    // e.g. "Tax", "Finance", "News"
+  tags        String?    // e.g. "GST,Income Tax,Compliance"
+
+  author      String?    @default("YF Advisors")
+
+  status      BlogStatus @default(DRAFT)
+  publishedAt DateTime?
+
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  @@index([status])
+  @@index([publishedAt])
+}
+
+model Service {
+  id                  String   @id @default(cuid())
+
+  // Basic Information
+  title               String
+  slug                String   @unique
+  icon                String?
+  image               String?
+
+  // Service Card (Listing Page)
+  cardDescription     String      // 2–3 line summary
+  keyValue            String      // Short value statement shown on card
+
+  // Service Details Page
+  description         String      @db.Text
+
+  status              ServiceStatus @default(DRAFT)
+  publishedAt         DateTime?
+
+  // Sections
+  offerings           ServiceOffering[]
+  capabilities        ServiceCapability[]
+  benefits            ServiceBenefit[]
+  whyChooseUs         WhyChoosePoint[]
+  workSteps           WorkStep[]
+  relatedServices     RelatedService[]
+
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  @@index([status])
+  @@index([publishedAt])
+}
+
+model ServiceOffering {
+  id          String   @id @default(cuid())
+
+  serviceId   String
+  service     Service  @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+
+  title       String
+  description String
+
+  order       Int
+
+  createdAt   DateTime @default(now())
+}
+
+model ServiceCapability {
+  id          String   @id @default(cuid())
+
+  serviceId   String
+  service     Service  @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+
+  title       String
+  description String
+
+  order       Int
+}
+
+model ServiceBenefit {
+  id          String   @id @default(cuid())
+
+  serviceId   String
+  service     Service  @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+
+  title       String
+  description String
+
+  order       Int
+}
+
+model WhyChoosePoint {
+  id          String   @id @default(cuid())
+
+  serviceId   String
+  service     Service  @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+
+  title       String
+  description String
+
+  order       Int
+}
+
+model WorkStep {
+  id          String   @id @default(cuid())
+
+  serviceId   String
+  service     Service  @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+
+  stepNumber  Int
+  title       String
+  description String
+}
+
+model RelatedService {
+  id                String   @id @default(cuid())
+
+  serviceId         String
+  service           Service  @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+
+  relatedServiceId  String
+  relatedService    String   // Title of related service
+  relatedSlug       String
+
+  order             Int
+}
+
+model Testimonial {
+  id            String   @id @default(cuid())
+
+  name          String
+  designation   String
+  company        String?
+
+  profileImage  String?
+  initials      String?
+
+  review        String   @db.Text
+
+  rating        Int      @default(5)
+
+  isVerified    Boolean  @default(true)
+
+  status        TestimonialStatus @default(PUBLISHED)
+
+  displayOrder  Int      @default(0)
+
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([status])
+  @@index([displayOrder])
+}
+
+model About {
+  id                 String   @id @default(cuid())
+
+  // Hero Section
+  title              String
+  subtitle           String
+
+  // Who We Are
+  whoWeAreTitle      String
+  whoWeAreContent    String   @db.Text
+
+  // Why Choose Us
+  whyChooseTitle     String
+  whyChooseContent   String   @db.Text
+
+  // Relations
+  visionPoints       VisionPoint[]
+  missionPoints      MissionPoint[]
+  statistics         AboutStatistic[]
+
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+}
+
+model VisionPoint {
+  id          String  @id @default(cuid())
+
+  aboutId     String
+  about       About   @relation(fields: [aboutId], references: [id], onDelete: Cascade)
+
+  title       String
+
+  order       Int
+}
+
+model MissionPoint {
+  id          String  @id @default(cuid())
+
+  aboutId     String
+  about       About   @relation(fields: [aboutId], references: [id], onDelete: Cascade)
+
+  title       String
+
+  order       Int
+}
+
+model AboutStatistic {
+  id          String  @id @default(cuid())
+
+  aboutId     String
+  about       About   @relation(fields: [aboutId], references: [id], onDelete: Cascade)
+
+  title       String
+  value       String
+  icon        String?
+
+  order       Int
+}
+
+model Homepage {
+  id                String   @id @default(cuid())
+
+  // Hero Section
+  heroTitle         String
+  heroDescription   String
+
+  heroImage         String?
+  heroButtonText    String?
+  heroButtonLink    String?
+
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+}
+
+model Contact {
+  id          String   @id @default(cuid())
+
+  // Section Heading
+  title       String   @default("Contact Details")
+
+  // Office
+  officeTitle String   @default("Our Office")
+  address     String   @db.Text
+
+  // Email
+  emailTitle  String   @default("Email Us")
+  email       String
+
+  // Phone
+  phoneTitle  String   @default("Call Us")
+  phone       String
+
+  // Optional
+  googleMap   String?
+  officeHours String?
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }
