@@ -199,7 +199,7 @@ export const servicesData: ServiceDetail[] = [
     ],
 
     otherServices: [
-      "Back office Automation Service",
+      "Back Office Automation",
       "Functional Outsourcing",
       "Mystery Audits",
       "Payroll Management",
@@ -452,7 +452,7 @@ export const servicesData: ServiceDetail[] = [
 
     otherServices: [
       "Finance Consulting",
-      "Back office Automation Service",
+      "Back Office Automation",
       "Mystery Audits",
       "Payroll Management",
       "Bookkeeping Services",
@@ -588,7 +588,7 @@ export const servicesData: ServiceDetail[] = [
 
     otherServices: [
       "Finance Consulting",
-      "Back office Automation Service",
+      "Back Office Automation",
       "Functional Outsourcing",
       "Payroll Management",
       "Bookkeeping Services",
@@ -718,7 +718,7 @@ export const servicesData: ServiceDetail[] = [
 
     otherServices: [
       "Finance Consulting",
-      "Back office Automation Service",
+      "Back Office Automation",
       "Functional Outsourcing",
       "Mystery Audits",
       "Bookkeeping Services",
@@ -852,7 +852,7 @@ export const servicesData: ServiceDetail[] = [
 
     otherServices: [
       "Finance Consulting",
-      "Back office Automation Service",
+      "Back Office Automation",
       "Functional Outsourcing",
       "Mystery Audits",
       "Payroll Management",
@@ -975,7 +975,7 @@ export const servicesData: ServiceDetail[] = [
 
     otherServices: [
       "Finance Consulting",
-      "Back office Automation Service",
+      "Back Office Automation",
       "Functional Outsourcing",
       "Mystery Audits",
       "Payroll Management",
@@ -1098,7 +1098,7 @@ export const servicesData: ServiceDetail[] = [
 
     otherServices: [
       "Finance Consulting",
-      "Back office Automation Service",
+      "Back Office Automation",
       "Functional Outsourcing",
       "Mystery Audits",
       "Payroll Management",
@@ -1233,7 +1233,7 @@ export const servicesData: ServiceDetail[] = [
 
     otherServices: [
       "Finance Consulting",
-      "Back office Automation Service",
+      "Back Office Automation",
       "Functional Outsourcing",
       "Mystery Audits",
       "Payroll Management",
@@ -1367,7 +1367,7 @@ export const servicesData: ServiceDetail[] = [
 
     otherServices: [
       "Finance Consulting",
-      "Back office Automation Service",
+      "Back Office Automation",
       "Functional Outsourcing",
       "Mystery Audits",
       "Payroll Management",
