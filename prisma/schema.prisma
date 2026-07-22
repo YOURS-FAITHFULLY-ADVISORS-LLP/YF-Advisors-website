@@ -148,16 +148,15 @@ model WorkStep {
 }
 
 model RelatedService {
-  id                String   @id @default(cuid())
+  id          String   @id @default(cuid())
 
-  serviceId         String
-  service           Service  @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+  serviceId   String
+  service     Service  @relation("CurrentService", fields: [serviceId], references: [id], onDelete: Cascade)
 
-  relatedServiceId  String
-  relatedService    String   // Title of related service
-  relatedSlug       String
+  relatedId   String
+  related     Service  @relation("RelatedService", fields: [relatedId], references: [id])
 
-  order             Int
+  displayOrder Int @default(0)
 }
 
 model Testimonial {
