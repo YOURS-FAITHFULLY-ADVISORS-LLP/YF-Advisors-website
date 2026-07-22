@@ -29,19 +29,28 @@ enum TeamStatus {
 model Blog {
   id          String     @id @default(cuid())
 
+  // Basic Information
   title       String
   slug        String     @unique
 
+  // Blog Listing Card
+  cardDescription String
+
+  // Blog Detail Page
   excerpt     String
   content     String     @db.Text
 
+  // Media
   image       String?
 
-  category    String?    // e.g. "Tax", "Finance", "News"
-  tags        String?    // e.g. "GST,Income Tax,Compliance"
+  // Classification
+  category    String?
+  tags        String?
 
-  author      String?    @default("YF Advisors")
+  // Author
+  author      String     @default("YF Advisors")
 
+  // Publishing
   status      BlogStatus @default(DRAFT)
   publishedAt DateTime?
 
