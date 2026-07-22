@@ -125,6 +125,7 @@ const ArticleWrapper = styled.article`
   .question-box p { margin-bottom: 10px; color: #334155; }
   .question-box p:last-child { margin-bottom: 0; }
 
+  .sidebar { position: sticky; top: 100px; align-self: start; }
   .sidebar-widget { background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); border: 1px solid #f1f5f9; margin-bottom: 30px; }
   .sidebar-widget h4 { color: #002B49; margin-bottom: 24px; text-transform: uppercase; border-bottom: 2px solid #00A79D; padding-bottom: 12px; display: inline-block; }
   .sidebar-widget ul { list-style: none; padding: 0; }

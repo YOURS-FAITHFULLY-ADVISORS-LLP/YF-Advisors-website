@@ -102,6 +102,7 @@ const ArticleWrapper = styled.article`
   p { margin-bottom: 24px; }
   .intro-text { font-size: 1.25rem; color: #475569; border-left: 4px solid #00A79D; padding-left: 24px; font-style: italic; }
   
+  .sidebar { position: sticky; top: 100px; align-self: start; }
   .sidebar-widget { background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); border: 1px solid #f1f5f9; margin-bottom: 30px; }
   .sidebar-widget h4 { color: #002B49; margin-bottom: 24px; text-transform: uppercase; border-bottom: 2px solid #00A79D; padding-bottom: 12px; display: inline-block; }
   .sidebar-widget ul { list-style: none; padding: 0; }

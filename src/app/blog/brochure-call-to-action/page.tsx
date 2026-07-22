@@ -400,7 +400,7 @@ const ArticleWrapper = styled.article`
   }
 
   /* Sidebar */
-  .sidebar { display: flex; flex-direction: column; gap: 30px; }
+  .sidebar { display: flex; flex-direction: column; gap: 30px; position: sticky; top: 100px; align-self: start; }
   
   .sidebar-widget {
     background: white;

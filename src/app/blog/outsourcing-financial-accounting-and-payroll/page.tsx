@@ -131,6 +131,7 @@ const ArticleWrapper = styled.article`
   .cta-box h3 { margin-top: 0; color: #002B49; font-size: 1.5rem; }
   .cta-box button { background: #002B49; color: white; border: none; padding: 14px 32px; font-size: 1rem; border-radius: 6px; cursor: pointer; font-weight: 600; margin-top: 20px; transition: all 0.3s; &:hover { background: #00A79D; } }
   
+  .sidebar { position: sticky; top: 100px; align-self: start; }
   .sidebar-widget { background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); border: 1px solid #f1f5f9; margin-bottom: 30px; }
   .sidebar-widget h4 { color: #002B49; margin-bottom: 24px; text-transform: uppercase; border-bottom: 2px solid #00A79D; padding-bottom: 12px; display: inline-block; }
   .sidebar-widget ul { list-style: none; padding: 0; }

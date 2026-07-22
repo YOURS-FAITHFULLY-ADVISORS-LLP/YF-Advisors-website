@@ -45,3 +45,11 @@ h1 *, h2 *, h3 * {
 button, input, select, textarea {
   font-family: var(--font-montserrat), sans-serif !important;
 }
+
+/* Sticky Sidebar for Blog Article Pages */
+.sidebar {
+  position: sticky;
+  top: 100px;
+  align-self: start;
+}
+
