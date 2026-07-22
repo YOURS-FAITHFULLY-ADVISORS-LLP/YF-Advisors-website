@@ -27,38 +27,59 @@ enum TeamStatus {
 }
 
 model Blog {
-  id          String     @id @default(cuid())
+  id              String      @id @default(cuid())
 
   // Basic Information
-  title       String
-  slug        String     @unique
+  title           String
+  slug            String      @unique
 
-  // Blog Listing Card
+  // Blog Card
   cardDescription String
 
-  // Blog Detail Page
-  excerpt     String
-  content     String     @db.Text
+  // Blog Introduction
+  excerpt         String
 
-  // Media
-  image       String?
+  // Featured Image
+  image           String?
 
   // Classification
-  category    String?
-  tags        String?
+  category        String?
+  tags            String?
 
   // Author
-  author      String     @default("YF Advisors")
+  author          String      @default("YF Advisors")
+
+  // Blog Content
+  content         String?     @db.Text
+  sections        BlogSection[]
 
   // Publishing
-  status      BlogStatus @default(DRAFT)
-  publishedAt DateTime?
+  status          BlogStatus  @default(DRAFT)
+  publishedAt     DateTime?
 
-  createdAt   DateTime   @default(now())
-  updatedAt   DateTime   @updatedAt
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
 
   @@index([status])
   @@index([publishedAt])
+}
+
+model BlogSection {
+  id            String    @id @default(cuid())
+
+  blogId        String
+  blog          Blog      @relation(fields: [blogId], references: [id], onDelete: Cascade)
+
+  heading       String?
+
+  content       String    @db.Text
+
+  displayOrder  Int       @default(0)
+
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  @@index([blogId])
 }
 
 model Service {
