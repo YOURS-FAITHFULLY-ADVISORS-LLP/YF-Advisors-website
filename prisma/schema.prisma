@@ -341,3 +341,37 @@ model Team {
   @@index([status])
   @@index([displayOrder])
 }
+
+model Settings {
+  id                    String   @id @default(cuid())
+
+  // Company Information
+  companyName           String
+  companyEmail          String?
+  companyPhone          String?
+  companyAddress        String?   @db.Text
+  googleMapUrl          String?
+
+  // Branding
+  logo                  String?
+  favicon               String?
+  ogImage               String?
+
+  // Social Media
+  facebookUrl           String?
+  instagramUrl          String?
+  linkedinUrl           String?
+  twitterUrl            String?
+  youtubeUrl            String?
+
+  // SEO Defaults
+  defaultMetaTitle      String?
+  defaultMetaDescription String? @db.Text
+  defaultKeywords       String?   @db.Text
+
+  // Business
+  officeHours           String?   @db.Text
+
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+}
