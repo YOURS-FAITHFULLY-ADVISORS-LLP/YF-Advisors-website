@@ -58,17 +58,66 @@ This project is built with a modern, high-performance web stack:
 
 ```bash
 yfa-website/
+├── docs/               # API documentation (api_endpoint.md)
 ├── public/             # Static assets (logos, banners, icons)
 ├── src/
-│   ├── app/            # Next.js App Router (Pages, Layouts)
+│   ├── app/            # Next.js App Router (Pages, Layouts & API Routes)
 │   ├── components/     # Reusable UI components
-│   └── data/           # Mock data and static content
+│   ├── data/           # Static content & mock data
+│   ├── lib/            # Utilities (auth, prisma, api-handler, pagination)
+│   └── validations/    # Zod validation schemas
 ├── .env                # Environment variables
 ├── next.config.ts      # Next.js configuration
 └── tailwind.config.ts  # Tailwind CSS configuration
 ```
 
 ---
+
+## 📡 API Endpoints Summary
+
+For complete, detailed technical documentation (including request bodies, validation schemas, expected output responses, and status codes), see [docs/api_endpoint.md](file:///home/sahil-hode/Documents/My%20Data/intern/YF%20Advisors%20Intern/projects/yfa-website/docs/api_endpoint.md).
+
+### 🔑 Authentication API
+| Method | Endpoint | Auth | Purpose |
+| :---: | :--- | :---: | :--- |
+| `POST` | `/api/admin/auth/login` | Public | Admin login authentication (JWT & Cookie) |
+| `GET` | `/api/admin/auth/me` | Admin | Get current active admin session / token details |
+| `POST` | `/api/admin/auth/logout` | Admin | Logout admin session (clears session cookie) |
+
+### 📨 Public Lead / Contact API
+| Method | Endpoint | Auth | Purpose |
+| :---: | :--- | :---: | :--- |
+| `POST` | `/api/contact` | Public | Submit contact form inquiry (rate limited, emails via SMTP) |
+
+### 📝 CMS & Content Management API
+| Method | Endpoint | Auth | Purpose |
+| :---: | :--- | :---: | :--- |
+| `GET` / `PATCH` | `/api/admin/about` | Admin | Fetch / Update About Us content & stats |
+| `GET` / `PATCH` | `/api/admin/contact` | Admin | Fetch / Update office contact details |
+| `GET` / `PATCH` | `/api/admin/homepage` | Admin | Fetch / Update Homepage hero section |
+| `GET` / `PATCH` | `/api/admin/settings` | Admin | Fetch / Update global branding & SEO settings |
+
+### 👥 Team Members API
+| Method | Endpoint | Auth | Purpose |
+| :---: | :--- | :---: | :--- |
+| `GET` / `POST` | `/api/admin/team` | Admin | List team members (paginated) / Create new team member |
+| `GET` / `PATCH` / `DELETE` | `/api/admin/team/:id` | Admin | Fetch / Update / Delete single team member |
+| `PATCH` | `/api/admin/team/:id/status` | Admin | Toggle team member status (`DRAFT` / `PUBLISHED`) |
+
+### ⭐ Testimonials API
+| Method | Endpoint | Auth | Purpose |
+| :---: | :--- | :---: | :--- |
+| `GET` / `POST` | `/api/admin/testimonials` | Admin | List testimonials (paginated) / Create testimonial |
+| `GET` / `PATCH` / `DELETE` | `/api/admin/testimonials/:id` | Admin | Fetch / Update / Delete single testimonial |
+| `PATCH` | `/api/admin/testimonials/:id/status` | Admin | Toggle testimonial status (`DRAFT` / `PUBLISHED`) |
+
+### 🛠️ Services API
+| Method | Endpoint | Auth | Purpose |
+| :---: | :--- | :---: | :--- |
+| `PATCH` | `/api/admin/services/:id/status` | Admin | Toggle service publishing status |
+
+---
+
 
 ## 🚀 Getting Started
 
