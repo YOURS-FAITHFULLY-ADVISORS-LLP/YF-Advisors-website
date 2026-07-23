@@ -23,9 +23,13 @@ import {
   List,
   Quote,
   Link as LinkIcon,
-  Code
+  Code,
+  Wand2,
+  Sparkles
 } from 'lucide-react';
 import ImageUploadInput from './ImageUploadInput';
+import RichTextEditor from './RichTextEditor';
+import { cleanAndSanitizeHtml, convertPlainTextToSemanticHtml } from '@/src/lib/html-formatter';
 
 interface BlogSection {
   id?: string;
@@ -77,6 +81,8 @@ export default function BlogEditor({ blogId }: BlogEditorProps) {
   const [saving, setSaving] = useState(false);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [showSuccessDialog, setShowSuccessDialog] = useState(false);
+  const [savedSlug, setSavedSlug] = useState('');
 
   const mainContentRef = useRef<HTMLTextAreaElement | null>(null);
 
@@ -254,11 +260,11 @@ export default function BlogEditor({ blogId }: BlogEditorProps) {
     setSuccessMessage(null);
     setErrorMessage(null);
 
-    // Auto-format plain text into clean HTML paragraphs
-    const formattedContent = ensureHtmlFormatting(formData.content);
+    // Auto-format plain text into clean, structured semantic HTML
+    const formattedContent = convertPlainTextToSemanticHtml(formData.content);
     const formattedSections = sections.map((sec, index) => ({
       heading: sec.heading.trim(),
-      content: ensureHtmlFormatting(sec.content),
+      content: convertPlainTextToSemanticHtml(sec.content),
       displayOrder: index,
     }));
 
@@ -512,121 +518,14 @@ export default function BlogEditor({ blogId }: BlogEditorProps) {
               </div>
             </div>
 
-            {/* Main Content Body with Formatting Toolbar */}
-            <div className="space-y-1.5">
-              <div className="flex items-center justify-between">
-                <label className="block text-xs font-bold text-[#002B49] uppercase tracking-wider">
-                  Main Intro / Content
-                </label>
-                <span className="text-[10px] text-slate-400 font-medium">
-                  Plain text auto-converts to HTML paragraphs on save
-                </span>
-              </div>
-
-              {/* Formatting Toolbar */}
-              <div className="flex flex-wrap items-center gap-1 p-1.5 bg-slate-100 border border-slate-200 rounded-t-2xl">
-                <button
-                  type="button"
-                  onClick={() =>
-                    insertFormatting(
-                      mainContentRef,
-                      'bold',
-                      (val) => setFormData((p) => ({ ...p, content: val })),
-                      formData.content
-                    )
-                  }
-                  className="p-1.5 hover:bg-white rounded-lg text-slate-700 transition-colors cursor-pointer"
-                  title="Bold"
-                >
-                  <Bold className="w-3.5 h-3.5" />
-                </button>
-                <button
-                  type="button"
-                  onClick={() =>
-                    insertFormatting(
-                      mainContentRef,
-                      'italic',
-                      (val) => setFormData((p) => ({ ...p, content: val })),
-                      formData.content
-                    )
-                  }
-                  className="p-1.5 hover:bg-white rounded-lg text-slate-700 transition-colors cursor-pointer"
-                  title="Italic"
-                >
-                  <Italic className="w-3.5 h-3.5" />
-                </button>
-                <button
-                  type="button"
-                  onClick={() =>
-                    insertFormatting(
-                      mainContentRef,
-                      'para',
-                      (val) => setFormData((p) => ({ ...p, content: val })),
-                      formData.content
-                    )
-                  }
-                  className="px-2 py-1 hover:bg-white rounded-lg text-slate-700 text-xs font-bold transition-colors cursor-pointer"
-                  title="Paragraph"
-                >
-                  P
-                </button>
-                <button
-                  type="button"
-                  onClick={() =>
-                    insertFormatting(
-                      mainContentRef,
-                      'list',
-                      (val) => setFormData((p) => ({ ...p, content: val })),
-                      formData.content
-                    )
-                  }
-                  className="p-1.5 hover:bg-white rounded-lg text-slate-700 transition-colors cursor-pointer"
-                  title="Bullet List"
-                >
-                  <List className="w-3.5 h-3.5" />
-                </button>
-                <button
-                  type="button"
-                  onClick={() =>
-                    insertFormatting(
-                      mainContentRef,
-                      'quote',
-                      (val) => setFormData((p) => ({ ...p, content: val })),
-                      formData.content
-                    )
-                  }
-                  className="p-1.5 hover:bg-white rounded-lg text-slate-700 transition-colors cursor-pointer"
-                  title="Quote"
-                >
-                  <Quote className="w-3.5 h-3.5" />
-                </button>
-                <button
-                  type="button"
-                  onClick={() =>
-                    insertFormatting(
-                      mainContentRef,
-                      'link',
-                      (val) => setFormData((p) => ({ ...p, content: val })),
-                      formData.content
-                    )
-                  }
-                  className="p-1.5 hover:bg-white rounded-lg text-slate-700 transition-colors cursor-pointer"
-                  title="Add Link"
-                >
-                  <LinkIcon className="w-3.5 h-3.5" />
-                </button>
-              </div>
-
-              <textarea
-                ref={mainContentRef}
-                name="content"
-                rows={5}
-                value={formData.content}
-                onChange={handleChange}
-                placeholder="Type your article content here..."
-                className="block w-full px-4 py-3 bg-slate-50/50 border border-slate-200 border-t-0 rounded-b-2xl text-slate-900 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#002B49]/30 focus:border-[#002B49] focus:bg-white transition-all"
-              />
-            </div>
+            {/* Main Content Body with RichTextEditor */}
+            <RichTextEditor
+              label="Main Intro / Content Body"
+              value={formData.content}
+              onChange={(val) => setFormData((prev) => ({ ...prev, content: val }))}
+              placeholder="Paste or type content here from Word, ChatGPT, Google Docs, or Notepad..."
+              rows={8}
+            />
           </div>
         </div>
 
@@ -715,18 +614,13 @@ export default function BlogEditor({ blogId }: BlogEditorProps) {
                     />
                   </div>
 
-                  <div className="space-y-1.5">
-                    <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider">
-                      Section Content
-                    </label>
-                    <textarea
-                      rows={4}
-                      value={section.content}
-                      onChange={(e) => handleSectionChange(index, 'content', e.target.value)}
-                      placeholder="Type section paragraph text here..."
-                      className="block w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl text-slate-900 text-xs font-medium focus:outline-none focus:ring-2 focus:ring-[#002B49]/20 focus:border-[#002B49] transition-all"
-                    />
-                  </div>
+                  <RichTextEditor
+                    label="Section Body Content"
+                    value={section.content}
+                    onChange={(val) => handleSectionChange(index, 'content', val)}
+                    placeholder="Paste or type section content from ChatGPT, Word, Google Docs..."
+                    rows={5}
+                  />
                 </div>
               ))}
             </div>

@@ -23,6 +23,8 @@ import {
   Quote,
   Link as LinkIcon
 } from 'lucide-react';
+import RichTextEditor from './RichTextEditor';
+import { convertPlainTextToSemanticHtml } from '@/src/lib/html-formatter';
 
 interface CollectionItem {
   id?: string;
@@ -258,7 +260,7 @@ export default function ServiceEditor({ serviceId }: ServiceEditorProps) {
 
     const payload = {
       ...formData,
-      description: ensureHtmlFormatting(formData.description),
+      description: convertPlainTextToSemanticHtml(formData.description),
       offerings: offerings.map((item, idx) => ({ ...item, order: idx })),
       capabilities: capabilities.map((item, idx) => ({ ...item, order: idx })),
       benefits: benefits.map((item, idx) => ({ ...item, order: idx })),
@@ -469,106 +471,14 @@ export default function ServiceEditor({ serviceId }: ServiceEditorProps) {
               />
             </div>
 
-            {/* Main Description */}
-            <div className="space-y-1.5">
-              <div className="flex items-center justify-between">
-                <label className="block text-xs font-bold text-[#002B49] uppercase tracking-wider">
-                  Full Service Detailed Description
-                </label>
-                <span className="text-[10px] text-slate-400 font-medium">
-                  Plain text auto-converts to HTML paragraphs on save
-                </span>
-              </div>
-
-              {/* Formatting Toolbar */}
-              <div className="flex flex-wrap items-center gap-1 p-1.5 bg-slate-100 border border-slate-200 rounded-t-2xl">
-                <button
-                  type="button"
-                  onClick={() =>
-                    insertFormatting(
-                      mainDescRef,
-                      'bold',
-                      (val) => setFormData((p) => ({ ...p, description: val })),
-                      formData.description
-                    )
-                  }
-                  className="p-1.5 hover:bg-white rounded-lg text-slate-700 transition-colors cursor-pointer"
-                  title="Bold"
-                >
-                  <Bold className="w-3.5 h-3.5" />
-                </button>
-                <button
-                  type="button"
-                  onClick={() =>
-                    insertFormatting(
-                      mainDescRef,
-                      'italic',
-                      (val) => setFormData((p) => ({ ...p, description: val })),
-                      formData.description
-                    )
-                  }
-                  className="p-1.5 hover:bg-white rounded-lg text-slate-700 transition-colors cursor-pointer"
-                  title="Italic"
-                >
-                  <Italic className="w-3.5 h-3.5" />
-                </button>
-                <button
-                  type="button"
-                  onClick={() =>
-                    insertFormatting(
-                      mainDescRef,
-                      'para',
-                      (val) => setFormData((p) => ({ ...p, description: val })),
-                      formData.description
-                    )
-                  }
-                  className="px-2 py-1 hover:bg-white rounded-lg text-slate-700 text-xs font-bold transition-colors cursor-pointer"
-                  title="Paragraph"
-                >
-                  P
-                </button>
-                <button
-                  type="button"
-                  onClick={() =>
-                    insertFormatting(
-                      mainDescRef,
-                      'list',
-                      (val) => setFormData((p) => ({ ...p, description: val })),
-                      formData.description
-                    )
-                  }
-                  className="p-1.5 hover:bg-white rounded-lg text-slate-700 transition-colors cursor-pointer"
-                  title="Bullet List"
-                >
-                  <List className="w-3.5 h-3.5" />
-                </button>
-                <button
-                  type="button"
-                  onClick={() =>
-                    insertFormatting(
-                      mainDescRef,
-                      'link',
-                      (val) => setFormData((p) => ({ ...p, description: val })),
-                      formData.description
-                    )
-                  }
-                  className="p-1.5 hover:bg-white rounded-lg text-slate-700 transition-colors cursor-pointer"
-                  title="Add Link"
-                >
-                  <LinkIcon className="w-3.5 h-3.5" />
-                </button>
-              </div>
-
-              <textarea
-                ref={mainDescRef}
-                name="description"
-                rows={5}
-                value={formData.description}
-                onChange={handleChange}
-                placeholder="Enter full comprehensive service overview..."
-                className="block w-full px-4 py-3 bg-slate-50/50 border border-slate-200 border-t-0 rounded-b-2xl text-slate-900 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#002B49]/30 focus:border-[#002B49] focus:bg-white transition-all"
-              />
-            </div>
+            {/* Main Description with RichTextEditor */}
+            <RichTextEditor
+              label="Full Service Detailed Description"
+              value={formData.description}
+              onChange={(val) => setFormData((prev) => ({ ...prev, description: val }))}
+              placeholder="Enter full comprehensive service overview or paste from Word, ChatGPT..."
+              rows={8}
+            />
           </div>
         </div>
 
