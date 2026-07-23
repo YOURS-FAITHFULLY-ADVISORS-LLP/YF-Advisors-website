@@ -577,6 +577,32 @@ export default function AboutUs() {
   const title = currentData.title || DEFAULT_ABOUT_DATA.title;
   const subtitle = currentData.subtitle || DEFAULT_ABOUT_DATA.subtitle;
 
+  // Format title so last 2 words always carry the teal-to-blue gradient
+  const renderFormattedAboutTitle = (text: string) => {
+    if (!text) return null;
+    const words = text.trim().split(/\s+/);
+
+    if (words.length >= 2) {
+      const normalPart = words.slice(0, words.length - 2).join(" ");
+      const gradientPart = words.slice(words.length - 2).join(" ");
+
+      return (
+        <>
+          {normalPart}{normalPart ? " " : ""}
+          <span className="text-transparent bg-clip-text bg-linear-to-r from-teal-500 to-blue-600">
+            {gradientPart}
+          </span>
+        </>
+      );
+    }
+
+    return (
+      <span className="text-transparent bg-clip-text bg-linear-to-r from-teal-500 to-blue-600">
+        {text}
+      </span>
+    );
+  };
+
   return (
     <section id="about-us" className="pt-24 pb-12 md:pt-32 md:pb-16 bg-slate-50 relative overflow-hidden">
       {/* --- Background Effects --- */}
@@ -596,17 +622,7 @@ export default function AboutUs() {
           </div>
 
           <h2 className="text-4xl md:text-6xl font-black text-[#002B49] mb-6 tracking-tight">
-            {title.includes("Trusted Excellence") ? (
-              <>
-                {title.split("Trusted Excellence")[0]}
-                <span className="text-transparent bg-clip-text bg-linear-to-r from-teal-500 to-blue-600">
-                  Trusted Excellence
-                </span>
-                {title.split("Trusted Excellence")[1]}
-              </>
-            ) : (
-              title
-            )}
+            {renderFormattedAboutTitle(title)}
           </h2>
 
           <p className="text-lg md:text-xl text-slate-600 max-w-3xl mx-auto leading-relaxed">
