@@ -40,7 +40,7 @@ export default function RichTextEditor({
   rows = 10,
   showPreviewTab = true,
 }: RichTextEditorProps) {
-  const [mode, setMode] = useState<'editor' | 'html' | 'preview'>('editor');
+  const [mode, setMode] = useState<'editor' | 'preview'>('editor');
   const [autoFormattedBanner, setAutoFormattedBanner] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
 
@@ -176,19 +176,6 @@ export default function RichTextEditor({
             >
               <Edit3 className="w-3.5 h-3.5" />
               <span>Editor</span>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => setMode('html')}
-              className={`px-3 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
-                mode === 'html'
-                  ? 'bg-white text-[#002B49] shadow-2xs'
-                  : 'text-slate-600 hover:text-slate-900'
-              }`}
-            >
-              <Code className="w-3.5 h-3.5" />
-              <span>HTML Source</span>
             </button>
 
             {showPreviewTab && (
@@ -375,9 +362,7 @@ export default function RichTextEditor({
               onChange={(e) => onChange(e.target.value)}
               onPaste={handlePaste}
               placeholder={placeholder}
-              className={`w-full p-4 border-0 text-slate-900 text-sm font-medium focus:outline-none transition-all ${
-                mode === 'html' ? 'font-mono text-xs bg-slate-900 text-slate-100' : 'bg-white'
-              }`}
+              className="w-full p-4 border-0 text-slate-900 text-sm font-medium focus:outline-none bg-white transition-all"
             />
           </>
         )}
