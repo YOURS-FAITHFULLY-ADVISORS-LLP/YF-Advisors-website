@@ -22,67 +22,68 @@ import {
   Award,
   Star
 } from "lucide-react";
-import Link from "next/link"
+import { AboutCMSData, fetchAboutData } from "@/src/services/cms.service";
+
 // ==========================================
-// SHARED DATA
+// DEFAULT FALLBACK DATA (Matches original design)
 // ==========================================
 
-const FEATURES_DATA = [
-  {
-    id: 1,
-    title: "Who We Are",
-    description: "A powerhouse team of 10+ partners and 50+ experts—including CAs, CSs, and legal professionals—serving clients in India, USA and Dubai.",
-    icon: <Users className="h-6 w-6 text-white" />,
-    colSpan: "md:col-span-2",
-    bg: "bg-linear-to-br from-[#002B49] to-[#00406b] text-white",
-    iconBg: "bg-white/10",
-    iconColor: "text-white"
-  },
-  {
-    id: 2,
-    title: "Our Vision",
-    points: [
-      "Building seamless 'lean' cultures.",
-      "Prioritizing absolute client trust.",
-      "Providing flexible, 24/7 global support.",
-    ],
-    icon: <Lightbulb className="h-6 w-6 text-white" />,
-    colSpan: "md:col-span-1",
-    bg: "bg-white border border-gray-100",
-    iconBg: "bg-amber-50",
-    iconColor: "text-amber-500"
-  },
-  {
-    id: 3,
-    title: "Our Mission",
-    points: [
-      "Turning innovative ideas into reality.",
-      "Setting the standard for pro services.",
-      "Delivering work teams are proud of.",
-    ],
-    icon: <Target className="h-6 w-6 text-white" />,
-    colSpan: "md:col-span-1",
-    bg: "bg-white border border-gray-100",
-    iconBg: "bg-rose-50",
-    iconColor: "text-rose-500"
-  },
-  {
-    id: 4,
-    title: "Why Choose Us?",
-    description: "We offer a fresh, practical approach to tax planning and financial maintenance. Our solutions are customized, innovative, and cost-effective—designed to make your life simpler.",
-    icon: <Award className="h-6 w-6 text-white" />,
-    colSpan: "md:col-span-2",
-    bg: "bg-linear-to-br from-teal-50 to-white border border-teal-100",
-    iconBg: "bg-teal-100",
-    iconColor: "text-teal-600"
-  }
-];
+const DEFAULT_ABOUT_DATA: AboutCMSData = {
+  id: "about",
+  title: "15+ Years of Trusted Excellence",
+  subtitle: "Strategic financial partners helping businesses grow with clarity, compliance, and confidence.",
+  whoWeAreTitle: "Who We Are",
+  whoWeAreContent: "A powerhouse team of 10+ partners and 50+ experts—including CAs, CSs, and legal professionals—serving clients in India, USA and Dubai.",
+  whyChooseTitle: "Why Choose Us?",
+  whyChooseContent: "We offer a fresh, practical approach to tax planning and financial maintenance. Our solutions are customized, innovative, and cost-effective—designed to make your life simpler.",
+  visionPoints: [
+    { title: "Building seamless 'lean' cultures.", order: 0 },
+    { title: "Prioritizing absolute client trust.", order: 1 },
+    { title: "Providing flexible, 24/7 global support.", order: 2 }
+  ],
+  missionPoints: [
+    { title: "Turning innovative ideas into reality.", order: 0 },
+    { title: "Setting the standard for pro services.", order: 1 },
+    { title: "Delivering work teams are proud of.", order: 2 }
+  ],
+  statistics: [
+    { title: "Global Presence", value: "India, USA & Dubai", icon: "Globe", order: 0 },
+    { title: "Trusted By", value: "10+ Partners", icon: "Shield", order: 1 },
+    { title: "Expert Team", value: "50+ Professionals", icon: "TrendingUp", order: 2 }
+  ]
+};
 
-const STATS_DATA = [
-  { icon: Globe, label: "Global Presence", sub: "India, USA & Dubai" },
-  { icon: Shield, label: "Trusted By", sub: "10+ Partners" },
-  { icon: TrendingUp, label: "Expert Team", sub: "50+ Professionals" },
-];
+// Icon resolver helper
+function getIconComponent(iconName?: string | null, fallbackIcon = Globe) {
+  if (!iconName) return fallbackIcon;
+  const name = iconName.toLowerCase();
+  if (name.includes("globe")) return Globe;
+  if (name.includes("shield")) return Shield;
+  if (name.includes("trending") || name.includes("chart")) return TrendingUp;
+  if (name.includes("user")) return Users;
+  if (name.includes("award") || name.includes("star")) return Award;
+  if (name.includes("light") || name.includes("idea")) return Lightbulb;
+  if (name.includes("target")) return Target;
+  return fallbackIcon;
+}
+
+interface FeatureCardItem {
+  id: number;
+  title: string;
+  description?: string;
+  points?: string[];
+  icon: React.ReactElement;
+  colSpan: string;
+  bg: string;
+  iconBg: string;
+  iconColor: string;
+}
+
+interface StatItem {
+  icon: React.ComponentType<{ size?: number; className?: string }>;
+  label: string;
+  sub: string;
+}
 
 // ==========================================
 // 1. CAROUSEL COMPONENT (Optimized for Mobile)
@@ -94,7 +95,7 @@ const GAP = 16;
 const SPRING_OPTIONS = { type: 'spring' as const, stiffness: 300, damping: 30 };
 
 interface CarouselItemProps {
-  item: typeof FEATURES_DATA[0];
+  item: FeatureCardItem;
   index: number;
   itemWidth: number;
   trackItemOffset: number;
@@ -125,7 +126,7 @@ function CarouselItem({ item, index, itemWidth, trackItemOffset, x, transition }
     >
       {/* Decorative Blur for Dark Cards */}
       {item.title.includes("Who") && (
-         <div className="absolute top-0 right-0 w-40 h-40 bg-white/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none" />
+        <div className="absolute top-0 right-0 w-40 h-40 bg-white/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none" />
       )}
 
       {/* Icon Section */}
@@ -135,7 +136,7 @@ function CarouselItem({ item, index, itemWidth, trackItemOffset, x, transition }
 
       {/* Content Section */}
       <div className="w-full">
-        <div className={`mb-3 font-bold text-2xl ${item.title.includes("Who") || item.title.includes("Choose") && item.bg.includes("text-white") ? "text-white" : "text-[#002B49]"}`}>
+        <div className={`mb-3 font-bold text-2xl ${item.title.includes("Who") || (item.title.includes("Choose") && item.bg.includes("text-white")) ? "text-white" : "text-[#002B49]"}`}>
           {item.title}
         </div>
         
@@ -160,11 +161,11 @@ function CarouselItem({ item, index, itemWidth, trackItemOffset, x, transition }
   );
 }
 
-const AboutCarousel = () => {
-  const items = FEATURES_DATA;
+const AboutCarousel = ({ featuresData, statsData }: { featuresData: FeatureCardItem[]; statsData: StatItem[] }) => {
+  const items = featuresData;
   const baseWidth = 340; 
   const autoplay = true;
-  const autoplayDelay = 3500; // Adjusted for better pacing
+  const autoplayDelay = 3500;
   const pauseOnHover = true;
 
   const containerPadding = 16;
@@ -172,6 +173,7 @@ const AboutCarousel = () => {
   const trackItemOffset = itemWidth + GAP;
   
   const itemsForRender = useMemo(() => {
+    if (!items.length) return [];
     return [items[items.length - 1], ...items, items[0]];
   }, [items]);
 
@@ -196,7 +198,6 @@ const AboutCarousel = () => {
       container.addEventListener('mouseenter', handleMouseEnter);
       container.addEventListener('mouseleave', handleMouseLeave);
       
-      // Touch events for mobile interaction pausing
       container.addEventListener('touchstart', handleMouseEnter);
       container.addEventListener('touchend', handleMouseLeave);
 
@@ -209,7 +210,7 @@ const AboutCarousel = () => {
     }
   }, [pauseOnHover]);
 
-  // Autoplay Logic - simplified and robust
+  // Autoplay Logic
   useEffect(() => {
     if (!autoplay || isHovered || isJumping) return;
 
@@ -223,20 +224,16 @@ const AboutCarousel = () => {
   const handleAnimationComplete = () => {
     const lastCloneIndex = itemsForRender.length - 1;
     
-    // Check if we reached the cloned end (Right side)
     if (position >= lastCloneIndex) {
       setIsJumping(true);
       setPosition(1);
       x.set(-1 * trackItemOffset);
       
-      // Use requestAnimationFrame to ensure the jump is invisible before resuming animation
       requestAnimationFrame(() => {
         setIsJumping(false);
         setIsAnimating(false);
       });
-    } 
-    // Check if we reached the cloned start (Left side)
-    else if (position <= 0) {
+    } else if (position <= 0) {
       setIsJumping(true);
       setPosition(items.length);
       x.set(-items.length * trackItemOffset);
@@ -257,7 +254,6 @@ const AboutCarousel = () => {
     if (direction !== 0) {
       setPosition(prev => prev + direction);
     }
-    // Resume autoplay after drag
     setIsHovered(false);
   };
 
@@ -320,7 +316,7 @@ const AboutCarousel = () => {
 
       {/* Mobile Stats Stack */}
       <div className="flex flex-col gap-4 mt-10 w-full max-w-xs">
-        {STATS_DATA.map((stat, i) => {
+        {statsData.map((stat, i) => {
           const Icon = stat.icon;
           return (
             <div key={i} className="flex items-center gap-4 p-4 rounded-xl bg-white border border-slate-100 shadow-sm">
@@ -353,7 +349,7 @@ const itemVariants: Variants = {
   show: { opacity: 1, y: 0, scale: 1, transition: { type: "spring", stiffness: 120, damping: 20 } },
 };
 
-const AboutGrid = () => {
+const AboutGrid = ({ featuresData, statsData }: { featuresData: FeatureCardItem[]; statsData: StatItem[] }) => {
   return (
     <div className="w-full">
       {/* Cards Grid */}
@@ -364,7 +360,7 @@ const AboutGrid = () => {
         viewport={{ once: true, margin: "-50px" }}
         className="grid grid-cols-1 md:grid-cols-3 gap-6"
       >
-        {FEATURES_DATA.map((feature, index) => {
+        {featuresData.map((feature, index) => {
           const isWide = feature.colSpan?.includes("2");
           return (
             <motion.div
@@ -379,7 +375,7 @@ const AboutGrid = () => {
             >
               {/* Decoration for Dark Card */}
               {feature.title === "Who We Are" && (
-                 <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none" />
+                <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none" />
               )}
 
               <div>
@@ -421,7 +417,7 @@ const AboutGrid = () => {
 
       {/* Stats Section Desktop */}
       <div className="mt-20 grid grid-cols-3 gap-6 max-w-5xl mx-auto">
-        {STATS_DATA.map((stat, i) => {
+        {statsData.map((stat, i) => {
           const Icon = stat.icon;
           return (
             <motion.div
@@ -445,13 +441,106 @@ const AboutGrid = () => {
 };
 
 // ==========================================
-// 3. MAIN COMPONENT (Responsive Switcher)
+// 3. MAIN COMPONENT (Responsive Switcher + API Integration)
 // ==========================================
 
 export default function AboutUs() {
+  const [data, setData] = useState<AboutCMSData>(DEFAULT_ABOUT_DATA);
+
+  useEffect(() => {
+    let isMounted = true;
+    async function loadAboutCMS() {
+      try {
+        const cmsData = await fetchAboutData();
+        if (isMounted && cmsData) {
+          setData(cmsData);
+        }
+      } catch (err) {
+        console.error("Error loading About CMS data:", err);
+      }
+    }
+    loadAboutCMS();
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  // Dynamically build feature cards from API data
+  const featuresData: FeatureCardItem[] = useMemo(() => {
+    const visionPts = (data.visionPoints && data.visionPoints.length > 0)
+      ? data.visionPoints.sort((a, b) => (a.order ?? 0) - (b.order ?? 0)).map((v) => v.title)
+      : (DEFAULT_ABOUT_DATA.visionPoints || []).map((v) => v.title);
+
+    const missionPts = (data.missionPoints && data.missionPoints.length > 0)
+      ? data.missionPoints.sort((a, b) => (a.order ?? 0) - (b.order ?? 0)).map((m) => m.title)
+      : (DEFAULT_ABOUT_DATA.missionPoints || []).map((m) => m.title);
+
+    return [
+      {
+        id: 1,
+        title: data.whoWeAreTitle || DEFAULT_ABOUT_DATA.whoWeAreTitle,
+        description: data.whoWeAreContent || DEFAULT_ABOUT_DATA.whoWeAreContent,
+        icon: <Users className="h-6 w-6 text-white" />,
+        colSpan: "md:col-span-2",
+        bg: "bg-linear-to-br from-[#002B49] to-[#00406b] text-white",
+        iconBg: "bg-white/10",
+        iconColor: "text-white"
+      },
+      {
+        id: 2,
+        title: "Our Vision",
+        points: visionPts,
+        icon: <Lightbulb className="h-6 w-6 text-white" />,
+        colSpan: "md:col-span-1",
+        bg: "bg-white border border-gray-100",
+        iconBg: "bg-amber-50",
+        iconColor: "text-amber-500"
+      },
+      {
+        id: 3,
+        title: "Our Mission",
+        points: missionPts,
+        icon: <Target className="h-6 w-6 text-white" />,
+        colSpan: "md:col-span-1",
+        bg: "bg-white border border-gray-100",
+        iconBg: "bg-rose-50",
+        iconColor: "text-rose-500"
+      },
+      {
+        id: 4,
+        title: data.whyChooseTitle || DEFAULT_ABOUT_DATA.whyChooseTitle,
+        description: data.whyChooseContent || DEFAULT_ABOUT_DATA.whyChooseContent,
+        icon: <Award className="h-6 w-6 text-white" />,
+        colSpan: "md:col-span-2",
+        bg: "bg-linear-to-br from-teal-50 to-white border border-teal-100",
+        iconBg: "bg-teal-100",
+        iconColor: "text-teal-600"
+      }
+    ];
+  }, [data]);
+
+  // Dynamically build statistics section from API data
+  const statsData: StatItem[] = useMemo(() => {
+    if (data.statistics && data.statistics.length > 0) {
+      const sorted = [...data.statistics].sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
+      return sorted.map((s) => ({
+        icon: getIconComponent(s.icon),
+        label: s.title,
+        sub: s.value
+      }));
+    }
+    return [
+      { icon: Globe, label: "Global Presence", sub: "India, USA & Dubai" },
+      { icon: Shield, label: "Trusted By", sub: "10+ Partners" },
+      { icon: TrendingUp, label: "Expert Team", sub: "50+ Professionals" }
+    ];
+  }, [data]);
+
+  const title = data.title || DEFAULT_ABOUT_DATA.title;
+  const subtitle = data.subtitle || DEFAULT_ABOUT_DATA.subtitle;
+
   return (
     <section id="about-us" className="pt-24 pb-12 md:pt-32 md:pb-16 bg-slate-50 relative overflow-hidden">
-      
       {/* --- Background Effects --- */}
       <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
         <div className="absolute -top-[20%] -right-[10%] w-200 h-200 bg-teal-100/30 rounded-full blur-[120px]" />
@@ -459,7 +548,6 @@ export default function AboutUs() {
       </div>
 
       <div className="max-w-7xl mx-auto px-5 sm:px-6 lg:px-8 relative z-10">
-        
         {/* --- Header (Shared) --- */}
         <div className="text-center mb-16 md:mb-20">
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white border border-teal-100 shadow-sm text-teal-700 mb-6">
@@ -470,35 +558,34 @@ export default function AboutUs() {
           </div>
 
           <h2 className="text-4xl md:text-6xl font-black text-[#002B49] mb-6 tracking-tight">
-            15+ Years of{" "}
-            <span className="text-transparent bg-clip-text bg-linear-to-r from-teal-500 to-blue-600">
-              Trusted Excellence
-            </span>
+            {title.includes("Trusted Excellence") ? (
+              <>
+                {title.split("Trusted Excellence")[0]}
+                <span className="text-transparent bg-clip-text bg-linear-to-r from-teal-500 to-blue-600">
+                  Trusted Excellence
+                </span>
+                {title.split("Trusted Excellence")[1]}
+              </>
+            ) : (
+              title
+            )}
           </h2>
 
           <p className="text-lg md:text-xl text-slate-600 max-w-3xl mx-auto leading-relaxed">
-            Strategic financial partners helping businesses grow with clarity, compliance, and confidence.
+            {subtitle}
           </p>
         </div>
 
         {/* --- DESKTOP VIEW (Grid) --- */}
         <div className="hidden lg:block">
-          <AboutGrid />
+          <AboutGrid featuresData={featuresData} statsData={statsData} />
         </div>
 
         {/* --- MOBILE VIEW (Carousel) --- */}
         <div className="block lg:hidden">
-          <AboutCarousel />
+          <AboutCarousel featuresData={featuresData} statsData={statsData} />
         </div>
-
-        </div>
-
-      {/* Global CSS for Tailwind v4 compatibility if needed for custom animations */}
-      <style jsx global>{`
-        @keyframes shimmer {
-          100% { transform: translateX(100%); }
-        }
-      `}</style>
+      </div>
     </section>
   );
 }

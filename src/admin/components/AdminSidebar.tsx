@@ -7,6 +7,7 @@ import { usePathname } from 'next/navigation';
 import { 
   LayoutDashboard, 
   Sparkles,
+  Info,
   FileText, 
   Briefcase, 
   Users, 
@@ -30,6 +31,7 @@ export default function AdminSidebar({ mobileOpen, setMobileOpen, adminId = 'Adm
   const navItems = [
     { name: 'Dashboard', href: '/admin', icon: LayoutDashboard },
     { name: 'Homepage / Hero', href: '/admin/homepage', icon: Sparkles },
+    { name: 'About Section', href: '/admin/about', icon: Info },
     { name: 'Blogs', href: '/admin/blogs', icon: FileText },
     { name: 'Services', href: '/admin/services', icon: Briefcase },
     { name: 'Team', href: '/admin/team', icon: Users },
