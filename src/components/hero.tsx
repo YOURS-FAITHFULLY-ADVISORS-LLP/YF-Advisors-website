@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
-import { ArrowUpRight, PlayCircle } from "lucide-react";
+import { ArrowUpRight, PlayCircle, AlertCircle } from "lucide-react";
 import { motion } from "framer-motion";
 
 export interface HeroCMSData {
@@ -24,8 +24,48 @@ const DEFAULT_HERO_DATA: HeroCMSData = {
   heroButtonLink: "https://wa.me/918080506185",
 };
 
+// --- Skeleton Component for Hero (Prevents FOUC) ---
+const HeroSkeleton = () => {
+  return (
+    <section className="relative w-full pt-24 pb-40 md:pt-32 md:pb-48 overflow-hidden bg-white">
+      {/* Background Elements */}
+      <div className="absolute inset-0 pointer-events-none">
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,#8080800a_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] bg-size-[24px_24px]" />
+        <div className="absolute top-0 left-0 right-0 h-200 opacity-60">
+          <div className="absolute top-[-20%] left-[-10%] w-[60%] h-[80%] rounded-full bg-indigo-200/40 blur-[120px]" />
+          <div className="absolute top-[-10%] right-[-10%] w-[50%] h-[80%] rounded-full bg-teal-200/40 blur-[120px]" />
+        </div>
+      </div>
+
+      <div className="max-w-5xl mx-auto px-6 relative z-10">
+        <div className="flex flex-col items-center text-center animate-pulse">
+          {/* Skeleton Title (2 Lines) */}
+          <div className="w-full max-w-3xl space-y-4 mb-6">
+            <div className="h-12 md:h-16 bg-slate-200 rounded-2xl w-5/6 mx-auto" />
+            <div className="h-12 md:h-16 bg-slate-200 rounded-2xl w-4/6 mx-auto" />
+          </div>
+
+          {/* Skeleton Description (2 Lines) */}
+          <div className="w-full max-w-2xl space-y-3 mb-10">
+            <div className="h-5 bg-slate-100 rounded-xl w-full mx-auto" />
+            <div className="h-5 bg-slate-100 rounded-xl w-4/5 mx-auto" />
+          </div>
+
+          {/* Skeleton Buttons */}
+          <div className="flex flex-col sm:flex-row items-center gap-4 w-full sm:w-auto">
+            <div className="h-14 w-48 bg-slate-200 rounded-full" />
+            <div className="h-14 w-48 bg-slate-200 rounded-full" />
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+};
+
 const Hero = () => {
-  const [data, setData] = useState<HeroCMSData>(DEFAULT_HERO_DATA);
+  const [data, setData] = useState<HeroCMSData | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [hasError, setHasError] = useState(false);
 
   useEffect(() => {
     let isMounted = true;
@@ -36,10 +76,21 @@ const Hero = () => {
           const json = await res.json();
           if (isMounted && json.success && json.data) {
             setData(json.data);
+            setLoading(false);
+            return;
           }
+        }
+        if (isMounted) {
+          setData(DEFAULT_HERO_DATA);
+          setLoading(false);
         }
       } catch (err) {
         console.error("Failed to fetch homepage hero data:", err);
+        if (isMounted) {
+          setData(DEFAULT_HERO_DATA);
+          setHasError(true);
+          setLoading(false);
+        }
       }
     }
     loadCMSData();
@@ -60,11 +111,17 @@ const Hero = () => {
     }
   };
 
-  const title = data.heroTitle || DEFAULT_HERO_DATA.heroTitle!;
-  const description = data.heroDescription || DEFAULT_HERO_DATA.heroDescription!;
-  const buttonText = data.heroButtonText || DEFAULT_HERO_DATA.heroButtonText!;
-  const buttonLink = data.heroButtonLink || DEFAULT_HERO_DATA.heroButtonLink!;
-  const heroImage = data.heroImage;
+  // Show Skeleton while loading (Removes FOUC completely)
+  if (loading) {
+    return <HeroSkeleton />;
+  }
+
+  const currentData = data || DEFAULT_HERO_DATA;
+  const title = currentData.heroTitle || DEFAULT_HERO_DATA.heroTitle!;
+  const description = currentData.heroDescription || DEFAULT_HERO_DATA.heroDescription!;
+  const buttonText = currentData.heroButtonText || DEFAULT_HERO_DATA.heroButtonText!;
+  const buttonLink = "https://wa.me/918080506185";
+  const heroImage = currentData.heroImage;
 
   // Ensures headline splits cleanly into 2 lines
   const renderTwoLineTitle = (text: string) => {

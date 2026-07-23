@@ -53,6 +53,37 @@ const DEFAULT_ABOUT_DATA: AboutCMSData = {
   ]
 };
 
+// --- Skeleton Component for About Section (Prevents FOUC) ---
+const AboutSkeleton = () => {
+  return (
+    <section className="pt-24 pb-12 md:pt-32 md:pb-16 bg-slate-50 relative overflow-hidden">
+      <div className="max-w-7xl mx-auto px-5 sm:px-6 lg:px-8 relative z-10 animate-pulse">
+        {/* Header Skeleton */}
+        <div className="text-center mb-16 md:mb-20 space-y-4">
+          <div className="h-6 bg-slate-200 rounded-full w-40 mx-auto" />
+          <div className="h-10 md:h-14 bg-slate-200 rounded-2xl w-3/4 mx-auto" />
+          <div className="h-5 bg-slate-200 rounded-xl w-1/2 mx-auto" />
+        </div>
+
+        {/* Cards Grid Skeleton */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="h-72 bg-slate-200 rounded-4xl md:col-span-2" />
+          <div className="h-72 bg-slate-200 rounded-4xl md:col-span-1" />
+          <div className="h-72 bg-slate-200 rounded-4xl md:col-span-1" />
+          <div className="h-72 bg-slate-200 rounded-4xl md:col-span-2" />
+        </div>
+
+        {/* Stats Skeleton */}
+        <div className="mt-20 grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
+          <div className="h-24 bg-slate-200 rounded-2xl" />
+          <div className="h-24 bg-slate-200 rounded-2xl" />
+          <div className="h-24 bg-slate-200 rounded-2xl" />
+        </div>
+      </div>
+    </section>
+  );
+};
+
 // Icon resolver helper
 function getIconComponent(iconName?: string | null, fallbackIcon = Globe) {
   if (!iconName) return fallbackIcon;
@@ -445,18 +476,28 @@ const AboutGrid = ({ featuresData, statsData }: { featuresData: FeatureCardItem[
 // ==========================================
 
 export default function AboutUs() {
-  const [data, setData] = useState<AboutCMSData>(DEFAULT_ABOUT_DATA);
+  const [data, setData] = useState<AboutCMSData | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     let isMounted = true;
     async function loadAboutCMS() {
       try {
         const cmsData = await fetchAboutData();
-        if (isMounted && cmsData) {
-          setData(cmsData);
+        if (isMounted) {
+          if (cmsData) {
+            setData(cmsData);
+          } else {
+            setData(DEFAULT_ABOUT_DATA);
+          }
+          setLoading(false);
         }
       } catch (err) {
         console.error("Error loading About CMS data:", err);
+        if (isMounted) {
+          setData(DEFAULT_ABOUT_DATA);
+          setLoading(false);
+        }
       }
     }
     loadAboutCMS();
@@ -465,79 +506,76 @@ export default function AboutUs() {
     };
   }, []);
 
+  // Show Skeleton while fetching (Prevents FOUC)
+  if (loading) {
+    return <AboutSkeleton />;
+  }
+
+  const currentData = data || DEFAULT_ABOUT_DATA;
+
   // Dynamically build feature cards from API data
-  const featuresData: FeatureCardItem[] = useMemo(() => {
-    const visionPts = (data.visionPoints && data.visionPoints.length > 0)
-      ? data.visionPoints.sort((a, b) => (a.order ?? 0) - (b.order ?? 0)).map((v) => v.title)
-      : (DEFAULT_ABOUT_DATA.visionPoints || []).map((v) => v.title);
-
-    const missionPts = (data.missionPoints && data.missionPoints.length > 0)
-      ? data.missionPoints.sort((a, b) => (a.order ?? 0) - (b.order ?? 0)).map((m) => m.title)
-      : (DEFAULT_ABOUT_DATA.missionPoints || []).map((m) => m.title);
-
-    return [
-      {
-        id: 1,
-        title: data.whoWeAreTitle || DEFAULT_ABOUT_DATA.whoWeAreTitle,
-        description: data.whoWeAreContent || DEFAULT_ABOUT_DATA.whoWeAreContent,
-        icon: <Users className="h-6 w-6 text-white" />,
-        colSpan: "md:col-span-2",
-        bg: "bg-linear-to-br from-[#002B49] to-[#00406b] text-white",
-        iconBg: "bg-white/10",
-        iconColor: "text-white"
-      },
-      {
-        id: 2,
-        title: "Our Vision",
-        points: visionPts,
-        icon: <Lightbulb className="h-6 w-6 text-white" />,
-        colSpan: "md:col-span-1",
-        bg: "bg-white border border-gray-100",
-        iconBg: "bg-amber-50",
-        iconColor: "text-amber-500"
-      },
-      {
-        id: 3,
-        title: "Our Mission",
-        points: missionPts,
-        icon: <Target className="h-6 w-6 text-white" />,
-        colSpan: "md:col-span-1",
-        bg: "bg-white border border-gray-100",
-        iconBg: "bg-rose-50",
-        iconColor: "text-rose-500"
-      },
-      {
-        id: 4,
-        title: data.whyChooseTitle || DEFAULT_ABOUT_DATA.whyChooseTitle,
-        description: data.whyChooseContent || DEFAULT_ABOUT_DATA.whyChooseContent,
-        icon: <Award className="h-6 w-6 text-white" />,
-        colSpan: "md:col-span-2",
-        bg: "bg-linear-to-br from-teal-50 to-white border border-teal-100",
-        iconBg: "bg-teal-100",
-        iconColor: "text-teal-600"
-      }
-    ];
-  }, [data]);
+  const featuresData: FeatureCardItem[] = [
+    {
+      id: 1,
+      title: currentData.whoWeAreTitle || DEFAULT_ABOUT_DATA.whoWeAreTitle,
+      description: currentData.whoWeAreContent || DEFAULT_ABOUT_DATA.whoWeAreContent,
+      icon: <Users className="h-6 w-6 text-white" />,
+      colSpan: "md:col-span-2",
+      bg: "bg-linear-to-br from-[#002B49] to-[#00406b] text-white",
+      iconBg: "bg-white/10",
+      iconColor: "text-white"
+    },
+    {
+      id: 2,
+      title: "Our Vision",
+      points: (currentData.visionPoints && currentData.visionPoints.length > 0)
+        ? [...currentData.visionPoints].sort((a, b) => (a.order ?? 0) - (b.order ?? 0)).map((v) => v.title)
+        : (DEFAULT_ABOUT_DATA.visionPoints || []).map((v) => v.title),
+      icon: <Lightbulb className="h-6 w-6 text-white" />,
+      colSpan: "md:col-span-1",
+      bg: "bg-white border border-gray-100",
+      iconBg: "bg-amber-50",
+      iconColor: "text-amber-500"
+    },
+    {
+      id: 3,
+      title: "Our Mission",
+      points: (currentData.missionPoints && currentData.missionPoints.length > 0)
+        ? [...currentData.missionPoints].sort((a, b) => (a.order ?? 0) - (b.order ?? 0)).map((m) => m.title)
+        : (DEFAULT_ABOUT_DATA.missionPoints || []).map((m) => m.title),
+      icon: <Target className="h-6 w-6 text-white" />,
+      colSpan: "md:col-span-1",
+      bg: "bg-white border border-gray-100",
+      iconBg: "bg-rose-50",
+      iconColor: "text-rose-500"
+    },
+    {
+      id: 4,
+      title: currentData.whyChooseTitle || DEFAULT_ABOUT_DATA.whyChooseTitle,
+      description: currentData.whyChooseContent || DEFAULT_ABOUT_DATA.whyChooseContent,
+      icon: <Award className="h-6 w-6 text-white" />,
+      colSpan: "md:col-span-2",
+      bg: "bg-linear-to-br from-teal-50 to-white border border-teal-100",
+      iconBg: "bg-teal-100",
+      iconColor: "text-teal-600"
+    }
+  ];
 
   // Dynamically build statistics section from API data
-  const statsData: StatItem[] = useMemo(() => {
-    if (data.statistics && data.statistics.length > 0) {
-      const sorted = [...data.statistics].sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
-      return sorted.map((s) => ({
+  const statsData: StatItem[] = (currentData.statistics && currentData.statistics.length > 0)
+    ? [...currentData.statistics].sort((a, b) => (a.order ?? 0) - (b.order ?? 0)).map((s) => ({
         icon: getIconComponent(s.icon),
         label: s.title,
         sub: s.value
-      }));
-    }
-    return [
-      { icon: Globe, label: "Global Presence", sub: "India, USA & Dubai" },
-      { icon: Shield, label: "Trusted By", sub: "10+ Partners" },
-      { icon: TrendingUp, label: "Expert Team", sub: "50+ Professionals" }
-    ];
-  }, [data]);
+      }))
+    : [
+        { icon: Globe, label: "Global Presence", sub: "India, USA & Dubai" },
+        { icon: Shield, label: "Trusted By", sub: "10+ Partners" },
+        { icon: TrendingUp, label: "Expert Team", sub: "50+ Professionals" }
+      ];
 
-  const title = data.title || DEFAULT_ABOUT_DATA.title;
-  const subtitle = data.subtitle || DEFAULT_ABOUT_DATA.subtitle;
+  const title = currentData.title || DEFAULT_ABOUT_DATA.title;
+  const subtitle = currentData.subtitle || DEFAULT_ABOUT_DATA.subtitle;
 
   return (
     <section id="about-us" className="pt-24 pb-12 md:pt-32 md:pb-16 bg-slate-50 relative overflow-hidden">

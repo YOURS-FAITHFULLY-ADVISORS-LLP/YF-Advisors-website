@@ -7,8 +7,46 @@ import Image from "next/image";
 import { blogPosts } from "../data/blogs";
 
 const Blog = () => {
-  // Explicitly type state for TypeScript (number or null)
-  const [hoveredId, setHoveredId] = useState<number | null>(null);
+  const [hoveredId, setHoveredId] = useState<any>(null);
+  const [blogs, setBlogs] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  React.useEffect(() => {
+    let isMounted = true;
+    async function fetchBlogs() {
+      try {
+        const res = await fetch('/api/admin/blogs?published=true');
+        if (res.ok) {
+          const json = await res.json();
+          if (isMounted && json.success && Array.isArray(json.data) && json.data.length > 0) {
+            const formatted = json.data.map((b: any) => ({
+              id: b.id,
+              title: b.title,
+              slug: b.slug,
+              category: b.category || "Insights",
+              date: new Date(b.createdAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }),
+              image: b.coverImage || "/blog/default.jpg",
+              excerpt: b.excerpt || (b.content ? b.content.replace(/<[^>]*>?/gm, '').substring(0, 120) + "..." : "")
+            }));
+            setBlogs(formatted);
+            setLoading(false);
+            return;
+          }
+        }
+        if (isMounted) {
+          setBlogs(blogPosts);
+          setLoading(false);
+        }
+      } catch (err) {
+        if (isMounted) {
+          setBlogs(blogPosts);
+          setLoading(false);
+        }
+      }
+    }
+    fetchBlogs();
+    return () => { isMounted = false; };
+  }, []);
 
   return (
     <SectionWrapper>
@@ -22,67 +60,71 @@ const Blog = () => {
           </p>
         </div>
         
-        <div className="grid">
-          {blogPosts.map((post, index) => (
-            <CardWrapper 
-              key={post.id}
-              $delay={index * 0.1} // Staggered delay based on index
-              onMouseEnter={() => setHoveredId(post.id)}
-              onMouseLeave={() => setHoveredId(null)}
-              className={hoveredId === post.id ? 'card-hovered' : ''}
-            >
-              {/* Dynamic Link using the slug from your data */}
-              {/* ADDED: target="_blank" to open in new tab */}
-              <Link 
-                href={`/blog/${post.slug}`} 
-                className="card-link"
-                target="_blank" 
-                rel="noopener noreferrer"
+        {loading ? (
+          <div className="grid">
+            {[1, 2, 3].map((n) => (
+              <div key={n} className="h-96 bg-slate-200/80 rounded-3xl animate-pulse" />
+            ))}
+          </div>
+        ) : (
+          <div className="grid">
+            {blogs.map((post, index) => (
+              <CardWrapper 
+                key={post.id}
+                $delay={index * 0.1}
+                onMouseEnter={() => setHoveredId(post.id)}
+                onMouseLeave={() => setHoveredId(null)}
+                className={hoveredId === post.id ? 'card-hovered' : ''}
               >
-                <div className="card">
-                  {/* Image Area */}
-                  <div className="image-container">
-                    <Image 
-                      src={post.image} 
-                      alt={post.title} 
-                      fill
-                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                      className="blog-img"
-                    />
-                    <div className="gradient-overlay"></div>
-                    <div className="category-tag">
-                      <span className="category-dot"></span>
-                      {post.category}
+                <Link 
+                  href={`/blog/${post.slug}`} 
+                  className="card-link"
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                >
+                  <div className="card">
+                    <div className="image-container">
+                      <Image 
+                        src={post.image} 
+                        alt={post.title} 
+                        fill
+                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                        className="blog-img"
+                      />
+                      <div className="gradient-overlay"></div>
+                      <div className="category-tag">
+                        <span className="category-dot"></span>
+                        {post.category}
+                      </div>
+                    </div>
+
+                    <div className="content-padding">
+                      <div className="meta-info">
+                        <span className="date-text">{post.date}</span>
+                      </div>
+
+                      <div className="title-wrapper">
+                         <h3 className="heading">{post.title}</h3>
+                      </div>
+                      
+                      <p className="excerpt">{post.excerpt}</p>
+                      
+                      <div className="footer">
+                        <span className="read-more-btn">
+                          Read Article
+                          <svg className="arrow-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                            <polyline points="12 5 19 12 12 19"></polyline>
+                          </svg>
+                        </span>
+                      </div>
                     </div>
                   </div>
-
-                  {/* Content Area */}
-                  <div className="content-padding">
-                    <div className="meta-info">
-                      <span className="date-text">{post.date}</span>
-                    </div>
-
-                    <div className="title-wrapper">
-                       <h3 className="heading">{post.title}</h3>
-                    </div>
-                    
-                    <p className="excerpt">{post.excerpt}</p>
-                    
-                    <div className="footer">
-                      <span className="read-more-btn">
-                        Read Article
-                        <svg className="arrow-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                          <line x1="5" y1="12" x2="19" y2="12"></line>
-                          <polyline points="12 5 19 12 12 19"></polyline>
-                        </svg>
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </Link>
-            </CardWrapper>
-          ))}
-        </div>
+                </Link>
+              </CardWrapper>
+            ))}
+          </div>
+        )}
       </div>
     </SectionWrapper>
   );
