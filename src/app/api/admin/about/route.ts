@@ -54,7 +54,7 @@ export const PATCH = withApiHandler(async (req: NextRequest) => {
 
   const data = validation.data;
 
-  const updatedAbout = await prisma.$transaction(async (tx) => {
+  const updatedAbout = await prisma.$transaction(async (tx: any) => {
     // Sync Vision Points if provided
     if (data.visionPoints !== undefined) {
       await tx.visionPoint.deleteMany({ where: { aboutId: currentRecord.id } });
