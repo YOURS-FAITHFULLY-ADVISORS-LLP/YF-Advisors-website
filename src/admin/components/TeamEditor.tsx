@@ -21,6 +21,14 @@ interface TeamEditorProps {
   memberId?: string;
 }
 
+const extractLinkedinUsername = (url?: string) => {
+  if (!url) return '';
+  let clean = url.trim();
+  clean = clean.replace(/^https?:\/\/(www\.)?linkedin\.com\/in\//i, '');
+  clean = clean.replace(/\/+$/, '');
+  return clean;
+};
+
 export default function TeamEditor({ memberId }: TeamEditorProps) {
   const router = useRouter();
   const isNew = !memberId;
@@ -258,20 +266,32 @@ export default function TeamEditor({ memberId }: TeamEditorProps) {
             </div>
           </div>
 
-          {/* LinkedIn URL, Display Order & Status */}
+          {/* LinkedIn Profile Prefix & Username, Display Order & Status */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
-            <div className="space-y-1.5">
+            <div className="space-y-1.5 sm:col-span-1">
               <label className="block text-xs font-bold text-[#002B49] uppercase tracking-wider">
-                LinkedIn Profile URL
+                LinkedIn Profile Username
               </label>
-              <input
-                type="text"
-                name="linkedinUrl"
-                value={formData.linkedinUrl}
-                onChange={handleChange}
-                placeholder="https://www.linkedin.com/in/..."
-                className="block w-full px-4 py-3 bg-slate-50/50 border border-slate-200 rounded-2xl text-slate-900 placeholder-slate-400 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#002B49]/30 focus:border-[#002B49] focus:bg-white transition-all"
-              />
+              <div className="flex items-center rounded-2xl border border-slate-200 bg-slate-50/50 overflow-hidden focus-within:ring-2 focus-within:ring-[#002B49]/30 focus-within:border-[#002B49] focus-within:bg-white transition-all">
+                <span className="px-3 py-3 text-[11px] font-bold text-slate-500 bg-slate-100/90 border-r border-slate-200 select-none shrink-0">
+                  linkedin.com/in/
+                </span>
+                <input
+                  type="text"
+                  name="linkedinUrl"
+                  value={extractLinkedinUsername(formData.linkedinUrl)}
+                  onChange={(e) => {
+                    const rawVal = e.target.value;
+                    const cleanUsername = rawVal.replace(/^https?:\/\/(www\.)?linkedin\.com\/in\//i, '').replace(/\/+$/, '');
+                    setFormData((prev) => ({
+                      ...prev,
+                      linkedinUrl: cleanUsername ? `https://www.linkedin.com/in/${cleanUsername}/` : '',
+                    }));
+                  }}
+                  placeholder="username"
+                  className="w-full px-3 py-3 text-slate-900 text-xs font-bold bg-transparent focus:outline-none placeholder-slate-400"
+                />
+              </div>
             </div>
 
             <div className="space-y-1.5">
