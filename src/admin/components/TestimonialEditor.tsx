@@ -14,6 +14,7 @@ import {
   RefreshCw,
   User
 } from 'lucide-react';
+import ImageUploadInput from './ImageUploadInput';
 
 interface TestimonialEditorProps {
   testimonialId?: string;
@@ -311,19 +312,13 @@ export default function TestimonialEditor({ testimonialId }: TestimonialEditorPr
 
           {/* Profile Image & Display Order */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-            <div className="space-y-1.5">
-              <label className="block text-xs font-bold text-[#002B49] uppercase tracking-wider">
-                Profile Image URL (Optional)
-              </label>
-              <input
-                type="text"
-                name="profileImage"
-                value={formData.profileImage}
-                onChange={handleChange}
-                placeholder="https://.../avatar.jpg"
-                className="block w-full px-4 py-3 bg-slate-50/50 border border-slate-200 rounded-2xl text-slate-900 placeholder-slate-400 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#002B49]/30 focus:border-[#002B49] focus:bg-white transition-all"
-              />
-            </div>
+            <ImageUploadInput
+              label="Profile Image"
+              value={formData.profileImage}
+              onChange={(url) => setFormData((prev) => ({ ...prev, profileImage: url }))}
+              folder="testimonials"
+              placeholder="https://.../avatar.jpg"
+            />
 
             <div className="space-y-1.5">
               <label className="block text-xs font-bold text-[#002B49] uppercase tracking-wider">

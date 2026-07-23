@@ -23,6 +23,7 @@ import {
   Twitter,
   Youtube
 } from 'lucide-react';
+import ImageUploadInput from './ImageUploadInput';
 
 export default function SettingsEditor() {
   const [formData, setFormData] = useState({
@@ -352,50 +353,32 @@ export default function SettingsEditor() {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
-            <div className="space-y-1.5">
-              <label className="block text-xs font-bold text-[#002B49] uppercase tracking-wider">
-                Main Logo URL
-              </label>
-              <input
-                type="text"
-                name="logo"
-                disabled={!isEditing}
-                value={formData.logo}
-                onChange={handleChange}
-                placeholder="https://.../logo.png"
-                className={inputClass}
-              />
-            </div>
+            <ImageUploadInput
+              label="Main Logo"
+              value={formData.logo}
+              onChange={(url) => setFormData((prev) => ({ ...prev, logo: url }))}
+              folder="logo"
+              placeholder="https://.../logo.png"
+              disabled={!isEditing}
+            />
 
-            <div className="space-y-1.5">
-              <label className="block text-xs font-bold text-[#002B49] uppercase tracking-wider">
-                Favicon URL
-              </label>
-              <input
-                type="text"
-                name="favicon"
-                disabled={!isEditing}
-                value={formData.favicon}
-                onChange={handleChange}
-                placeholder="https://.../favicon.ico"
-                className={inputClass}
-              />
-            </div>
+            <ImageUploadInput
+              label="Favicon"
+              value={formData.favicon}
+              onChange={(url) => setFormData((prev) => ({ ...prev, favicon: url }))}
+              folder="logo"
+              placeholder="https://.../favicon.ico"
+              disabled={!isEditing}
+            />
 
-            <div className="space-y-1.5">
-              <label className="block text-xs font-bold text-[#002B49] uppercase tracking-wider">
-                OG Social Image URL
-              </label>
-              <input
-                type="text"
-                name="ogImage"
-                disabled={!isEditing}
-                value={formData.ogImage}
-                onChange={handleChange}
-                placeholder="https://.../og-banner.jpg"
-                className={inputClass}
-              />
-            </div>
+            <ImageUploadInput
+              label="OG Social Share Image"
+              value={formData.ogImage}
+              onChange={(url) => setFormData((prev) => ({ ...prev, ogImage: url }))}
+              folder="logo"
+              placeholder="https://.../og-banner.jpg"
+              disabled={!isEditing}
+            />
           </div>
         </div>
 

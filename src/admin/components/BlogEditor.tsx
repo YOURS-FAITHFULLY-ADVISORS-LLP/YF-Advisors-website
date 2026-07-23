@@ -13,7 +13,9 @@ import {
   CheckCircle2, 
   AlertCircle, 
   FileText, 
-  Tag, 
+  Image as ImageIcon,
+  Tag,
+  Eye,
   User, 
   RefreshCw,
   Bold,
@@ -23,6 +25,7 @@ import {
   Link as LinkIcon,
   Code
 } from 'lucide-react';
+import ImageUploadInput from './ImageUploadInput';
 
 interface BlogSection {
   id?: string;
@@ -486,19 +489,13 @@ export default function BlogEditor({ blogId }: BlogEditorProps) {
 
             {/* Featured Image & Tags */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-              <div className="space-y-1.5">
-                <label className="block text-xs font-bold text-[#002B49] uppercase tracking-wider">
-                  Featured Image URL
-                </label>
-                <input
-                  type="text"
-                  name="image"
-                  value={formData.image}
-                  onChange={handleChange}
-                  placeholder="https://.../spark.jpg"
-                  className="block w-full px-4 py-3 bg-slate-50/50 border border-slate-200 rounded-2xl text-slate-900 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#002B49]/30 focus:border-[#002B49] focus:bg-white transition-all"
-                />
-              </div>
+              <ImageUploadInput
+                label="Featured Image"
+                value={formData.image}
+                onChange={(url) => setFormData((prev) => ({ ...prev, image: url }))}
+                folder="blog"
+                placeholder="https://.../spark.jpg"
+              />
 
               <div className="space-y-1.5">
                 <label className="block text-xs font-bold text-[#002B49] uppercase tracking-wider">

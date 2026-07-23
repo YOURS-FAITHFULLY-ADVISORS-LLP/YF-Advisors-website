@@ -15,6 +15,7 @@ import {
   RefreshCw,
   FileText
 } from 'lucide-react';
+import ImageUploadInput from './ImageUploadInput';
 
 interface TeamEditorProps {
   memberId?: string;
@@ -233,20 +234,14 @@ export default function TeamEditor({ memberId }: TeamEditorProps) {
 
           {/* Profile Image & Experience */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-            <div className="space-y-1.5">
-              <label className="block text-xs font-bold text-[#002B49] uppercase tracking-wider">
-                Profile Image URL <span className="text-red-500">*</span>
-              </label>
-              <input
-                type="text"
-                name="profileImage"
-                required
-                value={formData.profileImage}
-                onChange={handleChange}
-                placeholder="https://.../vishal.png"
-                className="block w-full px-4 py-3 bg-slate-50/50 border border-slate-200 rounded-2xl text-slate-900 placeholder-slate-400 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#002B49]/30 focus:border-[#002B49] focus:bg-white transition-all"
-              />
-            </div>
+            <ImageUploadInput
+              label="Profile Image"
+              value={formData.profileImage}
+              onChange={(url) => setFormData((prev) => ({ ...prev, profileImage: url }))}
+              folder="team"
+              placeholder="https://.../vishal.png"
+              required={true}
+            />
 
             <div className="space-y-1.5">
               <label className="block text-xs font-bold text-[#002B49] uppercase tracking-wider">
