@@ -32,10 +32,6 @@ function normalizeTitle(title: string): string {
     .replace(/[^a-z0-9]/g, "");
 }
 
-
-// --- Add with other imports ---
-import { blogPosts } from "../src/data/blogs";
-
 // ==========================================
 // 1. TEAM MIGRATION
 // ==========================================
