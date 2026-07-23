@@ -366,6 +366,87 @@ export default function AboutEditor() {
             </div>
 
             <div className="space-y-3">
+              <div className="space-y-1">
+                <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider">Card Title</label>
+                <input
+                  type="text"
+                  name="whoWeAreTitle"
+                  value={formData.whoWeAreTitle}
+                  onChange={handleChange}
+                  placeholder="Who We Are"
+                  className="block w-full px-4 py-2.5 bg-white border border-slate-300 rounded-xl text-slate-900 text-xs font-bold placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-[#002B49]/30"
+                />
+              </div>
+
+              <div className="space-y-1">
+                <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider">Card Content</label>
+                <textarea
+                  name="whoWeAreContent"
+                  rows={4}
+                  value={formData.whoWeAreContent}
+                  onChange={handleChange}
+                  placeholder="A powerhouse team of 10+ partners and 50+ experts..."
+                  className="block w-full px-4 py-2.5 bg-white border border-slate-300 rounded-xl text-slate-900 text-xs font-bold placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-[#002B49]/30"
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Why Choose Us */}
+          <div className="bg-white border border-slate-200/90 rounded-3xl p-6 sm:p-8 shadow-2xs space-y-4">
+            <div className="flex items-center gap-2 border-b border-slate-100 pb-3">
+              <Award className="w-5 h-5 text-[#002B49]" />
+              <h2 className="text-base font-bold font-serif text-[#002B49]">"Why Choose Us?" Card</h2>
+            </div>
+
+            <div className="space-y-3">
+              <div className="space-y-1">
+                <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider">Card Title</label>
+                <input
+                  type="text"
+                  name="whyChooseTitle"
+                  value={formData.whyChooseTitle}
+                  onChange={handleChange}
+                  placeholder="Why Choose Us?"
+                  className="block w-full px-4 py-2.5 bg-white border border-slate-300 rounded-xl text-slate-900 text-xs font-bold placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-[#002B49]/30"
+                />
+              </div>
+
+              <div className="space-y-1">
+                <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider">Card Content</label>
+                <textarea
+                  name="whyChooseContent"
+                  rows={4}
+                  value={formData.whyChooseContent}
+                  onChange={handleChange}
+                  placeholder="We offer a fresh, practical approach to tax planning..."
+                  className="block w-full px-4 py-2.5 bg-white border border-slate-300 rounded-xl text-slate-900 text-xs font-bold placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-[#002B49]/30"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Vision & Mission Points Managers */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Vision Points */}
+          <div className="bg-white border border-slate-200/90 rounded-3xl p-6 sm:p-8 shadow-2xs space-y-4">
+            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+              <div className="flex items-center gap-2">
+                <Lightbulb className="w-5 h-5 text-amber-500" />
+                <h2 className="text-base font-bold font-serif text-[#002B49]">Our Vision Points</h2>
+              </div>
+              <button
+                type="button"
+                onClick={addVisionPoint}
+                className="px-3 py-1.5 bg-amber-50 hover:bg-amber-100 text-amber-800 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1"
+              >
+                <Plus className="w-3.5 h-3.5" />
+                <span>Add Point</span>
+              </button>
+            </div>
+
+            <div className="space-y-3">
               {visionPoints.map((item, index) => (
                 <div key={index} className="flex items-center gap-2">
                   <span className="text-xs font-bold text-amber-700 bg-amber-50 border border-amber-200 px-2.5 py-1.5 rounded-lg shrink-0">
@@ -465,39 +546,39 @@ export default function AboutEditor() {
                 </div>
 
                 <div className="space-y-1">
-                  <label className="block text-[10px] font-bold text-slate-600 uppercase">Title / Label</label>
+                  <label className="block text-[10px] font-bold text-slate-700 uppercase tracking-wider">Title / Label</label>
                   <input
                     type="text"
                     value={stat.title}
                     onChange={(e) => updateStatistic(index, 'title', e.target.value)}
                     placeholder="e.g. Global Presence"
-                    className="block w-full px-3 py-2 bg-white border border-slate-200 rounded-xl text-xs font-bold text-[#002B49]"
+                    className="block w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-xs font-bold text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-[#002B49]/30 focus:border-[#002B49] transition-all"
                   />
                 </div>
 
                 <div className="space-y-1">
-                  <label className="block text-[10px] font-bold text-slate-600 uppercase">Sub-Value</label>
+                  <label className="block text-[10px] font-bold text-slate-700 uppercase tracking-wider">Sub-Value</label>
                   <input
                     type="text"
                     value={stat.value}
                     onChange={(e) => updateStatistic(index, 'value', e.target.value)}
                     placeholder="e.g. India, USA & Dubai"
-                    className="block w-full px-3 py-2 bg-white border border-slate-200 rounded-xl text-xs font-medium"
+                    className="block w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-xs font-bold text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-[#002B49]/30 focus:border-[#002B49] transition-all"
                   />
                 </div>
 
                 <div className="space-y-1">
-                  <label className="block text-[10px] font-bold text-slate-600 uppercase">Lucide Icon</label>
+                  <label className="block text-[10px] font-bold text-slate-700 uppercase tracking-wider">Lucide Icon</label>
                   <select
                     value={stat.icon || 'Globe'}
                     onChange={(e) => updateStatistic(index, 'icon', e.target.value)}
-                    className="block w-full px-3 py-2 bg-white border border-slate-200 rounded-xl text-xs font-medium"
+                    className="block w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-xs font-bold text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#002B49]/30 focus:border-[#002B49] transition-all"
                   >
-                    <option value="Globe">Globe</option>
-                    <option value="Shield">Shield</option>
-                    <option value="TrendingUp">TrendingUp</option>
-                    <option value="Users">Users</option>
-                    <option value="Award">Award</option>
+                    <option value="Globe" className="text-slate-900 bg-white font-semibold">Globe</option>
+                    <option value="Shield" className="text-slate-900 bg-white font-semibold">Shield</option>
+                    <option value="TrendingUp" className="text-slate-900 bg-white font-semibold">TrendingUp</option>
+                    <option value="Users" className="text-slate-900 bg-white font-semibold">Users</option>
+                    <option value="Award" className="text-slate-900 bg-white font-semibold">Award</option>
                   </select>
                 </div>
               </div>
