@@ -111,6 +111,13 @@ For complete, detailed technical documentation (including request bodies, valida
 | `GET` / `PATCH` / `DELETE` | `/api/admin/testimonials/:id` | Admin | Fetch / Update / Delete single testimonial |
 | `PATCH` | `/api/admin/testimonials/:id/status` | Admin | Toggle testimonial status (`DRAFT` / `PUBLISHED`) |
 
+### 📰 Blogs API
+| Method | Endpoint | Auth | Purpose |
+| :---: | :--- | :---: | :--- |
+| `GET` / `POST` | `/api/admin/blogs` | Admin | List blogs (paginated, searchable) / Create blog |
+| `GET` / `PATCH` / `DELETE` | `/api/admin/blogs/:id` | Admin | Fetch / Update / Delete single blog post |
+| `PATCH` | `/api/admin/blogs/:id/status` | Admin | Toggle blog status (`DRAFT` / `PUBLISHED`) |
+
 ### 🛠️ Services API
 | Method | Endpoint | Auth | Purpose |
 | :---: | :--- | :---: | :--- |

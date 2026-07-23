@@ -916,22 +916,199 @@ All standard API endpoints (wrapped by `withApiHandler`) conform to a uniform re
 
 ---
 
-## 7. Pending & Stubbed API Endpoint Routes
+## 7. Admin Blogs Management API Endpoints
+
+- **Files**:
+  - [src/app/api/admin/blogs/route.ts](file:///home/sahil-hode/Documents/My%20Data/intern/YF%20Advisors%20Intern/projects/yfa-website/src/app/api/admin/blogs/route.ts)
+  - [src/app/api/admin/blogs/[id]/route.ts](file:///home/sahil-hode/Documents/My%20Data/intern/YF%20Advisors%20Intern/projects/yfa-website/src/app/api/admin/blogs/%5Bid%5D/route.ts)
+  - [src/app/api/admin/blogs/[id]/status/route.ts](file:///home/sahil-hode/Documents/My%20Data/intern/YF%20Advisors%20Intern/projects/yfa-website/src/app/api/admin/blogs/%5Bid%5D/status/route.ts)
+
+### 7.1 List Blogs
+- **Method**: `GET`
+- **Path**: `/api/admin/blogs`
+- **Authentication**: Admin Session Required
+- **Query Parameters**:
+  - `page` *(number, default: 1)*
+  - `limit` *(number, default: 10, max: 100)*
+  - `search` *(string, matches title, cardDescription, excerpt, category, tags)*
+  - `status` *(string: `"DRAFT"` \| `"PUBLISHED"`)*
+  - `sortBy` *(string: `"title"` \| `"createdAt"` \| `"updatedAt"` \| `"publishedAt"`)*
+  - `sortOrder` *(string: `"asc"` \| `"desc"`)*
+
+**`200 OK` - Expected Output**
+```json
+{
+  "success": true,
+  "message": "Blogs retrieved successfully",
+  "data": [
+    {
+      "id": "blog_123",
+      "title": "Understanding Financial Valuation",
+      "slug": "understanding-financial-valuation",
+      "cardDescription": "A comprehensive guide to financial valuation models.",
+      "excerpt": "Financial valuation is key for corporate strategy.",
+      "image": "https://example.com/blog.jpg",
+      "category": "Corporate Finance",
+      "tags": "valuation, advisory",
+      "author": "YF Advisors",
+      "content": "Full blog content in markdown or HTML",
+      "status": "PUBLISHED",
+      "publishedAt": "2026-07-23T10:00:00.000Z",
+      "createdAt": "2026-07-23T10:00:00.000Z",
+      "updatedAt": "2026-07-23T10:00:00.000Z",
+      "sections": []
+    }
+  ],
+  "meta": {
+    "total": 1,
+    "page": 1,
+    "limit": 10,
+    "totalPages": 1,
+    "hasNextPage": false,
+    "hasPreviousPage": false
+  }
+}
+```
+
+---
+
+### 7.2 Create Blog
+- **Method**: `POST`
+- **Path**: `/api/admin/blogs`
+- **Authentication**: Admin Session Required
+- **Revalidates Caches**: `/blogs`, `/blogs/:slug`, `/`
+
+#### Request Body (`application/json`)
+| Field | Type | Required | Constraints |
+| :--- | :--- | :--- | :--- |
+| `title` | string | **Yes** | Min 1 char |
+| `slug` | string | **Yes** | Unique slug |
+| `cardDescription` | string | **Yes** | Min 1 char |
+| `excerpt` | string | **Yes** | Min 1 char |
+| `image` | string | No | Optional header image URL/path |
+| `category` | string | No | Optional category |
+| `tags` | string | No | Optional comma-separated tags |
+| `author` | string | No | Default `"YF Advisors"` |
+| `content` | string | No | Optional main text body |
+| `status` | string | No | `"DRAFT"` \| `"PUBLISHED"` (default `"DRAFT"`) |
+
+```json
+{
+  "title": "Understanding Financial Valuation",
+  "slug": "understanding-financial-valuation",
+  "cardDescription": "A comprehensive guide to financial valuation models.",
+  "excerpt": "Financial valuation is key for corporate strategy.",
+  "category": "Corporate Finance",
+  "tags": "valuation, advisory",
+  "status": "PUBLISHED"
+}
+```
+
+**`201 Created` - Expected Output**
+```json
+{
+  "success": true,
+  "message": "Blog created successfully",
+  "data": { ... }
+}
+```
+
+---
+
+### 7.3 Get Single Blog
+- **Method**: `GET`
+- **Path**: `/api/admin/blogs/:id`
+- **Authentication**: Admin Session Required
+
+**`200 OK` - Expected Output**
+```json
+{
+  "success": true,
+  "message": "Blog retrieved successfully",
+  "data": { "id": "blog_123", ... }
+}
+```
+
+---
+
+### 7.4 Update Blog
+- **Method**: `PATCH`
+- **Path**: `/api/admin/blogs/:id`
+- **Authentication**: Admin Session Required
+- **Revalidates Caches**: `/blogs`, `/blogs/:slug`, `/`
+
+#### Request Body (`application/json` - Partial update)
+```json
+{
+  "title": "Updated Title",
+  "status": "PUBLISHED"
+}
+```
+
+**`200 OK` - Expected Output**
+```json
+{
+  "success": true,
+  "message": "Blog updated successfully",
+  "data": { ... }
+}
+```
+
+---
+
+### 7.5 Toggle Blog Status
+- **Method**: `PATCH`
+- **Path**: `/api/admin/blogs/:id/status`
+- **Authentication**: Admin Session Required
+- **Revalidates Caches**: `/blogs`, `/blogs/:slug`, `/`
+
+#### Request Body (`application/json`)
+```json
+{
+  "status": "PUBLISHED"
+}
+```
+
+**`200 OK` - Expected Output**
+```json
+{
+  "success": true,
+  "message": "Blog status updated successfully",
+  "data": { "id": "blog_123", "status": "PUBLISHED" }
+}
+```
+
+---
+
+### 7.6 Delete Blog
+- **Method**: `DELETE`
+- **Path**: `/api/admin/blogs/:id`
+- **Authentication**: Admin Session Required
+- **Revalidates Caches**: `/blogs`, `/blogs/:slug`, `/`
+
+**`200 OK` - Expected Output**
+```json
+{
+  "success": true,
+  "message": "Blog deleted successfully",
+  "data": { "id": "blog_123" }
+}
+```
+
+---
+
+## 8. Pending & Stubbed API Endpoint Routes
 
 The following route files are initialized in the codebase structure (`export {};`) for future module implementation:
 
 | Module / Feature | Method(s) | Endpoint Path | File Location | Status |
 | :--- | :--- | :--- | :--- | :--- |
-| **Auth Session Me** | GET | `/api/admin/auth/me` | [src/app/api/admin/auth/me/route.ts](file:///home/sahil-hode/Documents/My%20Data/intern/YF%20Advisors%20Intern/projects/yfa-website/src/app/api/admin/auth/me/route.ts) | Stubbed |
-| **Auth Logout** | POST | `/api/admin/auth/logout` | [src/app/api/admin/auth/logout/route.ts](file:///home/sahil-hode/Documents/My%20Data/intern/YF%20Advisors%20Intern/projects/yfa-website/src/app/api/admin/auth/logout/route.ts) | Stubbed |
 | **Services CRUD** | GET, POST | `/api/admin/services` | [src/app/api/admin/services/route.ts](file:///home/sahil-hode/Documents/My%20Data/intern/YF%20Advisors%20Intern/projects/yfa-website/src/app/api/admin/services/route.ts) | Stubbed |
 | **Service By ID** | GET, PATCH, DELETE | `/api/admin/services/:id` | [src/app/api/admin/services/[id]/route.ts](file:///home/sahil-hode/Documents/My%20Data/intern/YF%20Advisors%20Intern/projects/yfa-website/src/app/api/admin/services/%5Bid%5D/route.ts) | Stubbed |
-| **Blogs List & Create** | GET, POST | `/api/admin/blogs` | [src/app/api/admin/blogs/route.ts](file:///home/sahil-hode/Documents/My%20Data/intern/YF%20Advisors%20Intern/projects/yfa-website/src/app/api/admin/blogs/route.ts) | Stubbed |
-| **Blog By ID** | GET, PATCH, DELETE | `/api/admin/blogs/:id` | [src/app/api/admin/blogs/[id]/route.ts](file:///home/sahil-hode/Documents/My%20Data/intern/YF%20Advisors%20Intern/projects/yfa-website/src/app/api/admin/blogs/%5Bid%5D/route.ts) | Stubbed |
-| **Blog Status Toggle** | PATCH | `/api/admin/blogs/:id/status` | [src/app/api/admin/blogs/[id]/status/route.ts](file:///home/sahil-hode/Documents/My%20Data/intern/YF%20Advisors%20Intern/projects/yfa-website/src/app/api/admin/blogs/%5Bid%5D/status/route.ts) | Stubbed |
 | **Blog Sections** | GET, POST | `/api/admin/blogs/:id/sections` | [src/app/api/admin/blogs/[id]/sections/route.ts](file:///home/sahil-hode/Documents/My%20Data/intern/YF%20Advisors%20Intern/projects/yfa-website/src/app/api/admin/blogs/%5Bid%5D/sections/route.ts) | Stubbed |
 | **Blog Section By ID** | PATCH, DELETE | `/api/admin/blogs/:id/sections/:sectionId` | [src/app/api/admin/blogs/[id]/sections/[sectionId]/route.ts](file:///home/sahil-hode/Documents/My%20Data/intern/YF%20Advisors%20Intern/projects/yfa-website/src/app/api/admin/blogs/%5Bid%5D/sections/%5BsectionId%5D/route.ts) | Stubbed |
 | **Blog Sections Reorder** | PATCH | `/api/admin/blogs/:id/sections/reorder` | [src/app/api/admin/blogs/[id]/sections/reorder/route.ts](file:///home/sahil-hode/Documents/My%20Data/intern/YF%20Advisors%20Intern/projects/yfa-website/src/app/api/admin/blogs/%5Bid%5D/sections/reorder/route.ts) | Stubbed |
 | **Dashboard Statistics** | GET | `/api/admin/dashboard/stats` | [src/app/api/admin/dashboard/stats/route.ts](file:///home/sahil-hode/Documents/My%20Data/intern/YF%20Advisors%20Intern/projects/yfa-website/src/app/api/admin/dashboard/stats/route.ts) | Stubbed |
 | **Media File Uploads** | POST | `/api/admin/uploads` | [src/app/api/admin/uploads/route.ts](file:///home/sahil-hode/Documents/My%20Data/intern/YF%20Advisors%20Intern/projects/yfa-website/src/app/api/admin/uploads/route.ts) | Stubbed |
 | **Testimonial Verification Toggle** | PATCH | `/api/admin/testimonials/:id/verified` | [src/app/api/admin/testimonials/[id]/verified/route.ts](file:///home/sahil-hode/Documents/My%20Data/intern/YF%20Advisors%20Intern/projects/yfa-website/src/app/api/admin/testimonials/%5Bid%5D/verified/route.ts) | Stubbed |
+
