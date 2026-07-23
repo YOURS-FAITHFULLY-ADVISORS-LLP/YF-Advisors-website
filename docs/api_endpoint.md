@@ -874,7 +874,128 @@ All standard API endpoints (wrapped by `withApiHandler`) conform to a uniform re
 
 ## 6. Admin Services Management API Endpoints
 
-### 6.1 Toggle Service Status
+- **Files**:
+  - [src/app/api/admin/services/route.ts](file:///home/sahil-hode/Documents/My%20Data/intern/YF%20Advisors%20Intern/projects/yfa-website/src/app/api/admin/services/route.ts)
+  - [src/app/api/admin/services/[id]/route.ts](file:///home/sahil-hode/Documents/My%20Data/intern/YF%20Advisors%20Intern/projects/yfa-website/src/app/api/admin/services/%5Bid%5D/route.ts)
+  - [src/app/api/admin/services/[id]/status/route.ts](file:///home/sahil-hode/Documents/My%20Data/intern/YF%20Advisors%20Intern/projects/yfa-website/src/app/api/admin/services/%5Bid%5D/status/route.ts)
+
+### 6.1 List Services
+- **Method**: `GET`
+- **Path**: `/api/admin/services`
+- **Authentication**: Admin Session Required
+- **Query Parameters**:
+  - `page` *(number, default: 1)*
+  - `limit` *(number, default: 10, max: 100)*
+  - `search` *(string, matches title, cardDescription, keyValue, description)*
+  - `status` *(string: `"DRAFT"` \| `"PUBLISHED"`)*
+  - `sortBy` *(string: `"title"` \| `"createdAt"` \| `"updatedAt"` \| `"publishedAt"`)*
+  - `sortOrder` *(string: `"asc"` \| `"desc"`)*
+
+**`200 OK` - Expected Output**
+```json
+{
+  "success": true,
+  "message": "Services retrieved successfully",
+  "data": [],
+  "meta": {
+    "total": 0,
+    "page": 1,
+    "limit": 10,
+    "totalPages": 0,
+    "hasNextPage": false,
+    "hasPreviousPage": false
+  }
+}
+```
+
+---
+
+### 6.2 Create Service
+- **Method**: `POST`
+- **Path**: `/api/admin/services`
+- **Authentication**: Admin Session Required
+- **Revalidates Caches**: `/services`, `/services/:slug`, `/`
+
+#### Request Body (`application/json`)
+```json
+{
+  "title": "Corporate Advisory",
+  "slug": "corporate-advisory",
+  "cardDescription": "Strategic guidance for business restructuring.",
+  "keyValue": "Maximize shareholder value",
+  "description": "Full end-to-end corporate advisory services.",
+  "status": "PUBLISHED"
+}
+```
+
+**`201 Created` - Expected Output**
+```json
+{
+  "success": true,
+  "message": "Service created successfully",
+  "data": { ... }
+}
+```
+
+---
+
+### 6.3 Get Single Service
+- **Method**: `GET`
+- **Path**: `/api/admin/services/:id`
+- **Authentication**: Admin Session Required
+
+**`200 OK` - Expected Output**
+```json
+{
+  "success": true,
+  "message": "Service retrieved successfully",
+  "data": { "id": "service_123", ... }
+}
+```
+
+---
+
+### 6.4 Update Service
+- **Method**: `PATCH`
+- **Path**: `/api/admin/services/:id`
+- **Authentication**: Admin Session Required
+
+#### Request Body (`application/json` - Partial update)
+```json
+{
+  "title": "Updated Service Title",
+  "status": "PUBLISHED"
+}
+```
+
+**`200 OK` - Expected Output**
+```json
+{
+  "success": true,
+  "message": "Service updated successfully",
+  "data": { ... }
+}
+```
+
+---
+
+### 6.5 Delete Service
+- **Method**: `DELETE`
+- **Path**: `/api/admin/services/:id`
+- **Authentication**: Admin Session Required
+
+**`200 OK` - Expected Output**
+```json
+{
+  "success": true,
+  "message": "Service deleted successfully",
+  "data": { "id": "service_123" }
+}
+```
+
+---
+
+### 6.6 Toggle Service Status
 - **File**: [src/app/api/admin/services/[id]/status/route.ts](file:///home/sahil-hode/Documents/My%20Data/intern/YF%20Advisors%20Intern/projects/yfa-website/src/app/api/admin/services/%5Bid%5D/status/route.ts)
 - **Method**: `PATCH`
 - **Path**: `/api/admin/services/:id/status`
@@ -905,12 +1026,27 @@ All standard API endpoints (wrapped by `withApiHandler`) conform to a uniform re
 }
 ```
 
-**`404 Not Found`**
+---
+
+## 7. Admin Dashboard Statistics API Endpoint
+
+### 7.1 Get Dashboard Statistics
+- **File**: [src/app/api/admin/dashboard/stats/route.ts](file:///home/sahil-hode/Documents/My%20Data/intern/YF%20Advisors%20Intern/projects/yfa-website/src/app/api/admin/dashboard/stats/route.ts)
+- **Method**: `GET`
+- **Path**: `/api/admin/dashboard/stats`
+- **Authentication**: Admin Session Required
+
+**`200 OK` - Expected Output**
 ```json
 {
-  "success": false,
-  "message": "Service not found",
-  "errors": ["Cannot update status of non-existing service"]
+  "success": true,
+  "message": "Dashboard statistics retrieved successfully",
+  "data": {
+    "blogs": { "total": 5, "published": 4, "draft": 1 },
+    "services": { "total": 8, "published": 8, "draft": 0 },
+    "team": { "total": 12, "published": 12 },
+    "testimonials": { "total": 15, "verified": 15 }
+  }
 }
 ```
 

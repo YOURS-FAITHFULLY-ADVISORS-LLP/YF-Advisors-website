@@ -121,7 +121,14 @@ For complete, detailed technical documentation (including request bodies, valida
 ### 🛠️ Services API
 | Method | Endpoint | Auth | Purpose |
 | :---: | :--- | :---: | :--- |
+| `GET` / `POST` | `/api/admin/services` | Admin | List services (paginated, searchable) / Create service |
+| `GET` / `PATCH` / `DELETE` | `/api/admin/services/:id` | Admin | Fetch / Update / Delete single service |
 | `PATCH` | `/api/admin/services/:id/status` | Admin | Toggle service publishing status |
+
+### 📊 Dashboard Statistics API
+| Method | Endpoint | Auth | Purpose |
+| :---: | :--- | :---: | :--- |
+| `GET` | `/api/admin/dashboard/stats` | Admin | Fetch count statistics for blogs, services, team & testimonials |
 
 ---
 
