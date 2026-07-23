@@ -1,6 +1,6 @@
 "use client";
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
 interface Testimonial {
     name: string;
@@ -8,6 +8,7 @@ interface Testimonial {
     initials: string;
     color: string;
     text: string;
+    profileImage?: string | null;
 }
 
 const reviewsRow1: Testimonial[] = [
@@ -113,9 +114,17 @@ const TestimonialCard = ({ card }: { card: Testimonial }) => (
     <div id='testimonials' className="p-6 rounded-2xl mx-4 shadow-sm bg-white border border-gray-100 hover:shadow-lg transition-all duration-300 w-96 shrink-0 select-none flex flex-col justify-between h-full">
         <div>
             <div className="flex gap-3 mb-4">
-                <div className={`w-12 h-12 rounded-full flex items-center justify-center text-white font-bold text-sm shadow-sm ${card.color}`}>
-                    {card.initials}
-                </div>
+                {card.profileImage ? (
+                    <img
+                        src={card.profileImage}
+                        alt={card.name}
+                        className="w-12 h-12 rounded-full object-cover shadow-sm shrink-0"
+                    />
+                ) : (
+                    <div className={`w-12 h-12 rounded-full flex items-center justify-center text-white font-bold text-sm shadow-sm ${card.color} shrink-0`}>
+                        {card.initials}
+                    </div>
+                )}
                 
                 <div className="flex flex-col justify-center">
                     <div className="flex items-center gap-1.5">
@@ -140,7 +149,83 @@ const TestimonialCard = ({ card }: { card: Testimonial }) => (
     </div>
 );
 
+const TestimonialsSkeleton = () => (
+    <section className="py-20 bg-slate-50 overflow-hidden">
+        <div className="text-center mb-16 px-4 animate-pulse">
+            <div className="h-8 bg-slate-200 rounded-2xl w-80 mx-auto mb-4" />
+            <div className="h-5 bg-slate-200 rounded-xl w-96 mx-auto" />
+        </div>
+        <div className="flex flex-col gap-10">
+            <div className="flex gap-4 overflow-hidden px-6 animate-pulse">
+                {[1, 2, 3, 4].map((n) => (
+                    <div key={n} className="w-96 h-56 bg-slate-200 rounded-2xl shrink-0" />
+                ))}
+            </div>
+            <div className="flex gap-4 overflow-hidden px-6 animate-pulse">
+                {[1, 2, 3, 4].map((n) => (
+                    <div key={n} className="w-96 h-56 bg-slate-200 rounded-2xl shrink-0" />
+                ))}
+            </div>
+        </div>
+    </section>
+);
+
 const Testimonials = () => {
+    const [row1, setRow1] = useState<Testimonial[]>([]);
+    const [row2, setRow2] = useState<Testimonial[]>([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        let isMounted = true;
+        async function fetchTestimonialsData() {
+            try {
+                const res = await fetch('/api/admin/testimonials?status=PUBLISHED');
+                if (res.ok) {
+                    const json = await res.json();
+                    if (isMounted && json.success && Array.isArray(json.data) && json.data.length > 0) {
+                        const colors = ['bg-blue-600', 'bg-emerald-600', 'bg-purple-600', 'bg-amber-500', 'bg-rose-500', 'bg-cyan-600', 'bg-indigo-600', 'bg-teal-600', 'bg-orange-500', 'bg-pink-600', 'bg-slate-600'];
+                        
+                        const formatted: Testimonial[] = json.data.map((item: any, idx: number) => ({
+                            name: item.name,
+                            role: item.designation || item.company || "Client",
+                            initials: item.initials || (item.name ? item.name.split(' ').map((n: string) => n[0]).join('').substring(0, 2).toUpperCase() : 'YF'),
+                            color: colors[idx % colors.length],
+                            text: item.review || item.text,
+                            profileImage: item.profileImage || null
+                        }));
+
+                        const mid = Math.ceil(formatted.length / 2);
+                        setRow1(formatted.slice(0, mid));
+                        setRow2(formatted.slice(mid));
+                        setLoading(false);
+                        return;
+                    }
+                }
+                if (isMounted) {
+                    setRow1(reviewsRow1);
+                    setRow2(reviewsRow2);
+                    setLoading(false);
+                }
+            } catch (err) {
+                console.error("Failed to load testimonials:", err);
+                if (isMounted) {
+                    setRow1(reviewsRow1);
+                    setRow2(reviewsRow2);
+                    setLoading(false);
+                }
+            }
+        }
+        fetchTestimonialsData();
+        return () => { isMounted = false; };
+    }, []);
+
+    if (loading) {
+        return <TestimonialsSkeleton />;
+    }
+
+    const firstRow = row1.length > 0 ? row1 : reviewsRow1;
+    const secondRow = row2.length > 0 ? row2 : reviewsRow2;
+
     return (
         <section className="py-20 bg-slate-50 overflow-hidden">
             <style>{`
@@ -175,13 +260,13 @@ const Testimonials = () => {
                     <div className="absolute left-0 top-0 h-full w-20 md:w-40 z-10 pointer-events-none bg-linear-to-r from-slate-50 to-transparent"></div>
                     
                     <div className="marquee-inner flex transform-gpu will-change-transform">
-                        {reviewsRow1.map((card, index) => (
+                        {firstRow.map((card, index) => (
                             <TestimonialCard key={`row1-original-${index}`} card={card} />
                         ))}
-                        {reviewsRow1.map((card, index) => (
+                        {firstRow.map((card, index) => (
                             <TestimonialCard key={`row1-clone-${index}`} card={card} />
                         ))}
-                         {reviewsRow1.map((card, index) => (
+                        {firstRow.map((card, index) => (
                             <TestimonialCard key={`row1-tri-clone-${index}`} card={card} />
                         ))}
                     </div>
@@ -193,13 +278,13 @@ const Testimonials = () => {
                     <div className="absolute left-0 top-0 h-full w-20 md:w-40 z-10 pointer-events-none bg-linear-to-r from-slate-50 to-transparent"></div>
                     
                     <div className="marquee-inner marquee-reverse flex transform-gpu will-change-transform">
-                        {reviewsRow2.map((card, index) => (
+                        {secondRow.map((card, index) => (
                             <TestimonialCard key={`row2-original-${index}`} card={card} />
                         ))}
-                        {reviewsRow2.map((card, index) => (
+                        {secondRow.map((card, index) => (
                             <TestimonialCard key={`row2-clone-${index}`} card={card} />
                         ))}
-                        {reviewsRow2.map((card, index) => (
+                        {secondRow.map((card, index) => (
                             <TestimonialCard key={`row2-tri-clone-${index}`} card={card} />
                         ))}
                     </div>
