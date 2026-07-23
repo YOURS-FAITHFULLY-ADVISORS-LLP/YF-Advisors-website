@@ -8,7 +8,6 @@ import {
   CheckCircle2, 
   AlertCircle, 
   ArrowUpRight, 
-  Image as ImageIcon,
   Type,
   Link2,
   FileText
@@ -20,7 +19,6 @@ export default function HomepageEditor() {
     heroDescription: '',
     heroButtonText: '',
     heroButtonLink: '',
-    heroImage: '',
   });
 
   const [loading, setLoading] = useState(true);
@@ -40,7 +38,6 @@ export default function HomepageEditor() {
           heroDescription: data.data.heroDescription || '',
           heroButtonText: data.data.heroButtonText || '',
           heroButtonLink: data.data.heroButtonLink || '',
-          heroImage: data.data.heroImage || '',
         });
       } else {
         setErrorMessage(data.message || 'Failed to load homepage settings');
@@ -87,7 +84,6 @@ export default function HomepageEditor() {
             heroDescription: data.data.heroDescription || '',
             heroButtonText: data.data.heroButtonText || '',
             heroButtonLink: data.data.heroButtonLink || '',
-            heroImage: data.data.heroImage || '',
           });
         }
       } else {
@@ -110,7 +106,7 @@ export default function HomepageEditor() {
             Homepage / Hero Editor
           </h1>
           <p className="text-xs sm:text-sm text-slate-500 font-medium mt-1">
-            Customize the main banner heading, subheadline, CTA buttons, and background image.
+            Customize the main banner heading, subheadline, and CTA button.
           </p>
         </div>
         <button
@@ -230,27 +226,6 @@ export default function HomepageEditor() {
               </div>
             </div>
 
-            {/* Hero Image URL */}
-            <div className="space-y-1.5">
-              <label htmlFor="heroImage" className="block text-xs font-bold text-[#002B49] uppercase tracking-wider">
-                Hero Image URL (Optional)
-              </label>
-              <div className="relative rounded-2xl shadow-2xs">
-                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
-                  <ImageIcon className="w-4 h-4" />
-                </div>
-                <input
-                  id="heroImage"
-                  name="heroImage"
-                  type="text"
-                  value={formData.heroImage}
-                  onChange={handleChange}
-                  placeholder="https://images.unsplash.com/... or /hero-banner.png"
-                  className="block w-full pl-10 pr-4 py-3 bg-slate-50/50 border border-slate-200 rounded-2xl text-slate-900 placeholder-slate-400 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#002B49]/30 focus:border-[#002B49] focus:bg-white transition-all"
-                />
-              </div>
-            </div>
-
             {/* Submit Button */}
             <button
               type="submit"
@@ -290,19 +265,6 @@ export default function HomepageEditor() {
                 <ArrowUpRight className="w-3.5 h-3.5 text-[#FDB913]" />
               </div>
             </div>
-
-            {formData.heroImage && (
-              <div className="pt-4">
-                <img
-                  src={formData.heroImage}
-                  alt="Hero Preview"
-                  className="w-full h-32 object-cover rounded-xl border border-slate-200"
-                  onError={(e) => {
-                    (e.target as HTMLElement).style.display = 'none';
-                  }}
-                />
-              </div>
-            )}
           </div>
         </div>
       </div>
