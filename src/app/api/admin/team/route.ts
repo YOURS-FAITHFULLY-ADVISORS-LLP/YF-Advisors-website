@@ -6,7 +6,7 @@ import { prisma } from '@/src/lib/prisma';
 import { createTeamSchema } from '@/src/validations/team.schema';
 import { sanitizeInput } from '@/src/lib/sanitize';
 import { revalidateCmsPaths } from '@/src/lib/revalidate';
-import { TeamStatus } from '@prisma/client';
+type TeamStatus = 'DRAFT' | 'PUBLISHED';
 
 export const GET = withApiHandler(async (req: NextRequest) => {
   const { page, limit, skip, search, status, sortBy, sortOrder } = parseQueryParams(req);

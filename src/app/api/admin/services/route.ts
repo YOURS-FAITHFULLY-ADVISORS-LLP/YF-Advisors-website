@@ -6,7 +6,7 @@ import { prisma } from '@/src/lib/prisma';
 import { createServiceSchema } from '@/src/validations/service.schema';
 import { sanitizeInput } from '@/src/lib/sanitize';
 import { revalidateCmsPaths } from '@/src/lib/revalidate';
-import { ServiceStatus } from '@prisma/client';
+type ServiceStatus = 'DRAFT' | 'PUBLISHED';
 
 export const GET = withApiHandler(async (req: NextRequest) => {
   const { page, limit, skip, search, status, sortBy, sortOrder } = parseQueryParams(req);
