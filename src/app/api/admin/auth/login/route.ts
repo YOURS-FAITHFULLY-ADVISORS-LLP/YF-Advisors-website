@@ -33,7 +33,11 @@ export const POST = withApiHandler(
       return apiError('Invalid credentials', ['Incorrect Admin ID or Password'], 401);
     }
 
-    const passwordMatches = await bcrypt.compare(password, envAdminPass);
+    const isBcryptHash = envAdminPass.startsWith('$2b$') || envAdminPass.startsWith('$2a$');
+    const passwordMatches = isBcryptHash
+      ? await bcrypt.compare(password, envAdminPass)
+      : password === envAdminPass;
+
     if (!passwordMatches) {
       return apiError('Invalid credentials', ['Incorrect Admin ID or Password'], 401);
     }
