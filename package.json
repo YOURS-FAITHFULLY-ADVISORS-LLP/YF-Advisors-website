@@ -7,9 +7,11 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "upload:images": "tsx scripts/upload-blog-images.ts"
+    "upload:images": "tsx scripts/upload-blog-images.ts",
+    "migrate:content": "tsx scripts/migrate-content.ts"
   },
   "dependencies": {
+    "@prisma/adapter-pg": "^7.9.0",
     "@prisma/client": "^7.9.0",
     "@supabase/supabase-js": "^2.110.8",
     "clsx": "^2.1.1",
