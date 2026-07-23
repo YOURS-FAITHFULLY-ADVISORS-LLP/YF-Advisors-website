@@ -5,6 +5,9 @@ import AdminHomepageSettingsPage from '@/src/admin/app/homepage/page';
 import AdminBlogsPage from '@/src/admin/app/blogs/page';
 import AdminNewBlogPage from '@/src/admin/app/blogs/new/page';
 import AdminEditBlogPage from '@/src/admin/app/blogs/[id]/page';
+import AdminServicesPage from '@/src/admin/app/services/page';
+import AdminNewServicePage from '@/src/admin/app/services/new/page';
+import AdminEditServicePage from '@/src/admin/app/services/[id]/page';
 
 interface DynamicRouteProps {
   params: Promise<{
@@ -30,12 +33,23 @@ export default async function DynamicRoute({ params }: DynamicRouteProps) {
       if (slug[1] === 'blogs') {
         return <AdminBlogsPage />;
       }
-    }
-    if (slug.length === 3 && slug[1] === 'blogs') {
-      if (slug[2] === 'new') {
-        return <AdminNewBlogPage />;
+      if (slug[1] === 'services') {
+        return <AdminServicesPage />;
       }
-      return <AdminEditBlogPage params={Promise.resolve({ id: slug[2] })} />;
+    }
+    if (slug.length === 3) {
+      if (slug[1] === 'blogs') {
+        if (slug[2] === 'new') {
+          return <AdminNewBlogPage />;
+        }
+        return <AdminEditBlogPage params={Promise.resolve({ id: slug[2] })} />;
+      }
+      if (slug[1] === 'services') {
+        if (slug[2] === 'new') {
+          return <AdminNewServicePage />;
+        }
+        return <AdminEditServicePage params={Promise.resolve({ id: slug[2] })} />;
+      }
     }
   }
 
