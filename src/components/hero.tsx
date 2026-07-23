@@ -4,9 +4,17 @@ import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { ArrowUpRight, PlayCircle } from "lucide-react";
 import { motion } from "framer-motion";
-import { fetchHomepageData, HomepageCMSData } from "@/src/services/cms.service";
 
-const DEFAULT_HERO_DATA: HomepageCMSData = {
+export interface HeroCMSData {
+  id?: string;
+  heroTitle?: string;
+  heroDescription?: string;
+  heroImage?: string | null;
+  heroButtonText?: string | null;
+  heroButtonLink?: string | null;
+}
+
+const DEFAULT_HERO_DATA: HeroCMSData = {
   id: "homepage",
   heroTitle: "Grow your business not your Back Office",
   heroDescription:
@@ -17,25 +25,21 @@ const DEFAULT_HERO_DATA: HomepageCMSData = {
 };
 
 const Hero = () => {
-  const [data, setData] = useState<HomepageCMSData>(DEFAULT_HERO_DATA);
-  const [loading, setLoading] = useState(true);
+  const [data, setData] = useState<HeroCMSData>(DEFAULT_HERO_DATA);
 
   useEffect(() => {
     let isMounted = true;
     async function loadCMSData() {
       try {
-        const cmsData = await fetchHomepageData();
-        if (isMounted) {
-          if (cmsData && cmsData.heroTitle) {
-            setData(cmsData);
+        const res = await fetch("/api/admin/homepage");
+        if (res.ok) {
+          const json = await res.json();
+          if (isMounted && json.success && json.data) {
+            setData(json.data);
           }
-          setLoading(false);
         }
       } catch (err) {
-        if (isMounted) {
-          console.error("Failed to load hero CMS data:", err);
-          setLoading(false);
-        }
+        console.error("Failed to fetch homepage hero data:", err);
       }
     }
     loadCMSData();
@@ -56,24 +60,22 @@ const Hero = () => {
     }
   };
 
-  const title = data.heroTitle || DEFAULT_HERO_DATA.heroTitle;
-  const description = data.heroDescription || DEFAULT_HERO_DATA.heroDescription;
-  const buttonText = data.heroButtonText || DEFAULT_HERO_DATA.heroButtonText;
-  const buttonLink = data.heroButtonLink || DEFAULT_HERO_DATA.heroButtonLink || "https://wa.me/918080506185";
+  const title = data.heroTitle || DEFAULT_HERO_DATA.heroTitle!;
+  const description = data.heroDescription || DEFAULT_HERO_DATA.heroDescription!;
+  const buttonText = data.heroButtonText || DEFAULT_HERO_DATA.heroButtonText!;
+  const buttonLink = data.heroButtonLink || DEFAULT_HERO_DATA.heroButtonLink!;
   const heroImage = data.heroImage;
 
-  // Ensures headline always splits cleanly into 2 lines
+  // Ensures headline splits cleanly into 2 lines
   const renderTwoLineTitle = (text: string) => {
     if (!text) return null;
 
-    // If explicit <br> tags exist
     if (/<br\s*\/?>/i.test(text)) {
       return <span dangerouslySetInnerHTML={{ __html: text }} />;
     }
 
     const words = text.trim().split(/\s+/);
     if (words.length >= 3) {
-      // Find "not" or split around the middle
       const notIndex = words.findIndex((w) => w.toLowerCase() === "not");
       const splitIndex = notIndex !== -1 ? notIndex + 1 : Math.ceil(words.length / 2);
 
