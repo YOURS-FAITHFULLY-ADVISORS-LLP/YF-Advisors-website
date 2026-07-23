@@ -51,17 +51,32 @@ export function convertPlainTextToSemanticHtml(text: string): string {
       continue;
     }
 
-    // Check for unordered list item (-, *, •, –, —, ›, »)
+    // Check for explicit unordered list item (-, *, •, –, —, ›, »)
     const ulMatch = line.match(/^[-*•–—›»]\s+(.+)/);
-    if (ulMatch) {
+
+    // Check for explicit ordered list item (1., 2., 1), etc.)
+    const olMatch = line.match(/^\d+[\.\)]\s+(.+)/);
+
+    // Check if line is part of an implicit bullet list (consecutive non-paragraph short lines without period)
+    const isNextLineNonEmpty = i + 1 < lines.length && lines[i + 1].trim().length > 0;
+    const isPrevLineNonEmpty = i - 1 >= 0 && lines[i - 1].trim().length > 0;
+    const noPeriodAtEnd = !/[.!?]$/.test(line);
+    const isShortItem = line.length <= 140;
+
+    const isImplicitListItem = 
+      (noPeriodAtEnd && isShortItem) && 
+      (isNextLineNonEmpty || isPrevLineNonEmpty || inUl) &&
+      !line.endsWith(':') &&
+      !line.startsWith('#');
+
+    if (ulMatch || isImplicitListItem) {
       if (inOl) closeActiveLists();
       inUl = true;
-      currentListItems.push(formatInlineLinks(ulMatch[1]));
+      const content = ulMatch ? ulMatch[1] : line;
+      currentListItems.push(formatInlineLinks(content));
       continue;
     }
 
-    // Check for ordered list item (1., 2., 1), etc.)
-    const olMatch = line.match(/^\d+[\.\)]\s+(.+)/);
     if (olMatch) {
       if (inUl) closeActiveLists();
       inOl = true;
@@ -84,17 +99,11 @@ export function convertPlainTextToSemanticHtml(text: string): string {
 
     // 2. Standalone short line (<= 80 chars) ending with ":" or Title Case short lines without period
     const isHeadingByColon = line.endsWith(':') && line.length <= 80;
-    const isShortTitleHeader = 
-      line.length <= 45 && 
-      !/[.!?]$/.test(line) && 
-      i + 1 < lines.length && 
-      lines[i + 1].trim().length > 0 &&
-      (i === 0 || lines[i - 1].trim() === '');
 
-    if (isHeadingByColon || isShortTitleHeader) {
+    if (isHeadingByColon) {
       const cleanHeading = line.replace(/:$/, '').trim();
-      const tag = line.length <= 35 || isHeadingByColon ? 'h2' : 'h3';
-      const tagClass = tag === 'h2' ? 'text-2xl font-bold font-serif text-[#002B49] mt-8 mb-4' : 'text-xl font-bold font-serif text-[#002B49] mt-6 mb-3';
+      const tag = 'h2';
+      const tagClass = 'text-2xl font-bold font-serif text-[#002B49] mt-8 mb-4';
       blocks.push(`<${tag} class="${tagClass}">${formatInlineLinks(cleanHeading)}</${tag}>`);
       continue;
     }
@@ -167,12 +176,12 @@ export function cleanAndSanitizeHtml(html: string): string {
   cleaned = cleaned.replace(/<p>\s*(&nbsp;)?\s*<\/p>/gi, '');
   cleaned = cleaned.replace(/<div>\s*(&nbsp;)?\s*<\/div>/gi, '');
 
-  // 6. Ensure <ul> and <ol> have bullet and list styling classes if unstyled
-  cleaned = cleaned.replace(/<ul>/gi, '<ul class="list-disc pl-6 space-y-1.5 my-4 text-slate-800 font-sans">');
-  cleaned = cleaned.replace(/<ol>/gi, '<ol class="list-decimal pl-6 space-y-1.5 my-4 text-slate-800 font-sans">');
+  // 6. Inject bullet list styles into <ul> and <ol> if missing list-disc class
+  cleaned = cleaned.replace(/<ul(?![^>]*class="[^"]*list-disc[^"]*")([^>]*)>/gi, '<ul class="list-disc pl-6 space-y-1.5 my-4 text-slate-800 font-sans"$1>');
+  cleaned = cleaned.replace(/<ol(?![^>]*class="[^"]*list-decimal[^"]*")([^>]*)>/gi, '<ol class="list-decimal pl-6 space-y-1.5 my-4 text-slate-800 font-sans"$1>');
 
-  // 7. Ensure <li> tags have clean leading line height if unstyled
-  cleaned = cleaned.replace(/<li>(?!\s*class=)/gi, '<li class="leading-relaxed">');
+  // 7. Inject <li> styles if unstyled
+  cleaned = cleaned.replace(/<li(?!\s*class=)/gi, '<li class="leading-relaxed">');
 
   // 8. Ensure clickable links have target="_blank"
   cleaned = cleaned.replace(
