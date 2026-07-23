@@ -8,6 +8,9 @@ import AdminEditBlogPage from '@/src/admin/app/blogs/[id]/page';
 import AdminServicesPage from '@/src/admin/app/services/page';
 import AdminNewServicePage from '@/src/admin/app/services/new/page';
 import AdminEditServicePage from '@/src/admin/app/services/[id]/page';
+import AdminTeamPage from '@/src/admin/app/team/page';
+import AdminNewTeamPage from '@/src/admin/app/team/new/page';
+import AdminEditTeamPage from '@/src/admin/app/team/[id]/page';
 
 interface DynamicRouteProps {
   params: Promise<{
@@ -36,6 +39,9 @@ export default async function DynamicRoute({ params }: DynamicRouteProps) {
       if (slug[1] === 'services') {
         return <AdminServicesPage />;
       }
+      if (slug[1] === 'team') {
+        return <AdminTeamPage />;
+      }
     }
     if (slug.length === 3) {
       if (slug[1] === 'blogs') {
@@ -49,6 +55,12 @@ export default async function DynamicRoute({ params }: DynamicRouteProps) {
           return <AdminNewServicePage />;
         }
         return <AdminEditServicePage params={Promise.resolve({ id: slug[2] })} />;
+      }
+      if (slug[1] === 'team') {
+        if (slug[2] === 'new') {
+          return <AdminNewTeamPage />;
+        }
+        return <AdminEditTeamPage params={Promise.resolve({ id: slug[2] })} />;
       }
     }
   }
