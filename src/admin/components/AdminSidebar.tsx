@@ -121,15 +121,22 @@ export default function AdminSidebar({ mobileOpen, setMobileOpen, adminId = 'Adm
           </div>
         </div>
 
-        <form action="/api/admin/auth/logout" method="POST">
-          <button
-            type="submit"
-            className="w-full flex items-center justify-center gap-2 py-2 px-3 rounded-xl bg-white hover:bg-red-50 text-red-600 border border-slate-200 hover:border-red-200 text-xs font-semibold shadow-2xs transition-colors cursor-pointer"
-          >
-            <LogOut className="w-3.5 h-3.5" />
-            <span>Sign Out</span>
-          </button>
-        </form>
+        <button
+          type="button"
+          onClick={async () => {
+            try {
+              await fetch('/api/admin/auth/logout', { method: 'POST' });
+            } catch (err) {
+              console.error('Logout failed:', err);
+            } finally {
+              window.location.href = '/admin/login';
+            }
+          }}
+          className="w-full flex items-center justify-center gap-2 py-2 px-3 rounded-xl bg-white hover:bg-red-50 text-red-600 border border-slate-200 hover:border-red-200 text-xs font-semibold shadow-2xs transition-colors cursor-pointer"
+        >
+          <LogOut className="w-3.5 h-3.5" />
+          <span>Sign Out</span>
+        </button>
       </div>
     </div>
   );

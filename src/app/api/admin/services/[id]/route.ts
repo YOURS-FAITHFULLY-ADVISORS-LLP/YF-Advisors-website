@@ -65,18 +65,100 @@ export const PATCH = withApiHandler(async (req: NextRequest, { params }: { param
       ? null
       : existingService.publishedAt;
 
-  const updatedService = await prisma.service.update({
+  await prisma.$transaction(async (tx) => {
+    // 1. Update main Service attributes
+    await tx.service.update({
+      where: { id },
+      data: {
+        ...(data.title !== undefined ? { title: data.title } : {}),
+        ...(data.slug !== undefined ? { slug: data.slug } : {}),
+        ...(data.icon !== undefined ? { icon: data.icon || null } : {}),
+        ...(data.image !== undefined ? { image: data.image || null } : {}),
+        ...(data.cardDescription !== undefined ? { cardDescription: data.cardDescription } : {}),
+        ...(data.keyValue !== undefined ? { keyValue: data.keyValue } : {}),
+        ...(data.description !== undefined ? { description: data.description } : {}),
+        ...(data.status !== undefined ? { status: data.status, publishedAt } : {}),
+      },
+    });
+
+    // 2. Update Offerings
+    if (data.offerings !== undefined) {
+      await tx.serviceOffering.deleteMany({ where: { serviceId: id } });
+      if (data.offerings.length > 0) {
+        await tx.serviceOffering.createMany({
+          data: data.offerings.map((o, idx) => ({
+            serviceId: id,
+            title: o.title,
+            description: o.description || '',
+            order: o.order ?? idx,
+          })),
+        });
+      }
+    }
+
+    // 3. Update Capabilities
+    if (data.capabilities !== undefined) {
+      await tx.serviceCapability.deleteMany({ where: { serviceId: id } });
+      if (data.capabilities.length > 0) {
+        await tx.serviceCapability.createMany({
+          data: data.capabilities.map((c, idx) => ({
+            serviceId: id,
+            title: c.title,
+            description: c.description || '',
+            order: c.order ?? idx,
+          })),
+        });
+      }
+    }
+
+    // 4. Update Benefits
+    if (data.benefits !== undefined) {
+      await tx.serviceBenefit.deleteMany({ where: { serviceId: id } });
+      if (data.benefits.length > 0) {
+        await tx.serviceBenefit.createMany({
+          data: data.benefits.map((b, idx) => ({
+            serviceId: id,
+            title: b.title,
+            description: b.description || '',
+            order: b.order ?? idx,
+          })),
+        });
+      }
+    }
+
+    // 5. Update WhyChooseUs (WhyChoosePoint)
+    if (data.whyChooseUs !== undefined) {
+      await tx.whyChoosePoint.deleteMany({ where: { serviceId: id } });
+      if (data.whyChooseUs.length > 0) {
+        await tx.whyChoosePoint.createMany({
+          data: data.whyChooseUs.map((w, idx) => ({
+            serviceId: id,
+            title: w.title,
+            description: w.description || '',
+            order: w.order ?? idx,
+          })),
+        });
+      }
+    }
+
+    // 6. Update WorkSteps (WorkStep)
+    if (data.workSteps !== undefined) {
+      await tx.workStep.deleteMany({ where: { serviceId: id } });
+      if (data.workSteps.length > 0) {
+        await tx.workStep.createMany({
+          data: data.workSteps.map((s, idx) => ({
+            serviceId: id,
+            title: s.title,
+            description: s.description || '',
+            stepNumber: s.stepNumber ?? (idx + 1),
+          })),
+        });
+      }
+    }
+  });
+
+  const updatedService = await prisma.service.findUnique({
     where: { id },
-    data: {
-      ...(data.title !== undefined ? { title: data.title } : {}),
-      ...(data.slug !== undefined ? { slug: data.slug } : {}),
-      ...(data.icon !== undefined ? { icon: data.icon || null } : {}),
-      ...(data.image !== undefined ? { image: data.image || null } : {}),
-      ...(data.cardDescription !== undefined ? { cardDescription: data.cardDescription } : {}),
-      ...(data.keyValue !== undefined ? { keyValue: data.keyValue } : {}),
-      ...(data.description !== undefined ? { description: data.description } : {}),
-      ...(data.status !== undefined ? { status: data.status, publishedAt } : {}),
-    },
     include: {
       offerings: { orderBy: { order: 'asc' } },
       capabilities: { orderBy: { order: 'asc' } },
@@ -86,7 +168,9 @@ export const PATCH = withApiHandler(async (req: NextRequest, { params }: { param
     },
   });
 
-  revalidateCmsPaths(['/services', `/services/${updatedService.slug}`, '/']);
+  if (updatedService) {
+    revalidateCmsPaths(['/services', `/services/${updatedService.slug}`, '/']);
+  }
 
   return apiSuccess(updatedService, 'Service updated successfully', undefined, 200);
 });
@@ -109,5 +193,5 @@ export const DELETE = withApiHandler(async (req: NextRequest, { params }: { para
 
   revalidateCmsPaths(['/services', `/services/${existingService.slug}`, '/']);
 
-  return apiSuccess({ id }, 'Service deleted successfully', undefined, 200);
+  return apiSuccess(null, 'Service deleted successfully', undefined, 200);
 });

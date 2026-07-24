@@ -88,6 +88,41 @@ export const POST = withApiHandler(async (req: NextRequest) => {
       description: data.description,
       status: data.status,
       publishedAt,
+      offerings: data.offerings && data.offerings.length > 0 ? {
+        create: data.offerings.map((o, idx) => ({
+          title: o.title,
+          description: o.description || '',
+          order: o.order ?? idx,
+        })),
+      } : undefined,
+      capabilities: data.capabilities && data.capabilities.length > 0 ? {
+        create: data.capabilities.map((c, idx) => ({
+          title: c.title,
+          description: c.description || '',
+          order: c.order ?? idx,
+        })),
+      } : undefined,
+      benefits: data.benefits && data.benefits.length > 0 ? {
+        create: data.benefits.map((b, idx) => ({
+          title: b.title,
+          description: b.description || '',
+          order: b.order ?? idx,
+        })),
+      } : undefined,
+      whyChooseUs: data.whyChooseUs && data.whyChooseUs.length > 0 ? {
+        create: data.whyChooseUs.map((w, idx) => ({
+          title: w.title,
+          description: w.description || '',
+          order: w.order ?? idx,
+        })),
+      } : undefined,
+      workSteps: data.workSteps && data.workSteps.length > 0 ? {
+        create: data.workSteps.map((s, idx) => ({
+          title: s.title,
+          description: s.description || '',
+          stepNumber: s.stepNumber ?? (idx + 1),
+        })),
+      } : undefined,
     },
     include: {
       offerings: true,
