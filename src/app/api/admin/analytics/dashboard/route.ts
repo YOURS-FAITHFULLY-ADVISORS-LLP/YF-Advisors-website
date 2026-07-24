@@ -5,15 +5,12 @@ import { prisma } from '@/src/lib/prisma';
 
 export const GET = withApiHandler(async (req: NextRequest) => {
   const { searchParams } = new URL(req.url);
-  const range = searchParams.get('range') || '7d'; // 'today' | 'yesterday' | '7d' | '30d' | '12m'
+  const range = searchParams.get('range') || '7d'; // 'today' | '7d' | '30d' | '12m'
 
   const now = new Date();
   let startDate = new Date();
 
   if (range === 'today') {
-    startDate.setHours(0, 0, 0, 0);
-  } else if (range === 'yesterday') {
-    startDate.setDate(now.getDate() - 1);
     startDate.setHours(0, 0, 0, 0);
   } else if (range === '7d') {
     startDate.setDate(now.getDate() - 7);
@@ -41,6 +38,7 @@ export const GET = withApiHandler(async (req: NextRequest) => {
     eventsGrouped,
     recentActivity,
     recentVisitorsRaw,
+    allPageViewsInRange,
   ] = await Promise.all([
     // Overview Cards
     prisma.analyticsVisitor.count(),
@@ -121,29 +119,90 @@ export const GET = withApiHandler(async (req: NextRequest) => {
         lastVisit: true,
       },
     }),
+
+    // All page views in range for building real visitor trends
+    prisma.analyticsPageView.findMany({
+      where: { enteredAt: { gte: startDate } },
+      select: { enteredAt: true },
+    }),
   ]);
 
   // Calculate Average Session Duration & Bounce Rate
   const totalSessionCount = sessions.length || 1;
   const totalDuration = sessions.reduce((acc, curr) => acc + curr.duration, 0);
   const avgSessionSeconds = Math.round(totalDuration / totalSessionCount);
-  const avgSessionFormatted = `${Math.floor(avgSessionSeconds / 60)}m ${avgSessionSeconds % 60}s`;
+  const avgSessionFormatted = sessions.length > 0
+    ? `${Math.floor(avgSessionSeconds / 60)}m ${avgSessionSeconds % 60}s`
+    : '0m 0s';
 
-  const bounceRate = Math.round((bounces / totalSessionCount) * 100);
+  const bounceRate = sessions.length > 0
+    ? Math.round((bounces / totalSessionCount) * 100)
+    : 0;
 
-  // Format Visitor Trends
+  // ── Build REAL Visitor Trends from DB data ──
   const trendDays: { day: string; count: number }[] = [];
-  for (let i = 6; i >= 0; i--) {
-    const d = new Date();
-    d.setDate(d.getDate() - i);
-    const dayLabel = d.toLocaleDateString('en-US', { weekday: 'short' });
-    trendDays.push({ day: dayLabel, count: Math.floor(Math.random() * 80) + 120 }); // fallback representation
+
+  if (range === 'today') {
+    // Group by hour for "today"
+    const hourCounts: Record<number, number> = {};
+    for (let h = 0; h <= now.getHours(); h++) hourCounts[h] = 0;
+    allPageViewsInRange.forEach((pv) => {
+      const hour = new Date(pv.enteredAt).getHours();
+      hourCounts[hour] = (hourCounts[hour] || 0) + 1;
+    });
+    Object.keys(hourCounts)
+      .map(Number)
+      .sort((a, b) => a - b)
+      .forEach((h) => {
+        const label = h === 0 ? '12 AM' : h < 12 ? `${h} AM` : h === 12 ? '12 PM' : `${h - 12} PM`;
+        trendDays.push({ day: label, count: hourCounts[h] });
+      });
+  } else if (range === '12m') {
+    // Group by month for "12 months"
+    const monthCounts: Record<string, number> = {};
+    for (let i = 11; i >= 0; i--) {
+      const d = new Date();
+      d.setMonth(d.getMonth() - i);
+      const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+      monthCounts[key] = 0;
+    }
+    allPageViewsInRange.forEach((pv) => {
+      const d = new Date(pv.enteredAt);
+      const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+      if (key in monthCounts) monthCounts[key]++;
+    });
+    Object.entries(monthCounts).forEach(([key, count]) => {
+      const [year, month] = key.split('-');
+      const label = new Date(Number(year), Number(month) - 1).toLocaleDateString('en-US', { month: 'short' });
+      trendDays.push({ day: label, count });
+    });
+  } else {
+    // Group by day for "7d" or "30d"
+    const numDays = range === '7d' ? 7 : 30;
+    const dayCounts: Record<string, number> = {};
+    for (let i = numDays - 1; i >= 0; i--) {
+      const d = new Date();
+      d.setDate(d.getDate() - i);
+      const key = d.toISOString().split('T')[0]; // YYYY-MM-DD
+      dayCounts[key] = 0;
+    }
+    allPageViewsInRange.forEach((pv) => {
+      const key = new Date(pv.enteredAt).toISOString().split('T')[0];
+      if (key in dayCounts) dayCounts[key]++;
+    });
+    Object.entries(dayCounts).forEach(([key, count]) => {
+      const d = new Date(key);
+      const label = range === '30d'
+        ? d.toLocaleDateString('en-US', { day: 'numeric', month: 'short' })
+        : d.toLocaleDateString('en-US', { weekday: 'short' });
+      trendDays.push({ day: label, count });
+    });
   }
 
   // Format Devices percentage
   const totalDeviceCount = visitorsByDevice.reduce((acc, curr) => acc + curr._count.device, 0) || 1;
   const devicesFormatted = visitorsByDevice.map((item) => ({
-    name: item.device || 'Desktop',
+    name: item.device || 'Unknown',
     count: item._count.device,
     percentage: Math.round((item._count.device / totalDeviceCount) * 100),
   }));
@@ -164,16 +223,18 @@ export const GET = withApiHandler(async (req: NextRequest) => {
       bounceRate: `${bounceRate}%`,
     },
     visitorTrends: trendDays,
-    countries: visitorsByCountry.map((c) => ({ country: c.country || 'India', count: c._count.country })),
-    cities: visitorsByCity.map((c) => ({ city: c.city || 'Mumbai', count: c._count.city })),
+    countries: visitorsByCountry.map((c) => ({ country: c.country || 'Unknown', count: c._count.country })),
+    cities: visitorsByCity.map((c) => ({ city: c.city || 'Unknown', count: c._count.city })),
     devices: devicesFormatted,
-    browsers: visitorsByBrowser.map((b) => ({ name: b.browser || 'Chrome', count: b._count.browser })),
-    operatingSystems: visitorsByOs.map((o) => ({ name: o.os || 'Windows', count: o._count.os })),
+    browsers: visitorsByBrowser.map((b) => ({ name: b.browser || 'Unknown', count: b._count.browser })),
+    operatingSystems: visitorsByOs.map((o) => ({ name: o.os || 'Unknown', count: o._count.os })),
     mostVisitedPages: pageViewsGrouped.map((p, idx) => ({
       rank: idx + 1,
       page: p.page,
       views: p._count.page,
-      avgTimeSpent: `${Math.floor((p._avg.timeSpent || 30) / 60)}m ${Math.round((p._avg.timeSpent || 30) % 60)}s`,
+      avgTimeSpent: p._avg.timeSpent
+        ? `${Math.floor(p._avg.timeSpent / 60)}m ${Math.round(p._avg.timeSpent % 60)}s`
+        : '0s',
     })),
     recentVisitors,
     recentActivity: recentActivity.map((a) => ({

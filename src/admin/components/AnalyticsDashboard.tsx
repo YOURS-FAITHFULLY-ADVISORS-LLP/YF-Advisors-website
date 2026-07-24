@@ -23,7 +23,9 @@ import {
   CheckCircle,
   PhoneCall,
   Mail,
-  MessageSquare
+  MessageSquare,
+  BarChart3,
+  Inbox
 } from 'lucide-react';
 
 interface DashboardData {
@@ -76,6 +78,16 @@ interface VisitorProfile {
   pagesVisitedCount: number;
   onlineStatus: string;
   journey: string[];
+}
+
+// Empty state component for sections with no data
+function EmptyState({ icon: Icon, label }: { icon: React.ElementType; label: string }) {
+  return (
+    <div className="flex flex-col items-center justify-center py-8 text-center">
+      <Icon className="w-8 h-8 text-slate-300 mb-2" />
+      <p className="text-xs text-slate-400 font-medium">{label}</p>
+    </div>
+  );
 }
 
 export default function AnalyticsDashboard() {
@@ -139,12 +151,12 @@ export default function AnalyticsDashboard() {
   }
 
   const overview = data?.overview || {
-    totalVisitors: 1542,
-    uniqueVisitors: 1120,
-    activeVisitors: 18,
-    totalPageViews: 5834,
-    avgSession: '3m 42s',
-    bounceRate: '38%',
+    totalVisitors: 0,
+    uniqueVisitors: 0,
+    activeVisitors: 0,
+    totalPageViews: 0,
+    avgSession: '0m 0s',
+    bounceRate: '0%',
   };
 
   return (
@@ -154,7 +166,7 @@ export default function AnalyticsDashboard() {
         <div>
           <h1 className="text-2xl font-bold text-[#002B49] tracking-tight">Analytics Dashboard</h1>
           <p className="text-xs text-slate-500 mt-1">
-            Real-time, privacy-friendly visitor analytics and web traffic insights.
+            Real-time, privacy-friendly visitor analytics — only real data from your website.
           </p>
         </div>
 
@@ -240,44 +252,42 @@ export default function AnalyticsDashboard() {
 
       {/* 📈 Visitor Trend & Most Visited Pages */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Trend Bar Chart representation */}
+        {/* Trend Bar Chart - REAL DATA */}
         <div className="lg:col-span-2 bg-white p-6 rounded-3xl border border-slate-200/80 shadow-2xs space-y-6">
           <div className="flex items-center justify-between">
             <div>
               <h2 className="text-base font-bold text-[#002B49]">Visitor Trends</h2>
-              <p className="text-xs text-slate-400">Daily website traffic volume</p>
+              <p className="text-xs text-slate-400">
+                {range === 'today' ? 'Hourly traffic today' : range === '12m' ? 'Monthly traffic volume' : 'Daily website traffic volume'}
+              </p>
             </div>
             <span className="text-xs font-semibold px-3 py-1 rounded-full bg-slate-100 text-slate-600">
               {range.toUpperCase()}
             </span>
           </div>
 
-          <div className="h-48 flex items-end justify-between gap-4 pt-6 px-4 border-b border-slate-100">
-            {(data?.visitorTrends || [
-              { day: 'Mon', count: 120 },
-              { day: 'Tue', count: 180 },
-              { day: 'Wed', count: 250 },
-              { day: 'Thu', count: 210 },
-              { day: 'Fri', count: 320 },
-              { day: 'Sat', count: 190 },
-              { day: 'Sun', count: 230 },
-            ]).map((t, idx) => {
-              const max = 350;
-              const heightPercent = Math.min(100, Math.round((t.count / max) * 100));
-              return (
-                <div key={idx} className="flex-1 flex flex-col items-center gap-2 h-full justify-end group">
-                  <span className="text-[10px] font-bold text-slate-500 opacity-0 group-hover:opacity-100 transition-opacity">
-                    {t.count}
-                  </span>
-                  <div
-                    style={{ height: `${heightPercent}%` }}
-                    className="w-full bg-[#002B49] group-hover:bg-[#00A79D] rounded-t-xl transition-all duration-300 shadow-2xs"
-                  />
-                  <span className="text-xs font-semibold text-slate-500 mt-1">{t.day}</span>
-                </div>
-              );
-            })}
-          </div>
+          {data?.visitorTrends && data.visitorTrends.length > 0 && data.visitorTrends.some(t => t.count > 0) ? (
+            <div className="h-48 flex items-end justify-between gap-2 pt-6 px-2 border-b border-slate-100">
+              {data.visitorTrends.map((t, idx) => {
+                const max = Math.max(...data.visitorTrends.map(d => d.count), 1);
+                const heightPercent = Math.min(100, Math.round((t.count / max) * 100));
+                return (
+                  <div key={idx} className="flex-1 flex flex-col items-center gap-2 h-full justify-end group">
+                    <span className="text-[10px] font-bold text-slate-500 opacity-0 group-hover:opacity-100 transition-opacity">
+                      {t.count}
+                    </span>
+                    <div
+                      style={{ height: `${Math.max(heightPercent, t.count > 0 ? 4 : 0)}%` }}
+                      className="w-full bg-[#002B49] group-hover:bg-[#00A79D] rounded-t-xl transition-all duration-300 shadow-2xs"
+                    />
+                    <span className="text-[10px] font-semibold text-slate-500 mt-1 truncate w-full text-center">{t.day}</span>
+                  </div>
+                );
+              })}
+            </div>
+          ) : (
+            <EmptyState icon={BarChart3} label="No visitor data yet. Trends will appear once visitors start browsing your website." />
+          )}
         </div>
 
         {/* 📄 Most Visited Pages */}
@@ -287,32 +297,30 @@ export default function AnalyticsDashboard() {
             <p className="text-xs text-slate-400">Top performing pages by views</p>
           </div>
 
-          <div className="space-y-3">
-            {(data?.mostVisitedPages || [
-              { rank: 1, page: 'Home (/)', views: 2300, avgTimeSpent: '1m 10s' },
-              { rank: 2, page: 'Services (/services)', views: 1400, avgTimeSpent: '3m 20s' },
-              { rank: 3, page: 'Pricing (/pricing)', views: 950, avgTimeSpent: '2m 40s' },
-              { rank: 4, page: 'About (/about)', views: 500, avgTimeSpent: '1m 45s' },
-              { rank: 5, page: 'Contact (/contact)', views: 320, avgTimeSpent: '45s' },
-            ]).map((p) => (
-              <div key={p.rank} className="flex items-center justify-between p-3 rounded-2xl bg-slate-50/70 border border-slate-100 text-xs">
-                <div className="flex items-center gap-3">
-                  <span className="w-6 h-6 rounded-full bg-[#002B49]/10 text-[#002B49] font-bold text-[11px] flex items-center justify-center shrink-0">
-                    {p.rank}
-                  </span>
-                  <span className="font-semibold text-slate-800 truncate max-w-[130px]">{p.page}</span>
+          {data?.mostVisitedPages && data.mostVisitedPages.length > 0 ? (
+            <div className="space-y-3">
+              {data.mostVisitedPages.map((p) => (
+                <div key={p.rank} className="flex items-center justify-between p-3 rounded-2xl bg-slate-50/70 border border-slate-100 text-xs">
+                  <div className="flex items-center gap-3">
+                    <span className="w-6 h-6 rounded-full bg-[#002B49]/10 text-[#002B49] font-bold text-[11px] flex items-center justify-center shrink-0">
+                      {p.rank}
+                    </span>
+                    <span className="font-semibold text-slate-800 truncate max-w-[130px]">{p.page}</span>
+                  </div>
+                  <div className="text-right">
+                    <div className="font-bold text-[#002B49]">{p.views.toLocaleString()} views</div>
+                    <div className="text-[10px] text-slate-400">{p.avgTimeSpent} avg</div>
+                  </div>
                 </div>
-                <div className="text-right">
-                  <div className="font-bold text-[#002B49]">{p.views.toLocaleString()} views</div>
-                  <div className="text-[10px] text-slate-400">{p.avgTimeSpent} avg</div>
-                </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          ) : (
+            <EmptyState icon={Eye} label="No page views recorded yet." />
+          )}
         </div>
       </div>
 
-      {/* 👥 Recent Visitors & 🟢 Live Visitors */}
+      {/* 👥 Recent Visitors & 🔘 Button Clicks */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2 bg-white rounded-3xl border border-slate-200/80 shadow-2xs overflow-hidden">
           <div className="p-6 border-b border-slate-100 flex items-center justify-between">
@@ -323,148 +331,143 @@ export default function AnalyticsDashboard() {
             <span className="text-xs font-bold text-[#00A79D]">Anonymous IDs</span>
           </div>
 
-          <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse">
-              <thead>
-                <tr className="bg-slate-50/80 border-b border-slate-200/80 text-[11px] font-bold text-slate-500 uppercase tracking-wider">
-                  <th className="px-6 py-3.5">Visitor ID</th>
-                  <th className="px-6 py-3.5">Last Page</th>
-                  <th className="px-6 py-3.5">Location</th>
-                  <th className="px-6 py-3.5">Device</th>
-                  <th className="px-6 py-3.5">Status</th>
-                  <th className="px-6 py-3.5 text-right">Action</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-100 text-xs">
-                {(data?.recentVisitors || [
-                  { visitorId: 'V-1023', exitPage: 'Services', country: 'India', city: 'Mumbai', device: 'Desktop', browser: 'Chrome', lastVisit: new Date().toISOString(), status: 'Online' },
-                  { visitorId: 'V-1024', exitPage: 'Pricing', country: 'India', city: 'Delhi', device: 'Mobile', browser: 'Safari', lastVisit: new Date().toISOString(), status: 'Online' },
-                  { visitorId: 'V-1025', exitPage: 'Contact', country: 'USA', city: 'New York', device: 'Desktop', browser: 'Edge', lastVisit: new Date().toISOString(), status: 'Offline' },
-                ]).map((v) => (
-                  <tr key={v.visitorId} className="hover:bg-slate-50/60 transition-colors">
-                    <td className="px-6 py-3.5 font-bold text-[#002B49]">{v.visitorId}</td>
-                    <td className="px-6 py-3.5 text-slate-700 font-medium">{v.exitPage}</td>
-                    <td className="px-6 py-3.5 text-slate-500">{v.city}, {v.country}</td>
-                    <td className="px-6 py-3.5 text-slate-500">{v.device} ({v.browser})</td>
-                    <td className="px-6 py-3.5">
-                      <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold ${
-                        v.status === 'Online' ? 'bg-emerald-500/10 text-emerald-600' : 'bg-slate-200/60 text-slate-500'
-                      }`}>
-                        <span className={`w-1.5 h-1.5 rounded-full ${v.status === 'Online' ? 'bg-emerald-500' : 'bg-slate-400'}`} />
-                        {v.status}
-                      </span>
-                    </td>
-                    <td className="px-6 py-3.5 text-right">
-                      <button
-                        onClick={() => openVisitorProfile(v.visitorId)}
-                        className="px-3 py-1.5 rounded-xl bg-[#002B49]/10 text-[#002B49] hover:bg-[#002B49] hover:text-white font-bold text-[11px] transition-colors"
-                      >
-                        Inspect
-                      </button>
-                    </td>
+          {data?.recentVisitors && data.recentVisitors.length > 0 ? (
+            <div className="overflow-x-auto">
+              <table className="w-full text-left border-collapse">
+                <thead>
+                  <tr className="bg-slate-50/80 border-b border-slate-200/80 text-[11px] font-bold text-slate-500 uppercase tracking-wider">
+                    <th className="px-6 py-3.5">Visitor ID</th>
+                    <th className="px-6 py-3.5">Last Page</th>
+                    <th className="px-6 py-3.5">Location</th>
+                    <th className="px-6 py-3.5">Device</th>
+                    <th className="px-6 py-3.5">Status</th>
+                    <th className="px-6 py-3.5 text-right">Action</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                </thead>
+                <tbody className="divide-y divide-slate-100 text-xs">
+                  {data.recentVisitors.map((v) => (
+                    <tr key={v.visitorId} className="hover:bg-slate-50/60 transition-colors">
+                      <td className="px-6 py-3.5 font-bold text-[#002B49]">{v.visitorId}</td>
+                      <td className="px-6 py-3.5 text-slate-700 font-medium">{v.exitPage}</td>
+                      <td className="px-6 py-3.5 text-slate-500">{v.city}, {v.country}</td>
+                      <td className="px-6 py-3.5 text-slate-500">{v.device} ({v.browser})</td>
+                      <td className="px-6 py-3.5">
+                        <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold ${
+                          v.status === 'Online' ? 'bg-emerald-500/10 text-emerald-600' : 'bg-slate-200/60 text-slate-500'
+                        }`}>
+                          <span className={`w-1.5 h-1.5 rounded-full ${v.status === 'Online' ? 'bg-emerald-500' : 'bg-slate-400'}`} />
+                          {v.status}
+                        </span>
+                      </td>
+                      <td className="px-6 py-3.5 text-right">
+                        <button
+                          onClick={() => openVisitorProfile(v.visitorId)}
+                          className="px-3 py-1.5 rounded-xl bg-[#002B49]/10 text-[#002B49] hover:bg-[#002B49] hover:text-white font-bold text-[11px] transition-colors"
+                        >
+                          Inspect
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          ) : (
+            <EmptyState icon={Users} label="No visitors recorded yet. Data will appear once real users visit your website." />
+          )}
         </div>
 
-        {/* 🔘 Button Click Analytics & Conversions */}
+        {/* 🔘 Button Click Analytics */}
         <div className="bg-white p-6 rounded-3xl border border-slate-200/80 shadow-2xs space-y-6">
           <div>
             <h2 className="text-base font-bold text-[#002B49]">Button Click Analytics</h2>
             <p className="text-xs text-slate-400">Tracked Call-To-Action clicks</p>
           </div>
 
-          <div className="space-y-3">
-            {(data?.buttonAnalytics || [
-              { button: 'Get Started', clicks: 250 },
-              { button: 'Contact Us', clicks: 140 },
-              { button: 'WhatsApp', clicks: 90 },
-              { button: 'Call Now', clicks: 42 },
-              { button: 'Book Consultation', clicks: 28 },
-            ]).map((b, idx) => (
-              <div key={idx} className="flex items-center justify-between p-3 rounded-2xl bg-slate-50 border border-slate-100 text-xs">
-                <div className="flex items-center gap-2.5">
-                  <MousePointer className="w-3.5 h-3.5 text-[#00A79D]" />
-                  <span className="font-semibold text-slate-800">{b.button}</span>
+          {data?.buttonAnalytics && data.buttonAnalytics.length > 0 ? (
+            <div className="space-y-3">
+              {data.buttonAnalytics.map((b, idx) => (
+                <div key={idx} className="flex items-center justify-between p-3 rounded-2xl bg-slate-50 border border-slate-100 text-xs">
+                  <div className="flex items-center gap-2.5">
+                    <MousePointer className="w-3.5 h-3.5 text-[#00A79D]" />
+                    <span className="font-semibold text-slate-800">{b.button}</span>
+                  </div>
+                  <span className="font-bold text-[#002B49] bg-[#002B49]/10 px-2.5 py-1 rounded-lg">
+                    {b.clicks} clicks
+                  </span>
                 </div>
-                <span className="font-bold text-[#002B49] bg-[#002B49]/10 px-2.5 py-1 rounded-lg">
-                  {b.clicks} clicks
-                </span>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          ) : (
+            <EmptyState icon={MousePointer} label="No CTA clicks tracked yet." />
+          )}
         </div>
       </div>
 
-      {/* 🌍 Countries, Cities, Devices, OS */}
+      {/* 🌍 Countries, Cities, Devices, Browsers */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         <div className="bg-white p-5 rounded-3xl border border-slate-200/80 shadow-2xs space-y-3">
           <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider">Top Countries</h3>
-          <div className="space-y-2">
-            {(data?.countries || [
-              { country: 'India', count: 1120 },
-              { country: 'USA', count: 80 },
-              { country: 'Canada', count: 35 },
-              { country: 'UK', count: 25 },
-            ]).map((c, i) => (
-              <div key={i} className="flex justify-between items-center text-xs">
-                <span className="font-semibold text-slate-700">{c.country}</span>
-                <span className="font-bold text-[#002B49]">{c.count}</span>
-              </div>
-            ))}
-          </div>
+          {data?.countries && data.countries.length > 0 ? (
+            <div className="space-y-2">
+              {data.countries.map((c, i) => (
+                <div key={i} className="flex justify-between items-center text-xs">
+                  <span className="font-semibold text-slate-700">{c.country}</span>
+                  <span className="font-bold text-[#002B49]">{c.count}</span>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="text-xs text-slate-400 py-4 text-center">No data yet</p>
+          )}
         </div>
 
         <div className="bg-white p-5 rounded-3xl border border-slate-200/80 shadow-2xs space-y-3">
           <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider">Top Cities</h3>
-          <div className="space-y-2">
-            {(data?.cities || [
-              { city: 'Mumbai', count: 480 },
-              { city: 'Delhi', count: 310 },
-              { city: 'Pune', count: 190 },
-              { city: 'Bangalore', count: 140 },
-            ]).map((c, i) => (
-              <div key={i} className="flex justify-between items-center text-xs">
-                <span className="font-semibold text-slate-700">{c.city}</span>
-                <span className="font-bold text-[#002B49]">{c.count}</span>
-              </div>
-            ))}
-          </div>
+          {data?.cities && data.cities.length > 0 ? (
+            <div className="space-y-2">
+              {data.cities.map((c, i) => (
+                <div key={i} className="flex justify-between items-center text-xs">
+                  <span className="font-semibold text-slate-700">{c.city}</span>
+                  <span className="font-bold text-[#002B49]">{c.count}</span>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="text-xs text-slate-400 py-4 text-center">No data yet</p>
+          )}
         </div>
 
         <div className="bg-white p-5 rounded-3xl border border-slate-200/80 shadow-2xs space-y-3">
           <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider">Devices</h3>
-          <div className="space-y-2">
-            {(data?.devices || [
-              { name: 'Desktop', count: 900, percentage: 60 },
-              { name: 'Mobile', count: 525, percentage: 35 },
-              { name: 'Tablet', count: 75, percentage: 5 },
-            ]).map((d, i) => (
-              <div key={i} className="flex justify-between items-center text-xs">
-                <span className="font-semibold text-slate-700">{d.name}</span>
-                <span className="font-bold text-[#002B49]">{d.percentage}%</span>
-              </div>
-            ))}
-          </div>
+          {data?.devices && data.devices.length > 0 ? (
+            <div className="space-y-2">
+              {data.devices.map((d, i) => (
+                <div key={i} className="flex justify-between items-center text-xs">
+                  <span className="font-semibold text-slate-700">{d.name}</span>
+                  <span className="font-bold text-[#002B49]">{d.percentage}%</span>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="text-xs text-slate-400 py-4 text-center">No data yet</p>
+          )}
         </div>
 
         <div className="bg-white p-5 rounded-3xl border border-slate-200/80 shadow-2xs space-y-3">
           <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider">Browsers / OS</h3>
-          <div className="space-y-2">
-            {(data?.browsers || [
-              { name: 'Chrome', count: 850 },
-              { name: 'Safari', count: 420 },
-              { name: 'Edge', count: 180 },
-              { name: 'Firefox', count: 90 },
-            ]).map((b, i) => (
-              <div key={i} className="flex justify-between items-center text-xs">
-                <span className="font-semibold text-slate-700">{b.name}</span>
-                <span className="font-bold text-[#002B49]">{b.count}</span>
-              </div>
-            ))}
-          </div>
+          {data?.browsers && data.browsers.length > 0 ? (
+            <div className="space-y-2">
+              {data.browsers.map((b, i) => (
+                <div key={i} className="flex justify-between items-center text-xs">
+                  <span className="font-semibold text-slate-700">{b.name}</span>
+                  <span className="font-bold text-[#002B49]">{b.count}</span>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="text-xs text-slate-400 py-4 text-center">No data yet</p>
+          )}
         </div>
       </div>
 
@@ -536,21 +539,25 @@ export default function AnalyticsDashboard() {
                   {/* 🧭 Visitor Journey Flow */}
                   <div className="space-y-3 pt-2">
                     <h3 className="font-bold text-[#002B49] uppercase tracking-wider text-[11px]">🧭 Visitor Journey Flow</h3>
-                    <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 flex flex-wrap items-center gap-2">
-                      {visitorProfile.journey.map((step, idx) => (
-                        <React.Fragment key={idx}>
-                          <span className="px-3 py-1.5 rounded-xl bg-white border border-slate-200 font-bold text-slate-800 shadow-2xs">
-                            {step}
-                          </span>
-                          {idx < visitorProfile.journey.length - 1 && (
-                            <ChevronRight className="w-4 h-4 text-slate-400 shrink-0" />
-                          )}
-                        </React.Fragment>
-                      ))}
-                      <span className="px-3 py-1.5 rounded-xl bg-slate-200 text-slate-600 font-semibold">
-                        Exit Website
-                      </span>
-                    </div>
+                    {visitorProfile.journey.length > 0 ? (
+                      <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 flex flex-wrap items-center gap-2">
+                        {visitorProfile.journey.map((step, idx) => (
+                          <React.Fragment key={idx}>
+                            <span className="px-3 py-1.5 rounded-xl bg-white border border-slate-200 font-bold text-slate-800 shadow-2xs">
+                              {step}
+                            </span>
+                            {idx < visitorProfile.journey.length - 1 && (
+                              <ChevronRight className="w-4 h-4 text-slate-400 shrink-0" />
+                            )}
+                          </React.Fragment>
+                        ))}
+                        <span className="px-3 py-1.5 rounded-xl bg-slate-200 text-slate-600 font-semibold">
+                          Exit Website
+                        </span>
+                      </div>
+                    ) : (
+                      <p className="text-xs text-slate-400 py-3 text-center">No journey data available.</p>
+                    )}
                   </div>
                 </>
               ) : null}

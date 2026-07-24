@@ -14,6 +14,34 @@ async function generateVisitorId(): Promise<string> {
   return `V-${nextNum}`;
 }
 
+// Lightweight geo-IP lookup using free ip-api.com service (no API key needed)
+async function getGeoInfo(ip: string): Promise<{ country: string; city: string }> {
+  // Skip geo for localhost / private IPs
+  if (!ip || ip === '127.0.0.1' || ip === '::1' || ip.startsWith('192.168.') || ip.startsWith('10.') || ip.startsWith('172.')) {
+    return { country: 'Local', city: 'Local' };
+  }
+
+  try {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 2000); // 2s timeout
+    const res = await fetch(`http://ip-api.com/json/${ip}?fields=country,city`, {
+      signal: controller.signal,
+    });
+    clearTimeout(timeout);
+
+    if (res.ok) {
+      const data = await res.json();
+      return {
+        country: data.country || 'Unknown',
+        city: data.city || 'Unknown',
+      };
+    }
+  } catch {
+    // Geo lookup failed — not critical, fallback gracefully
+  }
+  return { country: 'Unknown', city: 'Unknown' };
+}
+
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
@@ -39,7 +67,7 @@ export async function POST(req: NextRequest) {
     } = body;
 
     const forwardedFor = req.headers.get('x-forwarded-for');
-    const realIp = req.headers.get('x-real-ip') || (forwardedFor ? forwardedFor.split(',')[0] : '127.0.0.1');
+    const realIp = req.headers.get('x-real-ip') || (forwardedFor ? forwardedFor.split(',')[0].trim() : '127.0.0.1');
     const ipHash = hashIp(realIp);
 
     let visitorId = incomingVisitorId;
@@ -53,18 +81,22 @@ export async function POST(req: NextRequest) {
     if (!visitor) {
       visitorId = await generateVisitorId();
       isNewVisitor = true;
+
+      // Real geo-IP lookup for actual country and city
+      const geo = await getGeoInfo(realIp);
+
       visitor = await prisma.analyticsVisitor.create({
         data: {
           visitorId,
           ipHash,
-          country: metadata?.country || 'India', // fallback default
-          city: metadata?.city || 'Mumbai',      // fallback default
-          browser: browser || 'Chrome',
-          device: device || 'Desktop',
-          os: os || 'Windows',
-          language: language || 'en-US',
-          timezone: timezone || 'Asia/Kolkata',
-          screenResolution: screenResolution || '1920x1080',
+          country: geo.country,
+          city: geo.city,
+          browser: browser || 'Unknown',
+          device: device || 'Unknown',
+          os: os || 'Unknown',
+          language: language || navigator?.language || 'Unknown',
+          timezone: timezone || 'Unknown',
+          screenResolution: screenResolution || 'Unknown',
           referrer: referrer || 'Direct',
           utmSource: utmSource || null,
           utmMedium: utmMedium || null,
