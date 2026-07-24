@@ -117,7 +117,7 @@ export default async function DynamicBlogPage(props: PageProps) {
           </main>
 
           {/* Sidebar */}
-          <aside className="lg:col-span-4 space-y-6">
+          <aside className="lg:col-span-4 space-y-6 sticky top-28 h-fit">
             <div className="bg-white border border-slate-200/80 rounded-3xl p-6 shadow-sm space-y-4">
               <h3 className="text-sm font-bold font-serif text-[#002B49] uppercase tracking-wider border-b border-slate-100 pb-3">
                 Categories
