@@ -55,6 +55,7 @@ export default async function DynamicBlogPage(props: PageProps) {
           alt={title}
           fill
           priority
+          unoptimized
           className="object-cover object-center"
         />
         <div className="relative z-20 max-w-5xl mx-auto h-full flex flex-col justify-end p-6 md:p-12 pb-16">
