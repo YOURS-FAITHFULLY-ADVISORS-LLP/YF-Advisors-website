@@ -66,6 +66,11 @@ export async function POST(req: NextRequest) {
       timeSpent,
     } = body;
 
+    // SERVER-SIDE GUARD: Reject admin page analytics — only track public website
+    if (page && typeof page === 'string' && page.startsWith('/admin')) {
+      return NextResponse.json({ success: false, error: 'Admin pages are not tracked' }, { status: 200 });
+    }
+
     const forwardedFor = req.headers.get('x-forwarded-for');
     const realIp = req.headers.get('x-real-ip') || (forwardedFor ? forwardedFor.split(',')[0].trim() : '127.0.0.1');
     const ipHash = hashIp(realIp);
