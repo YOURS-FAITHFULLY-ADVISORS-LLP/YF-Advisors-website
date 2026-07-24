@@ -29,6 +29,10 @@ export default function AdminHeader({ setMobileOpen, adminId = 'Admin' }: AdminH
       return [{ label: 'Homepage & Hero', href: '/admin/homepage' }];
     }
 
+    if (parts[1] === 'contact') {
+      return [{ label: 'Contact Settings', href: '/admin/contact' }];
+    }
+
     if (parts[1] === 'blogs') {
       const items = [{ label: 'Blogs', href: '/admin/blogs' }];
       if (parts[2] === 'new') {
