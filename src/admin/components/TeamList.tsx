@@ -18,6 +18,7 @@ import {
   Filter,
   Award
 } from 'lucide-react';
+import ConfirmDialog from './ConfirmDialog';
 
 export interface TeamMemberItem {
   id: string;
@@ -45,6 +46,7 @@ export default function TeamList() {
   const [actionSuccess, setActionSuccess] = useState<string | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [togglingId, setTogglingId] = useState<string | null>(null);
+  const [confirmDelete, setConfirmDelete] = useState<{ id: string; name: string } | null>(null);
 
   const fetchTeamMembers = async () => {
     setLoading(true);
@@ -117,10 +119,12 @@ export default function TeamList() {
     }
   };
 
+  const requestDelete = (id: string, name: string) => {
+    setConfirmDelete({ id, name });
+  };
+
   const handleDelete = async (id: string, name: string) => {
-    if (!window.confirm(`Are you sure you want to delete team member "${name}"?`)) {
-      return;
-    }
+    setConfirmDelete(null);
 
     setDeletingId(id);
     setActionSuccess(null);
@@ -346,7 +350,7 @@ export default function TeamList() {
                           <Edit3 className="w-4 h-4" />
                         </Link>
                         <button
-                          onClick={() => handleDelete(member.id, member.name)}
+                          onClick={() => requestDelete(member.id, member.name)}
                           disabled={deletingId === member.id}
                           className="p-2 rounded-xl text-red-500 hover:bg-red-50 transition-colors cursor-pointer"
                           title="Delete Member"
@@ -392,6 +396,18 @@ export default function TeamList() {
           </div>
         )}
       </div>
+
+      <ConfirmDialog
+        isOpen={!!confirmDelete}
+        title="Delete Team Member"
+        message={`Are you sure you want to delete "${confirmDelete?.name}"? This action cannot be undone.`}
+        confirmLabel="Delete"
+        cancelLabel="Cancel"
+        variant="danger"
+        loading={!!deletingId}
+        onConfirm={() => confirmDelete && handleDelete(confirmDelete.id, confirmDelete.name)}
+        onCancel={() => setConfirmDelete(null)}
+      />
     </div>
   );
 }

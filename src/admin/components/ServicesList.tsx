@@ -19,6 +19,7 @@ import {
   Layers,
   Sparkles
 } from 'lucide-react';
+import ConfirmDialog from './ConfirmDialog';
 
 export interface ServiceItem {
   id: string;
@@ -52,6 +53,7 @@ export default function ServicesList() {
   const [actionSuccess, setActionSuccess] = useState<string | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [togglingId, setTogglingId] = useState<string | null>(null);
+  const [confirmDelete, setConfirmDelete] = useState<{ id: string; title: string } | null>(null);
 
   const fetchServices = async () => {
     setLoading(true);
@@ -124,10 +126,12 @@ export default function ServicesList() {
     }
   };
 
+  const requestDelete = (id: string, title: string) => {
+    setConfirmDelete({ id, title });
+  };
+
   const handleDelete = async (id: string, title: string) => {
-    if (!window.confirm(`Are you sure you want to delete "${title}"?`)) {
-      return;
-    }
+    setConfirmDelete(null);
 
     setDeletingId(id);
     setActionSuccess(null);
@@ -343,7 +347,7 @@ export default function ServicesList() {
                           <Edit3 className="w-4 h-4" />
                         </Link>
                         <button
-                          onClick={() => handleDelete(service.id, service.title)}
+                          onClick={() => requestDelete(service.id, service.title)}
                           disabled={deletingId === service.id}
                           className="p-2 rounded-xl text-red-500 hover:bg-red-50 transition-colors cursor-pointer"
                           title="Delete Service"
@@ -389,6 +393,18 @@ export default function ServicesList() {
           </div>
         )}
       </div>
+
+      <ConfirmDialog
+        isOpen={!!confirmDelete}
+        title="Delete Service"
+        message={`Are you sure you want to delete "${confirmDelete?.title}"? This action cannot be undone.`}
+        confirmLabel="Delete"
+        cancelLabel="Cancel"
+        variant="danger"
+        loading={!!deletingId}
+        onConfirm={() => confirmDelete && handleDelete(confirmDelete.id, confirmDelete.title)}
+        onCancel={() => setConfirmDelete(null)}
+      />
     </div>
   );
 }

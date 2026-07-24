@@ -21,6 +21,7 @@ import {
   Filter,
   FileText
 } from 'lucide-react';
+import ConfirmDialog from './ConfirmDialog';
 
 interface Submission {
   id: string;
@@ -56,6 +57,7 @@ export default function SubmissionsList() {
   const [updatingStatus, setUpdatingStatus] = useState(false);
   const [editingNotes, setEditingNotes] = useState('');
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
   const [actionSuccess, setActionSuccess] = useState<string | null>(null);
   const [actionError, setActionError] = useState<string | null>(null);
 
@@ -146,8 +148,12 @@ export default function SubmissionsList() {
     }
   };
 
+  const requestDelete = (id: string) => {
+    setConfirmDeleteId(id);
+  };
+
   const handleDelete = async (id: string) => {
-    if (!confirm('Are you sure you want to delete this submission inquiry?')) return;
+    setConfirmDeleteId(null);
     setDeletingId(id);
     try {
       const res = await fetch(`/api/admin/contact-submissions/${id}`, {
@@ -317,7 +323,7 @@ export default function SubmissionsList() {
                             <Eye className="w-4 h-4" />
                           </button>
                           <button
-                            onClick={() => handleDelete(sub.id)}
+                            onClick={() => requestDelete(sub.id)}
                             disabled={deletingId === sub.id}
                             className="p-2 rounded-xl text-red-500 hover:bg-red-50 transition-colors disabled:opacity-50"
                             title="Delete Inquiry"
@@ -485,6 +491,18 @@ export default function SubmissionsList() {
           </div>
         </div>
       )}
+
+      <ConfirmDialog
+        isOpen={!!confirmDeleteId}
+        title="Delete Submission Inquiry"
+        message="Are you sure you want to delete this contact submission inquiry? This action cannot be undone."
+        confirmLabel="Delete"
+        cancelLabel="Cancel"
+        variant="danger"
+        loading={!!deletingId}
+        onConfirm={() => confirmDeleteId && handleDelete(confirmDeleteId)}
+        onCancel={() => setConfirmDeleteId(null)}
+      />
     </div>
   );
 }

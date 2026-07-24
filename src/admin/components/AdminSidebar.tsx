@@ -20,6 +20,7 @@ import {
   PhoneCall,
   ShieldCheck
 } from 'lucide-react';
+import ConfirmDialog from './ConfirmDialog';
 
 interface AdminSidebarProps {
   mobileOpen: boolean;
@@ -29,6 +30,8 @@ interface AdminSidebarProps {
 
 export default function AdminSidebar({ mobileOpen, setMobileOpen, adminId = 'Admin' }: AdminSidebarProps) {
   const pathname = usePathname();
+  const [showLogoutConfirm, setShowLogoutConfirm] = React.useState(false);
+  const [loggingOut, setLoggingOut] = React.useState(false);
 
   const navItems = [
     { name: 'Dashboard', href: '/admin', icon: LayoutDashboard },
@@ -127,21 +130,34 @@ export default function AdminSidebar({ mobileOpen, setMobileOpen, adminId = 'Adm
 
         <button
           type="button"
-          onClick={async () => {
-            try {
-              await fetch('/api/admin/auth/logout', { method: 'POST' });
-            } catch (err) {
-              console.error('Logout failed:', err);
-            } finally {
-              window.location.href = '/admin/login';
-            }
-          }}
+          onClick={() => setShowLogoutConfirm(true)}
           className="w-full flex items-center justify-center gap-2 py-2 px-3 rounded-xl bg-white hover:bg-red-50 text-red-600 border border-slate-200 hover:border-red-200 text-xs font-semibold shadow-2xs transition-colors cursor-pointer"
         >
           <LogOut className="w-3.5 h-3.5" />
           <span>Sign Out</span>
         </button>
       </div>
+
+      <ConfirmDialog
+        isOpen={showLogoutConfirm}
+        title="Sign Out"
+        message="Are you sure you want to sign out of the Admin Portal?"
+        confirmLabel="Sign Out"
+        cancelLabel="Cancel"
+        variant="logout"
+        loading={loggingOut}
+        onConfirm={async () => {
+          setLoggingOut(true);
+          try {
+            await fetch('/api/admin/auth/logout', { method: 'POST' });
+          } catch (err) {
+            console.error('Logout failed:', err);
+          } finally {
+            window.location.href = '/admin/login';
+          }
+        }}
+        onCancel={() => setShowLogoutConfirm(false)}
+      />
     </div>
   );
 
