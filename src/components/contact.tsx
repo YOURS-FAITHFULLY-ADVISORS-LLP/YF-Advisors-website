@@ -12,7 +12,9 @@ import {
   ChevronDown, 
   Check,
   ArrowRight,
-  Send
+  Send,
+  Clock,
+  ExternalLink
 } from "lucide-react";
 
 const SERVICES = [
@@ -60,6 +62,8 @@ export default function ContactSection() {
     email: "info@yfadvisors.in",
     phoneTitle: "Call Us",
     phone: "+91 80805 06185",
+    officeHours: "",
+    googleMap: "",
   });
 
   React.useEffect(() => {
@@ -77,6 +81,8 @@ export default function ContactSection() {
               email: json.data.email || "info@yfadvisors.in",
               phoneTitle: json.data.phoneTitle || "Call Us",
               phone: json.data.phone || "+91 80805 06185",
+              officeHours: json.data.officeHours || "",
+              googleMap: json.data.googleMap || "",
             });
           }
         }
@@ -190,6 +196,17 @@ export default function ContactSection() {
                     <p className="text-gray-500 text-sm leading-relaxed mt-1 whitespace-pre-line">
                       {contactData.address}
                     </p>
+                    {contactData.googleMap && (
+                      <a
+                        href={contactData.googleMap}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1.5 text-xs font-bold text-[#00A79D] hover:underline mt-2"
+                      >
+                        <span>View on Google Maps</span>
+                        <ExternalLink size={13} />
+                      </a>
+                    )}
                   </div>
                 </div>
 
@@ -216,6 +233,20 @@ export default function ContactSection() {
                     </a>
                   </div>
                 </div>
+
+                {contactData.officeHours && (
+                  <div className="flex items-start gap-5">
+                    <div className="shrink-0 w-12 h-12 rounded-2xl bg-linear-to-br from-[#00A79D] to-teal-600 text-white flex items-center justify-center shadow-lg shadow-teal-500/20">
+                      <Clock size={22} />
+                    </div>
+                    <div>
+                      <h4 className="font-bold text-gray-900 text-lg">Working Hours</h4>
+                      <p className="text-gray-500 text-sm mt-1">
+                        {contactData.officeHours}
+                      </p>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
 
