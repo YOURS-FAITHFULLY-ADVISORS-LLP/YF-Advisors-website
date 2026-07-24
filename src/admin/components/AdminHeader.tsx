@@ -14,7 +14,7 @@ export default function AdminHeader({ setMobileOpen, adminId = 'Admin' }: AdminH
   const pathname = usePathname() || '/admin';
 
   React.useEffect(() => {
-    document.title = 'YF Advisors Admin Panel';
+    document.title = 'Admin Panel';
   }, []);
 
   const getBreadcrumb = () => {

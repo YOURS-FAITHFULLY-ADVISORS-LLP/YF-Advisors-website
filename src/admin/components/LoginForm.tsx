@@ -14,7 +14,7 @@ export default function LoginForm() {
   const [error, setError] = useState<string | null>(null);
 
   React.useEffect(() => {
-    document.title = 'YF Advisors Admin Panel';
+    document.title = 'Admin Panel';
   }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
