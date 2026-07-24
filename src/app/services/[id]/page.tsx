@@ -2,28 +2,70 @@ import React from 'react';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { 
-  ArrowLeft, CheckCircle2, Star, Briefcase, BarChart, ArrowRightCircle, ArrowRight, LayoutGrid
+  ArrowLeft, CheckCircle2, Star, Briefcase, BarChart, ArrowRight, LayoutGrid, ArrowRightCircle
 } from 'lucide-react';
-
-// Relative path to your data file
+import { prisma } from '@/src/lib/prisma';
 import { servicesData } from '../../../data/services/data'; 
 
-// Define params as a Promise (Required for Next.js 15)
 interface PageProps {
   params: Promise<{ id: string }>;
 }
 
 export default async function ServiceDetail(props: PageProps) {
-  
-  // 1. Unwrap the params Promise (Fixes the Server Error)
   const params = await props.params;
   const id = params.id;
 
-  // 2. Find the specific service data
-  const service = servicesData.find((s) => s.id === id);
+  // 1. Query database for live service data (matching ID or slug)
+  const dbService = await prisma.service.findFirst({
+    where: {
+      OR: [
+        { id: id },
+        { slug: id },
+      ],
+    },
+    include: {
+      offerings: { orderBy: { order: 'asc' } },
+      capabilities: { orderBy: { order: 'asc' } },
+      benefits: { orderBy: { order: 'asc' } },
+      whyChooseUs: { orderBy: { order: 'asc' } },
+      workSteps: { orderBy: { stepNumber: 'asc' } },
+    },
+  });
 
-  // 3. If ID doesn't exist, show 404
-  if (!service) return notFound();
+  // 2. Fallback to static servicesData if not found in DB
+  const staticService = servicesData.find(
+    (s) => s.id === id || s.id === dbService?.slug || s.title.toLowerCase().replace(/\s+/g, '-') === id
+  );
+
+  if (!dbService && !staticService) return notFound();
+
+  // Combine DB & static presentation properties
+  const service = {
+    id: dbService?.id || staticService?.id || id,
+    title: dbService?.title || staticService?.title || '',
+    color: staticService?.color || '#00A79D',
+    icon: staticService?.icon || Briefcase,
+    shortDescription: dbService?.cardDescription || staticService?.shortDescription || '',
+    introText: dbService?.description 
+      ? [dbService.description.replace(/<[^>]*>?/gm, '').trim()]
+      : staticService?.introText || [],
+    detailedServices: dbService?.offerings && dbService.offerings.length > 0
+      ? dbService.offerings.map(o => ({ title: o.title, description: o.description }))
+      : staticService?.detailedServices || [],
+    coreServices: dbService?.capabilities && dbService.capabilities.length > 0
+      ? dbService.capabilities.map(c => ({ title: c.title, description: c.description }))
+      : staticService?.coreServices || [],
+    benefitsDetail: dbService?.benefits && dbService.benefits.length > 0
+      ? dbService.benefits.map(b => ({ title: b.title, description: b.description }))
+      : staticService?.benefitsDetail || [],
+    whyChooseUs: dbService?.whyChooseUs && dbService.whyChooseUs.length > 0
+      ? dbService.whyChooseUs.map(w => ({ title: w.title, description: w.description }))
+      : staticService?.whyChooseUs || [],
+    workProcess: dbService?.workSteps && dbService.workSteps.length > 0
+      ? dbService.workSteps.map(s => ({ title: s.title, description: s.description }))
+      : staticService?.workProcess || [],
+    otherServices: staticService?.otherServices || [],
+  };
 
   const Icon = service.icon;
 
@@ -32,7 +74,6 @@ export default async function ServiceDetail(props: PageProps) {
       
       {/* ================= HERO SECTION ================= */}
       <header className="relative bg-slate-900 text-white pt-32 pb-24 px-6 overflow-hidden">
-        {/* Background Blob - Fixed Tailwind Classes: w-125, h-125 */}
         <div 
           className="absolute -top-24 -right-24 w-125 h-125 rounded-full blur-3xl opacity-20 pointer-events-none mix-blend-screen"
           style={{ backgroundColor: service.color }}
@@ -67,10 +108,6 @@ export default async function ServiceDetail(props: PageProps) {
                 <p key={idx}>{paragraph}</p>
              ))}
           </div>
-
-          <div className="mt-12 flex gap-4">
-             
-          </div>
         </div>
       </header>
 
@@ -100,7 +137,6 @@ export default async function ServiceDetail(props: PageProps) {
                             <h3 className="text-xl font-bold mb-4 text-slate-900 group-hover:text-slate-700 transition-colors relative z-10">
                               {item.title}
                             </h3>
-                            {/* Fixed Tailwind: flex-grow -> grow */}
                             <p className="text-slate-600 leading-relaxed grow text-sm md:text-base relative z-10">
                               {item.description}
                             </p>
@@ -112,7 +148,6 @@ export default async function ServiceDetail(props: PageProps) {
 
         {/* ================= 2. CORE SERVICES ================= */}
         {service.coreServices && service.coreServices.length > 0 && (
-            // Fixed Tailwind: rounded-[2rem] -> rounded-4xl
             <section className="bg-slate-900 text-white rounded-4xl p-8 md:p-16 relative overflow-hidden shadow-2xl">
                 <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'radial-gradient(#ffffff 1px, transparent 1px)', backgroundSize: '32px 32px' }}></div>
                 
@@ -198,7 +233,6 @@ export default async function ServiceDetail(props: PageProps) {
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-12">
                     {service.workProcess.map((item, i) => (
                         <div key={i} className="relative text-center group">
-                            {/* Connector Line (Desktop Only) - Don't show for last item */}
                             {i !== service.workProcess!.length - 1 && (
                                 <div className="hidden md:block absolute top-10 left-1/2 w-full h-1 bg-slate-100 -z-10" />
                             )}
@@ -218,7 +252,6 @@ export default async function ServiceDetail(props: PageProps) {
         )}
 
         {/* ================= 5. FOOTER / OTHER SERVICES ================= */}
-        {/* Fixed Tailwind: rounded-[2rem] -> rounded-4xl */}
         {service.otherServices && service.otherServices.length > 0 && (
             <section className="bg-slate-50 rounded-4xl p-10 md:p-16 mt-12 text-center md:text-left border border-slate-100">
                 <h3 className="text-xs font-extrabold text-slate-400 uppercase tracking-widest mb-8">
