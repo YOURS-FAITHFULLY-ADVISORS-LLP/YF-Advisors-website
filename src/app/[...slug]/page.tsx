@@ -17,6 +17,7 @@ import AdminEditTestimonialPage from '@/src/admin/app/testimonials/[id]/page';
 import AdminSettingsPage from '@/src/admin/app/settings/page';
 import AdminAboutPage from '@/src/admin/app/about/page';
 import AdminContactPage from '@/src/admin/app/contact/page';
+import AdminInquiriesPage from '@/src/admin/app/inquiries/page';
 
 interface DynamicRouteProps {
   params: Promise<{
@@ -41,6 +42,9 @@ export default async function DynamicRoute({ params }: DynamicRouteProps) {
       }
       if (slug[1] === 'about') {
         return <AdminAboutPage />;
+      }
+      if (slug[1] === 'inquiries') {
+        return <AdminInquiriesPage />;
       }
       if (slug[1] === 'contact') {
         return <AdminContactPage />;

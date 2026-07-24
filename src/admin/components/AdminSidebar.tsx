@@ -31,6 +31,7 @@ export default function AdminSidebar({ mobileOpen, setMobileOpen, adminId = 'Adm
 
   const navItems = [
     { name: 'Dashboard', href: '/admin', icon: LayoutDashboard },
+    { name: 'Form Inquiries', href: '/admin/inquiries', icon: MessageSquare },
     { name: 'Homepage / Hero', href: '/admin/homepage', icon: Sparkles },
     { name: 'About Section', href: '/admin/about', icon: Info },
     { name: 'Contact Details', href: '/admin/contact', icon: PhoneCall },

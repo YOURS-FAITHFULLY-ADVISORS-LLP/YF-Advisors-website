@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 import { headers } from 'next/headers';
 import nodemailer from 'nodemailer';
+import { prisma } from '@/src/lib/prisma';
+
 
 const ipRequestCounts = new Map();
 const ipRateLimits = new Map();
@@ -161,6 +163,22 @@ export async function POST(request) {
     };
 
     incrementIpCount(clientIp);
+
+    // Save to Database
+    try {
+      await prisma.contactSubmission.create({
+        data: {
+          name: sanitizedData.name,
+          email: sanitizedData.email,
+          phone: sanitizedData.contact,
+          service: sanitizedData.service,
+          message: sanitizedData.message,
+          ipAddress: sanitizedData.ip,
+        },
+      });
+    } catch (dbError) {
+      console.error('Failed to save contact submission to database:', dbError);
+    }
 
     const mailOptions = {
       from: process.env.SMTP_USER,
