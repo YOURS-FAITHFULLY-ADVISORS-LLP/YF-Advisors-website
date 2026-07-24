@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Playfair_Display, Montserrat, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import StyledComponentsRegistry from "./registry";
+import AnalyticsTracker from "@/src/components/AnalyticsTracker";
 
 const playfair = Playfair_Display({
   variable: "--font-playfair",
@@ -36,6 +37,7 @@ export default function RootLayout({
       <body
         className={`${playfair.variable} ${montserrat.variable} ${geistMono.variable} antialiased`}
       >
+        <AnalyticsTracker />
         {/* WRAP CHILDREN WITH THE REGISTRY COMPONENT */}
         <StyledComponentsRegistry>
           {children}

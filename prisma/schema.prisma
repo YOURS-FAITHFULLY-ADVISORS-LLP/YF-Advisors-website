@@ -407,3 +407,93 @@ model Settings {
   createdAt             DateTime @default(now())
   updatedAt             DateTime @updatedAt
 }
+
+model AnalyticsVisitor {
+  id               String               @id @default(cuid())
+  visitorId        String               @unique // e.g. V-000102
+  ipHash           String?
+  country          String?
+  city             String?
+  browser          String?
+  device           String?
+  os               String?
+  language         String?
+  timezone         String?
+  screenResolution String?
+  referrer         String?
+  utmSource        String?
+  utmMedium        String?
+  utmCampaign      String?
+  landingPage      String?
+  exitPage         String?
+  visitCount       Int                  @default(1)
+  firstVisit       DateTime             @default(now())
+  lastVisit        DateTime             @default(now())
+  createdAt        DateTime             @default(now())
+  updatedAt        DateTime             @updatedAt
+
+  sessions         AnalyticsSession[]
+  pageViews        AnalyticsPageView[]
+  events           AnalyticsEvent[]
+
+  @@index([lastVisit])
+  @@index([country])
+  @@index([device])
+  @@index([browser])
+}
+
+model AnalyticsSession {
+  id         String              @id @default(cuid())
+  visitorId  String
+  startedAt  DateTime            @default(now())
+  endedAt    DateTime            @default(now())
+  duration   Int                 @default(0) // seconds
+  bounce     Boolean             @default(true)
+  pages      Int                 @default(1)
+  createdAt  DateTime            @default(now())
+
+  visitor    AnalyticsVisitor    @relation(fields: [visitorId], references: [visitorId], onDelete: Cascade)
+  pageViews  AnalyticsPageView[]
+  events     AnalyticsEvent[]
+
+  @@index([visitorId])
+  @@index([startedAt])
+}
+
+model AnalyticsPageView {
+  id        String           @id @default(cuid())
+  visitorId String
+  sessionId String
+  page      String
+  title     String?
+  enteredAt DateTime         @default(now())
+  leftAt    DateTime?
+  timeSpent Int              @default(0) // seconds
+
+  visitor   AnalyticsVisitor @relation(fields: [visitorId], references: [visitorId], onDelete: Cascade)
+  session   AnalyticsSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+
+  @@index([visitorId])
+  @@index([sessionId])
+  @@index([page])
+  @@index([enteredAt])
+}
+
+model AnalyticsEvent {
+  id         String           @id @default(cuid())
+  visitorId  String
+  sessionId  String
+  eventType  String           // button_click, contact_submit, whatsapp_click, phone_click, email_click, etc.
+  page       String
+  buttonName String?
+  metadata   Json?
+  createdAt  DateTime         @default(now())
+
+  visitor    AnalyticsVisitor @relation(fields: [visitorId], references: [visitorId], onDelete: Cascade)
+  session    AnalyticsSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+
+  @@index([visitorId])
+  @@index([sessionId])
+  @@index([eventType])
+  @@index([createdAt])
+}

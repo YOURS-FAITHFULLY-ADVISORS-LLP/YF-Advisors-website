@@ -6,6 +6,7 @@ import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { 
   LayoutDashboard, 
+  Activity,
   Sparkles,
   Info,
   FileText, 
@@ -31,6 +32,7 @@ export default function AdminSidebar({ mobileOpen, setMobileOpen, adminId = 'Adm
 
   const navItems = [
     { name: 'Dashboard', href: '/admin', icon: LayoutDashboard },
+    { name: 'Analytics', href: '/admin/analytics', icon: Activity },
     { name: 'Form Inquiries', href: '/admin/inquiries', icon: MessageSquare },
     { name: 'Homepage / Hero', href: '/admin/homepage', icon: Sparkles },
     { name: 'About Section', href: '/admin/about', icon: Info },
