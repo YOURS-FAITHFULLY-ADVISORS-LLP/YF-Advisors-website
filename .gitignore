@@ -47,6 +47,5 @@ next-env.d.ts
 /.claude
 /.agents
 
-
-
-
+# Password Hashing
+hash.js
