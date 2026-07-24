@@ -1,5 +1,12 @@
 import { z } from 'zod';
 
+const blogSectionSchema = z.object({
+  id: z.string().optional(),
+  heading: z.string().optional().nullable(),
+  content: z.string().default(''),
+  displayOrder: z.number().default(0),
+});
+
 export const createBlogSchema = z.object({
   title: z.string().min(1, 'Title is required'),
   slug: z.string().min(1, 'Slug is required'),
@@ -11,6 +18,7 @@ export const createBlogSchema = z.object({
   author: z.string().default('YF Advisors'),
   content: z.string().optional().nullable(),
   status: z.enum(['DRAFT', 'PUBLISHED']).default('DRAFT'),
+  sections: z.array(blogSectionSchema).optional(),
 });
 
 export const updateBlogSchema = createBlogSchema.partial();

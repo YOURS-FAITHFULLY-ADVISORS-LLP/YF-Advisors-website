@@ -87,9 +87,16 @@ export const POST = withApiHandler(async (req: NextRequest) => {
       content: data.content || null,
       status: data.status,
       publishedAt,
+      sections: data.sections && data.sections.length > 0 ? {
+        create: data.sections.map((s, idx) => ({
+          heading: s.heading || null,
+          content: s.content || '',
+          displayOrder: s.displayOrder ?? idx,
+        })),
+      } : undefined,
     },
     include: {
-      sections: true,
+      sections: { orderBy: { displayOrder: 'asc' } },
     },
   });
 

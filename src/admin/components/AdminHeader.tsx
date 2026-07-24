@@ -13,6 +13,10 @@ interface AdminHeaderProps {
 export default function AdminHeader({ setMobileOpen, adminId = 'Admin' }: AdminHeaderProps) {
   const pathname = usePathname() || '/admin';
 
+  React.useEffect(() => {
+    document.title = 'YF Advisors Admin Panel';
+  }, []);
+
   const getBreadcrumb = () => {
     const parts = pathname.split('/').filter(Boolean);
 

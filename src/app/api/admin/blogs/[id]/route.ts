@@ -61,26 +61,50 @@ export const PATCH = withApiHandler(async (req: NextRequest, { params }: { param
       ? null
       : existingBlog.publishedAt;
 
-  const updatedBlog = await prisma.blog.update({
+  await prisma.$transaction(async (tx) => {
+    // 1. Update main Blog fields
+    await tx.blog.update({
+      where: { id },
+      data: {
+        ...(data.title !== undefined ? { title: data.title } : {}),
+        ...(data.slug !== undefined ? { slug: data.slug } : {}),
+        ...(data.cardDescription !== undefined ? { cardDescription: data.cardDescription } : {}),
+        ...(data.excerpt !== undefined ? { excerpt: data.excerpt } : {}),
+        ...(data.image !== undefined ? { image: data.image || null } : {}),
+        ...(data.category !== undefined ? { category: data.category || null } : {}),
+        ...(data.tags !== undefined ? { tags: data.tags || null } : {}),
+        ...(data.author !== undefined ? { author: data.author } : {}),
+        ...(data.content !== undefined ? { content: data.content || null } : {}),
+        ...(data.status !== undefined ? { status: data.status, publishedAt } : {}),
+      },
+    });
+
+    // 2. Update sections if provided
+    if (data.sections !== undefined) {
+      await tx.blogSection.deleteMany({ where: { blogId: id } });
+      if (data.sections.length > 0) {
+        await tx.blogSection.createMany({
+          data: data.sections.map((s, idx) => ({
+            blogId: id,
+            heading: s.heading || null,
+            content: s.content || '',
+            displayOrder: s.displayOrder ?? idx,
+          })),
+        });
+      }
+    }
+  });
+
+  const updatedBlog = await prisma.blog.findUnique({
     where: { id },
-    data: {
-      ...(data.title !== undefined ? { title: data.title } : {}),
-      ...(data.slug !== undefined ? { slug: data.slug } : {}),
-      ...(data.cardDescription !== undefined ? { cardDescription: data.cardDescription } : {}),
-      ...(data.excerpt !== undefined ? { excerpt: data.excerpt } : {}),
-      ...(data.image !== undefined ? { image: data.image || null } : {}),
-      ...(data.category !== undefined ? { category: data.category || null } : {}),
-      ...(data.tags !== undefined ? { tags: data.tags || null } : {}),
-      ...(data.author !== undefined ? { author: data.author } : {}),
-      ...(data.content !== undefined ? { content: data.content || null } : {}),
-      ...(data.status !== undefined ? { status: data.status, publishedAt } : {}),
-    },
     include: {
       sections: { orderBy: { displayOrder: 'asc' } },
     },
   });
 
-  revalidateCmsPaths(['/blogs', `/blogs/${updatedBlog.slug}`, '/']);
+  if (updatedBlog) {
+    revalidateCmsPaths(['/blogs', `/blogs/${updatedBlog.slug}`, '/']);
+  }
 
   return apiSuccess(updatedBlog, 'Blog updated successfully', undefined, 200);
 });
@@ -103,5 +127,5 @@ export const DELETE = withApiHandler(async (req: NextRequest, { params }: { para
 
   revalidateCmsPaths(['/blogs', `/blogs/${existingBlog.slug}`, '/']);
 
-  return apiSuccess({ id }, 'Blog deleted successfully', undefined, 200);
+  return apiSuccess(null, 'Blog deleted successfully', undefined, 200);
 });
