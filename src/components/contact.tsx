@@ -53,7 +53,41 @@ export default function ContactSection() {
     message: "",
   });
 
-  // Fixed: Added explicit type for the change event
+  const [contactData, setContactData] = useState({
+    officeTitle: "Our Office",
+    address: "207, 2nd Floor, Bldg No 1, Millenium Business Park, Sector-2 Mahape, Navi Mumbai, 400710",
+    emailTitle: "Email Us",
+    email: "info@yfadvisors.in",
+    phoneTitle: "Call Us",
+    phone: "+91 80805 06185",
+  });
+
+  React.useEffect(() => {
+    let isMounted = true;
+    async function loadContactDetails() {
+      try {
+        const res = await fetch("/api/admin/contact");
+        if (res.ok) {
+          const json = await res.json();
+          if (isMounted && json.success && json.data) {
+            setContactData({
+              officeTitle: json.data.officeTitle || "Our Office",
+              address: json.data.address || "207, 2nd Floor, Bldg No 1, Millenium Business Park, Sector-2 Mahape, Navi Mumbai, 400710",
+              emailTitle: json.data.emailTitle || "Email Us",
+              email: json.data.email || "info@yfadvisors.in",
+              phoneTitle: json.data.phoneTitle || "Call Us",
+              phone: json.data.phone || "+91 80805 06185",
+            });
+          }
+        }
+      } catch (err) {
+        console.error("Failed to load contact details:", err);
+      }
+    }
+    loadContactDetails();
+    return () => { isMounted = false; };
+  }, []);
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
     setErrorMessage("");
@@ -152,9 +186,9 @@ export default function ContactSection() {
                     <MapPin size={22} />
                   </div>
                   <div>
-                    <h4 className="font-bold text-gray-900 text-lg">Our Office</h4>
-                    <p className="text-gray-500 text-sm leading-relaxed mt-1">
-                      207, 2nd Floor, Bldg No 1,<br/>Millenium Business Park, Sector-2 Mahape,<br/>Navi Mumbai, 400710
+                    <h4 className="font-bold text-gray-900 text-lg">{contactData.officeTitle}</h4>
+                    <p className="text-gray-500 text-sm leading-relaxed mt-1 whitespace-pre-line">
+                      {contactData.address}
                     </p>
                   </div>
                 </div>
@@ -164,9 +198,9 @@ export default function ContactSection() {
                     <Mail size={22} />
                   </div>
                   <div>
-                    <h4 className="font-bold text-gray-900 text-lg">Email Us</h4>
-                    <a href="mailto:info@yfadvisors.com" className="text-gray-500 text-sm mt-1 block hover:text-[#00A79D] transition-colors">
-                      info@yfadvisors.in
+                    <h4 className="font-bold text-gray-900 text-lg">{contactData.emailTitle}</h4>
+                    <a href={`mailto:${contactData.email}`} className="text-gray-500 text-sm mt-1 block hover:text-[#00A79D] transition-colors">
+                      {contactData.email}
                     </a>
                   </div>
                 </div>
@@ -176,9 +210,9 @@ export default function ContactSection() {
                     <Phone size={22} />
                   </div>
                   <div>
-                    <h4 className="font-bold text-gray-900 text-lg">Call Us</h4>
-                    <a href="tel:+918080506185" className="text-gray-500 text-sm mt-1 block hover:text-[#00A79D] transition-colors">
-                      +91 80805 06185
+                    <h4 className="font-bold text-gray-900 text-lg">{contactData.phoneTitle}</h4>
+                    <a href={`tel:${contactData.phone?.replace(/\s+/g, '')}`} className="text-gray-500 text-sm mt-1 block hover:text-[#00A79D] transition-colors">
+                      {contactData.phone}
                     </a>
                   </div>
                 </div>

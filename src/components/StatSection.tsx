@@ -146,7 +146,9 @@ const StatsSection = () => {
                           enableScrollSpy
                           scrollSpyDelay={100}
                           scrollSpyOnce
-                        />
+                        >
+                          {({ countUpRef }) => <span ref={countUpRef} />}
+                        </CountUp>
                       ) : (
                         // Static fallback for SSR + first render
                         <>
