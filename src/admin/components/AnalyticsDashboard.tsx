@@ -105,10 +105,10 @@ export default function AnalyticsDashboard() {
 
   useEffect(() => {
     fetchDashboard();
-    // Auto-refresh analytics data every 10 minutes (600,000 ms)
+    // Auto-refresh analytics data every 2 minutes (120,000 ms) for live updates
     const interval = setInterval(() => {
       fetchDashboard();
-    }, 10 * 60 * 1000);
+    }, 2 * 60 * 1000);
 
     return () => clearInterval(interval);
   }, [fetchDashboard]);
