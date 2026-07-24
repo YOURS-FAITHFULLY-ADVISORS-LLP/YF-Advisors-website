@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { Save, RefreshCw, CheckCircle2, AlertCircle, MapPin, Mail, Phone, Clock, Map } from 'lucide-react';
+import { Save, RefreshCw, CheckCircle2, AlertCircle, MapPin, Mail, Phone, Clock, Map, Share2, Linkedin, Facebook, Instagram, Twitter, Youtube } from 'lucide-react';
 
 export default function ContactEditor() {
   const [formData, setFormData] = useState({
@@ -12,6 +12,11 @@ export default function ContactEditor() {
     email: '',
     phoneTitle: 'Call Us',
     phone: '',
+    facebookUrl: '',
+    instagramUrl: '',
+    linkedinUrl: '',
+    twitterUrl: '',
+    youtubeUrl: '',
     googleMap: '',
     officeHours: '',
   });
@@ -37,6 +42,11 @@ export default function ContactEditor() {
           email: c.email || '',
           phoneTitle: c.phoneTitle || 'Call Us',
           phone: c.phone || '',
+          facebookUrl: c.facebookUrl || '',
+          instagramUrl: c.instagramUrl || '',
+          linkedinUrl: c.linkedinUrl || '',
+          twitterUrl: c.twitterUrl || '',
+          youtubeUrl: c.youtubeUrl || '',
           googleMap: c.googleMap || '',
           officeHours: c.officeHours || '',
         });
@@ -258,6 +268,91 @@ export default function ContactEditor() {
                 value={formData.phone}
                 onChange={handleChange}
                 placeholder="+91 80805 06185"
+                className="w-full px-4 py-3 rounded-xl border border-slate-200 text-xs text-slate-900 focus:outline-none focus:border-[#00A79D] focus:ring-1 focus:ring-[#00A79D] transition-colors"
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Social Media Handles */}
+        <div className="bg-white border border-slate-200/80 rounded-3xl p-6 sm:p-8 shadow-2xs space-y-6">
+          <div className="flex items-center gap-3 border-b border-slate-100 pb-4">
+            <div className="p-2.5 rounded-xl bg-blue-500/10 text-blue-600">
+              <Share2 className="w-5 h-5" />
+            </div>
+            <div>
+              <h2 className="text-base font-bold text-[#002B49]">Social Media Channels</h2>
+              <p className="text-xs text-slate-400">Manage social profile links (LinkedIn, Instagram, Facebook, Twitter, YouTube)</p>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2 flex items-center gap-2">
+                <Linkedin className="w-3.5 h-3.5 text-blue-600" /> LinkedIn URL
+              </label>
+              <input
+                type="text"
+                name="linkedinUrl"
+                value={formData.linkedinUrl}
+                onChange={handleChange}
+                placeholder="https://www.linkedin.com/company/yfadvisors"
+                className="w-full px-4 py-3 rounded-xl border border-slate-200 text-xs text-slate-900 focus:outline-none focus:border-[#00A79D] focus:ring-1 focus:ring-[#00A79D] transition-colors"
+              />
+            </div>
+
+            <div>
+              <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2 flex items-center gap-2">
+                <Instagram className="w-3.5 h-3.5 text-pink-600" /> Instagram URL
+              </label>
+              <input
+                type="text"
+                name="instagramUrl"
+                value={formData.instagramUrl}
+                onChange={handleChange}
+                placeholder="https://www.instagram.com/yoursfaithfullyadvisors/"
+                className="w-full px-4 py-3 rounded-xl border border-slate-200 text-xs text-slate-900 focus:outline-none focus:border-[#00A79D] focus:ring-1 focus:ring-[#00A79D] transition-colors"
+              />
+            </div>
+
+            <div>
+              <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2 flex items-center gap-2">
+                <Facebook className="w-3.5 h-3.5 text-blue-700" /> Facebook URL
+              </label>
+              <input
+                type="text"
+                name="facebookUrl"
+                value={formData.facebookUrl}
+                onChange={handleChange}
+                placeholder="https://www.facebook.com/yfadvisors"
+                className="w-full px-4 py-3 rounded-xl border border-slate-200 text-xs text-slate-900 focus:outline-none focus:border-[#00A79D] focus:ring-1 focus:ring-[#00A79D] transition-colors"
+              />
+            </div>
+
+            <div>
+              <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2 flex items-center gap-2">
+                <Youtube className="w-3.5 h-3.5 text-red-600" /> YouTube Channel URL
+              </label>
+              <input
+                type="text"
+                name="youtubeUrl"
+                value={formData.youtubeUrl}
+                onChange={handleChange}
+                placeholder="https://www.youtube.com/channel/..."
+                className="w-full px-4 py-3 rounded-xl border border-slate-200 text-xs text-slate-900 focus:outline-none focus:border-[#00A79D] focus:ring-1 focus:ring-[#00A79D] transition-colors"
+              />
+            </div>
+
+            <div className="md:col-span-2">
+              <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2 flex items-center gap-2">
+                <Twitter className="w-3.5 h-3.5 text-sky-500" /> Twitter / X URL
+              </label>
+              <input
+                type="text"
+                name="twitterUrl"
+                value={formData.twitterUrl}
+                onChange={handleChange}
+                placeholder="https://twitter.com/..."
                 className="w-full px-4 py-3 rounded-xl border border-slate-200 text-xs text-slate-900 focus:outline-none focus:border-[#00A79D] focus:ring-1 focus:ring-[#00A79D] transition-colors"
               />
             </div>

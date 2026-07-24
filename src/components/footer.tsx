@@ -32,6 +32,53 @@ const socialLinks = [
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
+  const [contactData, setContactData] = React.useState({
+    address: "207, 2nd Floor, Bldg No 1, Millenium Business Park, Sector-2 Mahape, Navi Mumbai, 400710",
+    email: "info@yfadvisors.in",
+    phone: "+91 22 46054371",
+    googleMap: "",
+    facebookUrl: "https://www.facebook.com/yfadvisors",
+    instagramUrl: "https://www.instagram.com/yoursfaithfullyadvisors/",
+    linkedinUrl: "https://www.linkedin.com/company/yfadvisors",
+    twitterUrl: "",
+    youtubeUrl: "https://www.youtube.com/channel/UCn9WNGp3sJi7YcbofSFh6pA",
+  });
+
+  React.useEffect(() => {
+    let isMounted = true;
+    async function loadContactDetails() {
+      try {
+        const res = await fetch("/api/admin/contact");
+        if (res.ok) {
+          const json = await res.json();
+          if (isMounted && json.success && json.data) {
+            setContactData({
+              address: json.data.address || "207, 2nd Floor, Bldg No 1, Millenium Business Park, Sector-2 Mahape, Navi Mumbai, 400710",
+              email: json.data.email || "info@yfadvisors.in",
+              phone: json.data.phone || "+91 22 46054371",
+              googleMap: json.data.googleMap || "",
+              facebookUrl: json.data.facebookUrl || "https://www.facebook.com/yfadvisors",
+              instagramUrl: json.data.instagramUrl || "https://www.instagram.com/yoursfaithfullyadvisors/",
+              linkedinUrl: json.data.linkedinUrl || "https://www.linkedin.com/company/yfadvisors",
+              twitterUrl: json.data.twitterUrl || "",
+              youtubeUrl: json.data.youtubeUrl || "https://www.youtube.com/channel/UCn9WNGp3sJi7YcbofSFh6pA",
+            });
+          }
+        }
+      } catch (err) {
+        console.error("Failed to load contact details in footer:", err);
+      }
+    }
+    loadContactDetails();
+    return () => { isMounted = false; };
+  }, []);
+
+  const dynamicSocialLinks = [
+    { icon: Linkedin, url: contactData.linkedinUrl },
+    { icon: YoutubeIcon, url: contactData.youtubeUrl },
+    { icon: Instagram, url: contactData.instagramUrl },
+    { icon: Facebook, url: contactData.facebookUrl },
+  ].filter(item => Boolean(item.url));
 
   return (
     <footer className="w-full bg-slate-50 pt-16 pb-8 font-sans border-t border-slate-200">
@@ -50,7 +97,7 @@ export default function Footer() {
             </p>
             {/* Social Icons */}
             <div className="flex gap-3">
-              {socialLinks.map(({ icon: Icon, url }, idx) => (
+              {dynamicSocialLinks.map(({ icon: Icon, url }, idx) => (
                 <a
                   key={idx}
                   href={url}
@@ -98,22 +145,20 @@ export default function Footer() {
             <ul className="space-y-4">
               <li className="flex items-start gap-3">
                 <MapPin className="text-[#00A79D] shrink-0 mt-0.5" size={18} />
-                <span className="text-slate-600 text-sm leading-relaxed">
-                  207, 2nd Floor, Bldg No 1,<br />
-                  Millenium Business Park, Sector-2 Mahape,<br />
-                  Navi Mumbai, 400710
+                <span className="text-slate-600 text-sm leading-relaxed whitespace-pre-line">
+                  {contactData.address}
                 </span>
               </li>
               <li className="flex items-center gap-3">
                 <Phone className="text-[#00A79D] shrink-0" size={18} />
-                <a href="tel:+918080506185" className="text-slate-600 text-sm hover:text-[#00A79D] transition-colors">
-                  +91 22 46054371
+                <a href={`tel:${contactData.phone}`} className="text-slate-600 text-sm hover:text-[#00A79D] transition-colors">
+                  {contactData.phone}
                 </a>
               </li>
               <li className="flex items-center gap-3">
                 <Mail className="text-[#00A79D] shrink-0" size={18} />
-                <a href="mailto:hello@yfadvisors.in" className="text-slate-600 text-sm hover:text-[#00A79D] transition-colors">
-                  info@yfadvisors.in
+                <a href={`mailto:${contactData.email}`} className="text-slate-600 text-sm hover:text-[#00A79D] transition-colors">
+                  {contactData.email}
                 </a>
               </li>
             </ul>

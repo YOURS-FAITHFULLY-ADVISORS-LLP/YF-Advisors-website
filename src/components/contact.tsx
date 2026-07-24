@@ -64,6 +64,11 @@ export default function ContactSection() {
     phone: "+91 80805 06185",
     officeHours: "",
     googleMap: "",
+    facebookUrl: "https://www.facebook.com/yfadvisors",
+    instagramUrl: "https://www.instagram.com/yoursfaithfullyadvisors/",
+    linkedinUrl: "https://www.linkedin.com/company/yfadvisors",
+    twitterUrl: "",
+    youtubeUrl: "https://www.youtube.com/channel/UCn9WNGp3sJi7YcbofSFh6pA",
   });
 
   React.useEffect(() => {
@@ -83,6 +88,11 @@ export default function ContactSection() {
               phone: json.data.phone || "+91 80805 06185",
               officeHours: json.data.officeHours || "",
               googleMap: json.data.googleMap || "",
+              facebookUrl: json.data.facebookUrl || "https://www.facebook.com/yfadvisors",
+              instagramUrl: json.data.instagramUrl || "https://www.instagram.com/yoursfaithfullyadvisors/",
+              linkedinUrl: json.data.linkedinUrl || "https://www.linkedin.com/company/yfadvisors",
+              twitterUrl: json.data.twitterUrl || "",
+              youtubeUrl: json.data.youtubeUrl || "https://www.youtube.com/channel/UCn9WNGp3sJi7YcbofSFh6pA",
             });
           }
         }
@@ -253,7 +263,12 @@ export default function ContactSection() {
             <div className="bg-white p-6 rounded-3xl shadow-lg shadow-gray-200/50 border border-white flex items-center justify-between">
               <span className="font-bold text-gray-900 ml-2">Follow our socials</span>
               <div className="flex gap-2">
-                {SOCIAL_LINKS.map((item, index) => (
+                {[
+                  { icon: Linkedin, url: contactData.linkedinUrl },
+                  { icon: YoutubeIcon, url: contactData.youtubeUrl },
+                  { icon: Instagram, url: contactData.instagramUrl },
+                  { icon: Facebook, url: contactData.facebookUrl },
+                ].filter(item => Boolean(item.url)).map((item, index) => (
                   <a 
                     key={index} 
                     href={item.url} 

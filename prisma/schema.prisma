@@ -309,6 +309,13 @@ model Contact {
   phoneTitle  String   @default("Call Us")
   phone       String
 
+  // Social Handles
+  facebookUrl  String?
+  instagramUrl String?
+  linkedinUrl  String?
+  twitterUrl   String?
+  youtubeUrl   String?
+
   // Optional
   googleMap   String?
   officeHours String?

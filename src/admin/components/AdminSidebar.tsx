@@ -39,7 +39,6 @@ export default function AdminSidebar({ mobileOpen, setMobileOpen, adminId = 'Adm
     { name: 'Services', href: '/admin/services', icon: Briefcase },
     { name: 'Team', href: '/admin/team', icon: Users },
     { name: 'Testimonials', href: '/admin/testimonials', icon: MessageSquare },
-    { name: 'Settings', href: '/admin/settings', icon: Settings },
   ];
 
   const isActive = (path: string) => {
