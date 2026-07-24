@@ -14,6 +14,11 @@ function TrackerContent() {
     // 1. Initialize Visitor storage
     if (typeof window === 'undefined') return;
 
+    // IGNORE ADMIN PORTAL - Do not track admin activity
+    if (pathname.startsWith('/admin') || window.location.pathname.startsWith('/admin')) {
+      return;
+    }
+
     let vId = localStorage.getItem('yf_analytics_vid');
     let sId = sessionStorage.getItem('yf_analytics_sid');
 
