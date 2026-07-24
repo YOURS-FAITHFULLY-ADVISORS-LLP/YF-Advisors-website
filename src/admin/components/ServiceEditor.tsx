@@ -310,22 +310,22 @@ export default function ServiceEditor({ serviceId }: ServiceEditorProps) {
   }
 
   return (
-    <div className="space-y-8 max-w-5xl">
+    <div className="space-y-8 max-w-5xl w-full min-w-0">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div className="flex items-center gap-3">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 min-w-0">
+        <div className="flex items-center gap-3 min-w-0 flex-1">
           <Link
             href="/admin/services"
-            className="p-2.5 rounded-2xl bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 transition-colors"
+            className="p-2.5 rounded-2xl bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 transition-colors shrink-0"
             title="Back to services list"
           >
             <ArrowLeft className="w-4 h-4" />
           </Link>
-          <div>
-            <h1 className="text-2xl sm:text-3xl font-bold font-serif text-[#002B49] tracking-tight">
+          <div className="min-w-0 flex-1">
+            <h1 className="text-2xl sm:text-3xl font-bold font-serif text-[#002B49] tracking-tight truncate">
               {isNew ? 'Create New Service' : 'Edit Service'}
             </h1>
-            <p className="text-xs sm:text-sm text-slate-500 font-medium mt-0.5">
+            <p className="text-xs sm:text-sm text-slate-500 font-medium mt-0.5 truncate">
               {isNew
                 ? 'Catalog a new service offering for YF Advisors.'
                 : `Editing: ${formData.title || 'Service'}`}
@@ -333,7 +333,7 @@ export default function ServiceEditor({ serviceId }: ServiceEditorProps) {
           </div>
         </div>
 
-        <div className="flex items-center gap-3 self-start sm:self-auto">
+        <div className="flex items-center gap-3 shrink-0 self-start sm:self-auto">
           <Link
             href="/admin/services"
             className="px-4 py-2.5 bg-white border border-slate-200 hover:border-slate-300 rounded-2xl text-xs font-semibold text-slate-700 shadow-2xs transition-all hover:bg-slate-50"

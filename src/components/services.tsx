@@ -1,11 +1,45 @@
 "use client";
 
-import React, { useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { motion, useScroll, useTransform, MotionValue } from "framer-motion";
 import ReactLenis from "lenis/react";
-import { ArrowRight, LucideIcon } from "lucide-react";
+import { 
+  ArrowRight, 
+  LucideIcon, 
+  UserCheck, 
+  Settings, 
+  UserMinus, 
+  Headphones, 
+  FileText, 
+  PieChart, 
+  TrendingUp, 
+  Briefcase, 
+  Globe, 
+  Shield 
+} from "lucide-react";
 import { useRouter } from "next/navigation";
 import { servicesData } from "../data/services/data";
+
+// --- Icon Resolver Helper ---
+function getServiceIcon(iconName?: string): LucideIcon {
+  if (!iconName) return Briefcase;
+  const name = iconName.toLowerCase();
+  if (name.includes("usercheck") || name.includes("manpower")) return UserCheck;
+  if (name.includes("setting") || name.includes("process")) return Settings;
+  if (name.includes("userminus") || name.includes("attrition")) return UserMinus;
+  if (name.includes("headphone") || name.includes("virtual")) return Headphones;
+  if (name.includes("file") || name.includes("bookkeeping")) return FileText;
+  if (name.includes("chart") || name.includes("cfo") || name.includes("finance")) return PieChart;
+  if (name.includes("trending") || name.includes("tax")) return TrendingUp;
+  if (name.includes("globe")) return Globe;
+  if (name.includes("shield")) return Shield;
+  return Briefcase;
+}
+
+const stripHtml = (html?: string) => {
+  if (!html) return "";
+  return html.replace(/<[^>]*>?/gm, "").trim();
+};
 
 // --- Types ---
 interface Service {
@@ -14,11 +48,20 @@ interface Service {
   icon: LucideIcon;
   color: string;
   shortDescription: string;
-  detailedServices: { title: string; description: string }[];
-  benefitsDetail?: { title: string; description: string }[];
+  keyValueText?: string;
+  capabilities: { title: string; description?: string }[];
 }
 
-const services: Service[] = servicesData;
+// --- Skeleton Loader Component ---
+const ServicesSkeleton = () => (
+  <section id="services" className="relative w-full bg-slate-50 py-20">
+    <div className="max-w-5xl mx-auto px-6 text-center space-y-4 animate-pulse">
+      <div className="h-10 bg-slate-200 rounded-2xl w-48 mx-auto" />
+      <div className="h-4 bg-slate-200 rounded-xl w-32 mx-auto" />
+      <div className="mt-12 h-[400px] w-full bg-slate-200/90 rounded-[2.5rem] shadow-xl" />
+    </div>
+  </section>
+);
 
 // --- Single sticky/stacking card ---
 const StickyServiceCard = ({
@@ -42,23 +85,8 @@ const StickyServiceCard = ({
 
   const scale = useTransform(progress, range, [1, targetScale]);
 
-  // The LAST card has no sibling stacking on top of it, so it should never
-  // darken — otherwise it sits there permanently grey with unreadable text.
   const isLast = i === totalCards - 1;
 
-  // IMPORTANT: we no longer fade the card's own opacity. Fading opacity on a
-  // fully-opaque-background card is exactly what caused the "ghosting" —
-  // the card behind shows through a semi-transparent card in front of it.
-  // Instead we dim the receding card with an OPAQUE dark overlay layered
-  // on top of it. That darkens the card without making it see-through.
-  //
-  // Previously this used the SAME wide `range` prop ([i/n, 1]) as the scale
-  // animation, which meant every card kept accumulating darkness across the
-  // ENTIRE rest of the scroll — so a card would already look grey while it
-  // was still the front-and-center card, long before anything was actually
-  // covering it. Instead, the dim should only ramp up during the short
-  // window when the NEXT card is arriving, then hold steady (clamped) once
-  // that next card has settled on top of it.
   const step = 1 / totalCards;
   const nextCardArrives = (i + 1) * step;
   const nextCardSettles = Math.min(nextCardArrives + step * 0.5, 1);
@@ -71,128 +99,86 @@ const StickyServiceCard = ({
   return (
     <div
       ref={container}
-      // isolate creates a new stacking context so this card's contents
-      // can never visually bleed into (or be bled into by) a sibling card
       style={{ zIndex: i + 1 }}
-      className="sticky top-0 isolate flex h-screen items-center justify-center px-4"  
+      className="sticky top-0 isolate flex h-screen items-center justify-center px-4"
     >
       <motion.div
         style={{ scale }}
         onClick={() => router.push(`/services/${service.id}`)}
         className="group relative flex min-h-[480px] md:min-h-0 md:h-[400px] w-[min(90vw,960px)] origin-center cursor-pointer flex-col md:flex-row overflow-hidden rounded-[2.5rem] border border-slate-100 bg-white p-8 md:p-10 shadow-2xl transition-all duration-300 gap-8"
-      > 
-        {/* Hover / ambient gradient */}
-        <div
-          className="pointer-events-none absolute inset-0 z-0 opacity-60 transition-opacity duration-500 group-hover:opacity-100"
-          style={{
-            background: `linear-gradient(135deg, ${service.color}12 0%, transparent 55%)`,
-          }}
-        />
-
+      >
         {/* Big background number */}
         <span
-          className="pointer-events-none absolute -top-8 -right-4 z-0 select-none text-[9rem] font-black leading-none text-slate-50 transition-colors duration-500 group-hover:text-slate-100/50"
+          className="pointer-events-none absolute -top-8 -right-4 z-0 select-none text-[9rem] font-black leading-none text-slate-100/70 transition-colors duration-500 group-hover:text-slate-200/50"
           aria-hidden="true"
         >
           {(i + 1).toString().padStart(2, "0")}
         </span>
 
         {/* Left Column (Main details) */}
-        <div className="relative z-10 flex flex-1 flex-col justify-between">
+        <div className="relative z-10 flex flex-1 flex-col justify-between min-w-0">
           <div>
-            {/* Icon */}
-            <div
-              className="mb-6 flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl shadow-sm transition-transform duration-500 group-hover:scale-110 group-hover:rotate-6"
-              style={{ backgroundColor: service.color + "15" }}
-            >
-              <Icon size={30} color={service.color} strokeWidth={2} />
+            {/* Soft Teal Icon Container */}
+            <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-[#E6F7F5] border border-[#00A79D]/15 text-[#00A79D] shadow-xs transition-transform duration-500 group-hover:scale-105">
+              <Icon className="h-7 w-7 text-[#00A79D]" />
             </div>
 
             {/* Title */}
-            <h3 className="mb-3 font-serif text-3xl font-bold leading-tight text-slate-900 md:text-4xl">
+            <h3 className="mt-5 text-3xl font-bold font-serif tracking-tight text-slate-900 md:text-4xl break-words">
               {service.title}
             </h3>
 
             {/* Description */}
-            <p className="line-clamp-3 max-w-md text-sm font-medium leading-relaxed text-slate-500 mb-6 md:mb-0">
+            <p className="mt-3 text-sm text-slate-500 leading-relaxed max-w-md break-words line-clamp-3">
               {service.shortDescription}
             </p>
           </div>
 
-          {/* Read more button (hidden on mobile, shown on desktop at bottom left) */}
-          <div className="hidden md:block">
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                router.push(`/services/${service.id}`);
-              }}
-              className="flex items-center justify-center gap-2 px-6 py-2.5 rounded-full text-xs font-bold uppercase tracking-wider text-white shadow-md transition-all duration-300 hover:shadow-lg transform active:scale-95 cursor-pointer"
-              style={{ backgroundColor: service.color }}
-            >
-              Read More
-              <ArrowRight
-                size={14}
-                className="transition-transform duration-300 group-hover:translate-x-1"
-              />
-            </button>
+          {/* Solid Teal Pill Button */}
+          <div className="mt-8">
+            <span className="inline-flex items-center gap-2.5 px-6 py-3 bg-[#00A79D] group-hover:bg-[#008f85] text-white rounded-full text-xs font-bold uppercase tracking-wider transition-all shadow-md group-hover:shadow-lg">
+              <span>READ MORE</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </span>
           </div>
         </div>
 
-        {/* Right Column (Capabilities / Highlights) */}
-        <div className="relative z-10 flex md:w-[320px] shrink-0 flex-col justify-between border-t md:border-t-0 md:border-l border-slate-100 pt-6 md:pt-0 md:pl-8">
+        {/* Right Column (Core Capabilities & Key Value) */}
+        <div className="relative z-10 flex flex-1 flex-col justify-center border-t border-slate-100 pt-6 md:border-t-0 md:border-l md:border-slate-100 md:pt-0 md:pl-10 min-w-0">
+          {/* CORE CAPABILITIES */}
           <div>
-            <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-3">Core Capabilities</span>
-            <div className="space-y-3">
-              {service.detailedServices.slice(0, 4).map((item, idx) => (
-                <div key={idx} className="flex items-start gap-2.5 text-xs font-semibold text-slate-600">
-                  <span className="w-1.5 h-1.5 rounded-full shrink-0 mt-1.5" style={{ backgroundColor: service.color }} />
-                  <span className="leading-tight">{item.title}</span>
-                </div>
+            <h4 className="text-xs font-bold tracking-widest text-[#00A79D] uppercase mb-4">
+              CORE CAPABILITIES
+            </h4>
+
+            <ul className="space-y-2.5">
+              {service.capabilities.slice(0, 4).map((cap, idx) => (
+                <li key={idx} className="flex items-start gap-2.5 text-xs font-semibold text-slate-700 min-w-0">
+                  <span className="text-[#00A79D] font-bold text-sm leading-none shrink-0">•</span>
+                  <span className="break-words line-clamp-1">{cap.title}</span>
+                </li>
               ))}
-            </div>
+            </ul>
           </div>
 
-          {/* Key Value Highlight (Desktop only, sits at the bottom of the right column) */}
-          {service.benefitsDetail?.[0] && (
-            <div className="hidden md:block border-t border-slate-100 pt-4 mt-6">
-              <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-1">Key Value</span>
-              <p className="text-[11px] font-semibold text-slate-500 leading-normal line-clamp-3">
-                {service.benefitsDetail[0].description}
-              </p>
-            </div>
-          )}
+          {/* Divider */}
+          <div className="my-6 border-t border-slate-100" />
 
-          {/* Read more button (shown on mobile at bottom) */}
-          <div className="block md:hidden mt-6">
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                router.push(`/services/${service.id}`);
-              }}
-              className="flex items-center justify-center gap-2 px-6 py-2.5 rounded-full text-xs font-bold uppercase tracking-wider text-white shadow-md transition-all duration-300 hover:shadow-lg transform active:scale-95 cursor-pointer w-full"
-              style={{ backgroundColor: service.color }}
-            >
-              Read More
-              <ArrowRight
-                size={14}
-                className="transition-transform duration-300 group-hover:translate-x-1"
-              />
-            </button>
+          {/* KEY VALUE */}
+          <div className="min-w-0">
+            <h4 className="text-xs font-bold tracking-widest text-[#00A79D] uppercase mb-1.5">
+              KEY VALUE
+            </h4>
+            <p className="text-xs text-slate-500 leading-relaxed line-clamp-3 break-all break-words overflow-hidden">
+              {service.keyValueText || service.shortDescription}
+            </p>
           </div>
         </div>
 
         {/* Bottom accent bar */}
-        <div
-          className="absolute bottom-0 left-0 z-10 h-1.5 w-0 transition-all duration-500 group-hover:w-full"
-          style={{ backgroundColor: service.color }}
-        />
+        <div className="absolute bottom-0 left-0 right-0 z-10 h-1.5 bg-[#00A79D]" />
 
-        {/* Opaque dimming overlay — replaces the old opacity fade.
-            This sits ABOVE the card's own content (z-20) and darkens the
-            card as the next one is about to land on top of it, WITHOUT
-            letting the card behind show through. The last card has no
-            successor, so it's excluded entirely — it stays fully white
-            with fully readable text the whole time it's in view. */}
+        {/* Opaque dimming overlay */}
         {!isLast && (
           <motion.div
             style={{ opacity: dimOpacity }}
@@ -206,11 +192,57 @@ const StickyServiceCard = ({
 
 // --- Main export ---
 export default function StickyServicesSection() {
+  const defaultFormattedServices: Service[] = servicesData.map((s) => ({
+    id: s.id,
+    title: s.title,
+    icon: s.icon,
+    color: "#00A79D",
+    shortDescription: s.shortDescription,
+    keyValueText: `Our ${s.title.toLowerCase()} services can help businesses improve their efficiency by streamlining processes, reducing costs, and boosting overall performance.`,
+    capabilities: s.detailedServices || []
+  }));
+
+  const [servicesList, setServicesList] = useState<Service[]>(defaultFormattedServices);
+
   const container = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
     target: container,
     offset: ["start start", "end end"],
   });
+
+  useEffect(() => {
+    let isMounted = true;
+    async function loadServicesData() {
+      try {
+        const res = await fetch("/api/admin/services?status=PUBLISHED");
+        if (res.ok) {
+          const json = await res.json();
+          if (isMounted && json.success && Array.isArray(json.data) && json.data.length > 0) {
+            const formatted: Service[] = json.data.map((item: any) => ({
+              id: item.slug || item.id,
+              title: item.title,
+              icon: getServiceIcon(item.icon),
+              color: "#00A79D",
+              shortDescription: item.cardDescription || stripHtml(item.description) || "Professional Solution",
+              keyValueText: item.keyValue || stripHtml(item.description) || `Our ${item.title.toLowerCase()} services help businesses improve efficiency and reduce operational costs.`,
+              capabilities: item.offerings && item.offerings.length > 0 
+                ? item.offerings 
+                : (item.capabilities && item.capabilities.length > 0 ? item.capabilities : [])
+            }));
+            setServicesList(formatted);
+          }
+        }
+      } catch (err) {
+        console.error("Failed to fetch services:", err);
+      }
+    }
+    loadServicesData();
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  const activeServices = servicesList.length > 0 ? servicesList : defaultFormattedServices;
 
   return (
     <ReactLenis root>
@@ -219,32 +251,25 @@ export default function StickyServicesSection() {
           ref={container}
           className="relative flex w-full flex-col items-center justify-center"
         >
-          {/*
-            Header is now a normal, in-flow block — NOT sticky, NOT fixed,
-            NO z-50. It sits above the first sticky card in the DOM, so it
-            scrolls up and away naturally as the user scrolls into the
-            cards, and it will never re-pin itself over card content.
-          */}
           <div className="grid w-full content-start justify-items-center gap-5 py-[1vh] text-center">
             <h2 className="text-4xl font-black uppercase tracking-widest text-black md:text-6xl">
               Services
             </h2>
             <span className="relative max-w-[16ch] text-xs uppercase leading-tight tracking-wider text-slate-400">
               Scroll down
-              
             </span>
           </div>
 
-          {services.map((service, i) => {
-            const targetScale = Math.max(0.85, 1 - (services.length - i - 1) * 0.05);
+          {activeServices.map((service, i) => {
+            const targetScale = Math.max(0.85, 1 - (activeServices.length - i - 1) * 0.05);
             return (
               <StickyServiceCard
                 key={service.id}
                 i={i}
-                totalCards={services.length}
+                totalCards={activeServices.length}
                 service={service}
                 progress={scrollYProgress}
-                range={[i * (1 / services.length), 1]}
+                range={[i * (1 / activeServices.length), 1]}
                 targetScale={targetScale}
               />
             );
