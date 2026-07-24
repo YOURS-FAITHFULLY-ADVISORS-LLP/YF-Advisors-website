@@ -15,7 +15,7 @@ const Blog = () => {
     let isMounted = true;
     async function fetchBlogs() {
       try {
-        const res = await fetch('/api/admin/blogs?published=true');
+        const res = await fetch('/api/admin/blogs?status=PUBLISHED');
         if (res.ok) {
           const json = await res.json();
           if (isMounted && json.success && Array.isArray(json.data) && json.data.length > 0) {
@@ -23,10 +23,10 @@ const Blog = () => {
               id: b.id,
               title: b.title,
               slug: b.slug,
-              category: b.category || "Insights",
-              date: new Date(b.createdAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }),
-              image: b.coverImage || "/blog/default.jpg",
-              excerpt: b.excerpt || (b.content ? b.content.replace(/<[^>]*>?/gm, '').substring(0, 120) + "..." : "")
+              category: b.category || "Services",
+              date: new Date(b.publishedAt || b.createdAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }),
+              image: b.image || "/blog/spark.jpg",
+              excerpt: b.cardDescription || b.excerpt || (b.content ? b.content.replace(/<[^>]*>?/gm, '').substring(0, 120) + "..." : "")
             }));
             setBlogs(formatted);
             setLoading(false);
