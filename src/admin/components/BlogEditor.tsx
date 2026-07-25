@@ -374,11 +374,18 @@ export default function BlogEditor({ blogId }: BlogEditorProps) {
 
       {/* Form Card */}
       <form onSubmit={handleSubmit} className="space-y-8">
-        {/* Main Details Section */}
+        {/* SECTION 1: Card Overview & Preview */}
         <div className="bg-white border border-slate-200/90 rounded-3xl p-6 sm:p-8 shadow-2xs space-y-6">
-          <div className="flex items-center gap-2 border-b border-slate-100 pb-4">
-            <FileText className="w-5 h-5 text-[#002B49]" />
-            <h2 className="text-base font-bold font-serif text-[#002B49]">Article Information</h2>
+          <div className="flex items-center gap-3 border-b border-slate-100 pb-4">
+            <div className="p-2.5 bg-blue-50 text-[#002B49] rounded-2xl">
+              <Eye className="w-5 h-5" />
+            </div>
+            <div>
+              <h2 className="text-base font-bold font-serif text-[#002B49]">1. Card Overview (Appears on Blog Listing)</h2>
+              <p className="text-xs text-slate-500 font-medium">
+                Information displayed on the blog preview cards and summary cards across the website.
+              </p>
+            </div>
           </div>
 
           <div className="space-y-5">
@@ -426,28 +433,28 @@ export default function BlogEditor({ blogId }: BlogEditorProps) {
                   name="category"
                   value={formData.category}
                   onChange={handleChange}
-                  placeholder="Services / News and Events"
+                  placeholder="e.g. Services, Advisory, News"
                   className="block w-full px-4 py-3 bg-slate-50/50 border border-slate-200 rounded-2xl text-slate-900 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#002B49]/30 focus:border-[#002B49] focus:bg-white transition-all"
                 />
               </div>
 
               <div className="space-y-1.5">
                 <label className="block text-xs font-bold text-[#002B49] uppercase tracking-wider">
-                  Author
+                  Author Name
                 </label>
                 <input
                   type="text"
                   name="author"
                   value={formData.author}
                   onChange={handleChange}
-                  placeholder="YF Advisors"
+                  placeholder="e.g. YF Advisors"
                   className="block w-full px-4 py-3 bg-slate-50/50 border border-slate-200 rounded-2xl text-slate-900 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#002B49]/30 focus:border-[#002B49] focus:bg-white transition-all"
                 />
               </div>
 
               <div className="space-y-1.5">
                 <label className="block text-xs font-bold text-[#002B49] uppercase tracking-wider">
-                  Publish Status
+                  Publishing Status
                 </label>
                 <select
                   name="status"
@@ -455,87 +462,117 @@ export default function BlogEditor({ blogId }: BlogEditorProps) {
                   onChange={handleChange}
                   className="block w-full px-4 py-3 bg-slate-50/50 border border-slate-200 rounded-2xl text-slate-900 text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-[#002B49]/30 focus:border-[#002B49] focus:bg-white transition-all cursor-pointer"
                 >
-                  <option value="PUBLISHED">Published</option>
-                  <option value="DRAFT">Draft</option>
+                  <option value="PUBLISHED">Published (Live on Website)</option>
+                  <option value="DRAFT">Draft (Hidden)</option>
                 </select>
               </div>
             </div>
 
-            {/* Card Description */}
+            {/* Card Short Description */}
             <div className="space-y-1.5">
-              <label className="block text-xs font-bold text-[#002B49] uppercase tracking-wider">
-                Card Short Description <span className="text-red-500">*</span>
-              </label>
+              <div className="flex items-center justify-between">
+                <label className="block text-xs font-bold text-[#002B49] uppercase tracking-wider">
+                  Card Short Description <span className="text-red-500">*</span>
+                </label>
+                <span className="text-[11px] text-slate-400 font-medium">Shown on blog list card</span>
+              </div>
               <textarea
                 name="cardDescription"
                 rows={2}
                 required
                 value={formData.cardDescription}
-                onChange={handleChange}
-                placeholder="A concise summary for the blog card preview on the site..."
+                onChange={(e) => {
+                  const val = e.target.value;
+                  setFormData((prev) => ({
+                    ...prev,
+                    cardDescription: val,
+                    // If excerpt was empty or identical, auto-sync it so user doesn't have to re-type
+                    excerpt: (!prev.excerpt || prev.excerpt === prev.cardDescription) ? val : prev.excerpt,
+                  }));
+                }}
+                placeholder="A brief 1-2 sentence summary displayed on the blog card..."
                 className="block w-full px-4 py-3 bg-slate-50/50 border border-slate-200 rounded-2xl text-slate-900 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#002B49]/30 focus:border-[#002B49] focus:bg-white transition-all"
               />
             </div>
 
             {/* Excerpt */}
             <div className="space-y-1.5">
-              <label className="block text-xs font-bold text-[#002B49] uppercase tracking-wider">
-                Excerpt <span className="text-red-500">*</span>
-              </label>
+              <div className="flex items-center justify-between">
+                <label className="block text-xs font-bold text-[#002B49] uppercase tracking-wider">
+                  Excerpt / Teaser Text <span className="text-red-500">*</span>
+                </label>
+                <span className="text-[11px] text-slate-400 font-medium">Shown at top of full blog article</span>
+              </div>
               <textarea
                 name="excerpt"
                 rows={2}
                 required
                 value={formData.excerpt}
                 onChange={handleChange}
-                placeholder="Opening snippet or summary of the article..."
+                placeholder="Introductory teaser paragraph displayed at the top of the article..."
                 className="block w-full px-4 py-3 bg-slate-50/50 border border-slate-200 rounded-2xl text-slate-900 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#002B49]/30 focus:border-[#002B49] focus:bg-white transition-all"
               />
             </div>
 
-            {/* Featured Image & Tags */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-              <ImageUploadInput
-                label="Featured Image"
-                value={formData.image}
-                onChange={(url) => setFormData((prev) => ({ ...prev, image: url }))}
-                folder="blog"
-                placeholder="https://.../spark.jpg"
-              />
-
-              <div className="space-y-1.5">
-                <label className="block text-xs font-bold text-[#002B49] uppercase tracking-wider">
-                  Tags (Comma separated)
-                </label>
-                <input
-                  type="text"
-                  name="tags"
-                  value={formData.tags}
-                  onChange={handleChange}
-                  placeholder="outsourcing, advisory, finance"
-                  className="block w-full px-4 py-3 bg-slate-50/50 border border-slate-200 rounded-2xl text-slate-900 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#002B49]/30 focus:border-[#002B49] focus:bg-white transition-all"
-                />
-              </div>
-            </div>
-
-            {/* Main Content Body with RichTextEditor */}
-            <RichTextEditor
-              label="Main Intro / Content Body"
-              value={formData.content}
-              onChange={(val) => setFormData((prev) => ({ ...prev, content: val }))}
-              placeholder="Paste or type content here from Word, ChatGPT, Google Docs, or Notepad..."
-              rows={8}
+            {/* Featured Image */}
+            <ImageUploadInput
+              label="Card Cover Image / Featured Image"
+              value={formData.image}
+              onChange={(url) => setFormData((prev) => ({ ...prev, image: url }))}
+              folder="blog"
+              placeholder="https://.../spark.jpg"
             />
           </div>
         </div>
 
-        {/* Blog Sections Manager */}
+        {/* SECTION 2: Detailed Article Content */}
+        <div className="bg-white border border-slate-200/90 rounded-3xl p-6 sm:p-8 shadow-2xs space-y-6">
+          <div className="flex items-center gap-3 border-b border-slate-100 pb-4">
+            <div className="p-2.5 bg-teal-50 text-[#00A79D] rounded-2xl">
+              <FileText className="w-5 h-5" />
+            </div>
+            <div>
+              <h2 className="text-base font-bold font-serif text-[#002B49]">2. Detailed Article Content (Full Blog Page)</h2>
+              <p className="text-xs text-slate-500 font-medium">
+                Main body text, headings, and detailed sub-sections for the full article view.
+              </p>
+            </div>
+          </div>
+
+          <div className="space-y-6">
+            {/* Main Content Body */}
+            <RichTextEditor
+              label="Main Introduction / Article Body"
+              value={formData.content}
+              onChange={(val) => setFormData((prev) => ({ ...prev, content: val }))}
+              placeholder="Paste or type article main body here..."
+              rows={8}
+            />
+
+            {/* Tags */}
+            <div className="space-y-1.5">
+              <label className="block text-xs font-bold text-[#002B49] uppercase tracking-wider">
+                Article Tags (Comma separated)
+              </label>
+              <input
+                type="text"
+                name="tags"
+                value={formData.tags}
+                onChange={handleChange}
+                placeholder="e.g. outsourcing, advisory, finance"
+                className="block w-full px-4 py-3 bg-slate-50/50 border border-slate-200 rounded-2xl text-slate-900 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#002B49]/30 focus:border-[#002B49] focus:bg-white transition-all"
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* SECTION 3: Sub-Sections Manager */}
         <div className="bg-white border border-slate-200/90 rounded-3xl p-6 sm:p-8 shadow-2xs space-y-6">
           <div className="flex items-center justify-between border-b border-slate-100 pb-4">
             <div>
-              <h2 className="text-base font-bold font-serif text-[#002B49]">Article Sub-Sections</h2>
+              <h2 className="text-base font-bold font-serif text-[#002B49]">Article Sub-Sections (Headings & Paragraphs)</h2>
               <p className="text-xs text-slate-500 font-medium">
-                Add structured headings and content blocks. Plain text auto-wraps into paragraph tags.
+                Add formatted headings and paragraphs for different sub-topics in this article.
               </p>
             </div>
             <button
@@ -615,10 +652,10 @@ export default function BlogEditor({ blogId }: BlogEditorProps) {
                   </div>
 
                   <RichTextEditor
-                    label="Section Body Content"
+                    label="Section Content"
                     value={section.content}
                     onChange={(val) => handleSectionChange(index, 'content', val)}
-                    placeholder="Paste or type section content from ChatGPT, Word, Google Docs..."
+                    placeholder="Type or paste content for this sub-section..."
                     rows={5}
                   />
                 </div>
