@@ -381,7 +381,7 @@ export default function BlogEditor({ blogId }: BlogEditorProps) {
               <Eye className="w-5 h-5" />
             </div>
             <div>
-              <h2 className="text-base font-bold font-serif text-[#002B49]">1. Card Overview (Appears on Blog Listing)</h2>
+              <h2 className="text-base font-bold font-serif text-[#002B49]">Card Overview (Appears on Blog Listing)</h2>
               <p className="text-xs text-slate-500 font-medium">
                 Information displayed on the blog preview cards and summary cards across the website.
               </p>
