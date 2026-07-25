@@ -18,6 +18,7 @@ import {
   Search, 
   X, 
   ChevronRight, 
+  ChevronLeft,
   Calendar,
   MousePointer,
   CheckCircle,
@@ -99,6 +100,50 @@ export default function AnalyticsDashboard() {
   const [selectedVisitorId, setSelectedVisitorId] = useState<string | null>(null);
   const [visitorProfile, setVisitorProfile] = useState<VisitorProfile | null>(null);
   const [loadingProfile, setLoadingProfile] = useState(false);
+
+  // View All Visitors Modal State
+  const [showAllVisitorsModal, setShowAllVisitorsModal] = useState(false);
+  const [allVisitors, setAllVisitors] = useState<any[]>([]);
+  const [loadingAllVisitors, setLoadingAllVisitors] = useState(false);
+  const [visitorSearch, setVisitorSearch] = useState('');
+  const [visitorStatusFilter, setVisitorStatusFilter] = useState<'all' | 'online' | 'offline'>('all');
+  const [visitorPage, setVisitorPage] = useState(1);
+  const [visitorPaginationMeta, setVisitorPaginationMeta] = useState<any>(null);
+
+  const fetchAllVisitors = useCallback(async () => {
+    setLoadingAllVisitors(true);
+    try {
+      let url = `/api/admin/analytics/visitors?page=${visitorPage}&limit=10`;
+      if (visitorSearch.trim()) {
+        url += `&search=${encodeURIComponent(visitorSearch.trim())}`;
+      }
+      if (visitorStatusFilter === 'online') {
+        url += `&online=true`;
+      }
+      const res = await fetch(url);
+      const json = await res.json();
+      if (res.ok && json.success) {
+        let list = json.data || [];
+        if (visitorStatusFilter === 'offline') {
+          list = list.filter((v: any) => v.status === 'Offline');
+        }
+        setAllVisitors(list);
+        if (json.pagination) {
+          setVisitorPaginationMeta(json.pagination);
+        }
+      }
+    } catch (err) {
+      console.error('Error fetching all visitors:', err);
+    } finally {
+      setLoadingAllVisitors(false);
+    }
+  }, [visitorPage, visitorSearch, visitorStatusFilter]);
+
+  useEffect(() => {
+    if (showAllVisitorsModal) {
+      fetchAllVisitors();
+    }
+  }, [showAllVisitorsModal, fetchAllVisitors]);
 
   const fetchDashboard = useCallback(async () => {
     setLoading(true);
@@ -322,59 +367,70 @@ export default function AnalyticsDashboard() {
 
       {/* 👥 Recent Visitors & 🔘 Button Clicks */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <div className="lg:col-span-2 bg-white rounded-3xl border border-slate-200/80 shadow-2xs overflow-hidden">
-          <div className="p-6 border-b border-slate-100 flex items-center justify-between">
-            <div>
-              <h2 className="text-base font-bold text-[#002B49]">Recent Visitors</h2>
-              <p className="text-xs text-slate-400">Anonymous visitor sessions (No personal data collected)</p>
+        <div className="lg:col-span-2 bg-white rounded-3xl border border-slate-200/80 shadow-2xs overflow-hidden flex flex-col justify-between">
+          <div>
+            <div className="p-5 sm:p-6 border-b border-slate-100 flex flex-wrap items-center justify-between gap-3">
+              <div>
+                <h2 className="text-base font-bold text-[#002B49]">Recent Visitors</h2>
+                <p className="text-xs text-slate-400">Anonymous visitor sessions (No personal data collected)</p>
+              </div>
+              <div className="flex items-center gap-3">
+                <span className="hidden sm:inline-block text-xs font-bold text-[#00A79D]">Anonymous IDs</span>
+                <button
+                  onClick={() => setShowAllVisitorsModal(true)}
+                  className="px-3.5 py-1.5 rounded-xl bg-[#002B49] text-white hover:bg-[#002B49]/90 font-bold text-xs flex items-center gap-1.5 transition-all shadow-xs shrink-0"
+                >
+                  <span>View All</span>
+                  <ChevronRight className="w-3.5 h-3.5" />
+                </button>
+              </div>
             </div>
-            <span className="text-xs font-bold text-[#00A79D]">Anonymous IDs</span>
-          </div>
 
-          {data?.recentVisitors && data.recentVisitors.length > 0 ? (
-            <div className="overflow-x-auto">
-              <table className="w-full text-left border-collapse">
-                <thead>
-                  <tr className="bg-slate-50/80 border-b border-slate-200/80 text-[11px] font-bold text-slate-500 uppercase tracking-wider">
-                    <th className="px-6 py-3.5">Visitor ID</th>
-                    <th className="px-6 py-3.5">Last Page</th>
-                    <th className="px-6 py-3.5">Location</th>
-                    <th className="px-6 py-3.5">Device</th>
-                    <th className="px-6 py-3.5">Status</th>
-                    <th className="px-6 py-3.5 text-right">Action</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-100 text-xs">
-                  {data.recentVisitors.map((v) => (
-                    <tr key={v.visitorId} className="hover:bg-slate-50/60 transition-colors">
-                      <td className="px-6 py-3.5 font-bold text-[#002B49]">{v.visitorId}</td>
-                      <td className="px-6 py-3.5 text-slate-700 font-medium">{v.exitPage}</td>
-                      <td className="px-6 py-3.5 text-slate-500">{v.city}, {v.country}</td>
-                      <td className="px-6 py-3.5 text-slate-500">{v.device} ({v.browser})</td>
-                      <td className="px-6 py-3.5">
-                        <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold ${
-                          v.status === 'Online' ? 'bg-emerald-500/10 text-emerald-600' : 'bg-slate-200/60 text-slate-500'
-                        }`}>
-                          <span className={`w-1.5 h-1.5 rounded-full ${v.status === 'Online' ? 'bg-emerald-500' : 'bg-slate-400'}`} />
-                          {v.status}
-                        </span>
-                      </td>
-                      <td className="px-6 py-3.5 text-right">
-                        <button
-                          onClick={() => openVisitorProfile(v.visitorId)}
-                          className="px-3 py-1.5 rounded-xl bg-[#002B49]/10 text-[#002B49] hover:bg-[#002B49] hover:text-white font-bold text-[11px] transition-colors"
-                        >
-                          Inspect
-                        </button>
-                      </td>
+            {data?.recentVisitors && data.recentVisitors.length > 0 ? (
+              <div className="overflow-x-auto">
+                <table className="w-full text-left border-collapse min-w-[560px]">
+                  <thead>
+                    <tr className="bg-slate-50/80 border-b border-slate-200/80 text-[11px] font-bold text-slate-500 uppercase tracking-wider">
+                      <th className="px-4 py-3 sm:px-6 sm:py-3.5 whitespace-nowrap">Visitor ID</th>
+                      <th className="px-4 py-3 sm:px-6 sm:py-3.5 whitespace-nowrap">Last Page</th>
+                      <th className="px-4 py-3 sm:px-6 sm:py-3.5 whitespace-nowrap">Location</th>
+                      <th className="px-4 py-3 sm:px-6 sm:py-3.5 whitespace-nowrap">Device</th>
+                      <th className="px-4 py-3 sm:px-6 sm:py-3.5 whitespace-nowrap">Status</th>
+                      <th className="px-4 py-3 sm:px-6 sm:py-3.5 whitespace-nowrap text-right">Action</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          ) : (
-            <EmptyState icon={Users} label="No visitors recorded yet. Data will appear once real users visit your website." />
-          )}
+                  </thead>
+                  <tbody className="divide-y divide-slate-100 text-xs">
+                    {data.recentVisitors.map((v) => (
+                      <tr key={v.visitorId} className="hover:bg-slate-50/60 transition-colors">
+                        <td className="px-4 py-3 sm:px-6 sm:py-3.5 font-bold text-[#002B49] whitespace-nowrap">{v.visitorId}</td>
+                        <td className="px-4 py-3 sm:px-6 sm:py-3.5 text-slate-700 font-medium max-w-[140px] truncate" title={v.exitPage}>{v.exitPage}</td>
+                        <td className="px-4 py-3 sm:px-6 sm:py-3.5 text-slate-500 whitespace-nowrap">{v.city}, {v.country}</td>
+                        <td className="px-4 py-3 sm:px-6 sm:py-3.5 text-slate-500 whitespace-nowrap">{v.device} ({v.browser})</td>
+                        <td className="px-4 py-3 sm:px-6 sm:py-3.5 whitespace-nowrap">
+                          <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold ${
+                            v.status === 'Online' ? 'bg-emerald-500/10 text-emerald-600' : 'bg-slate-200/60 text-slate-500'
+                          }`}>
+                            <span className={`w-1.5 h-1.5 rounded-full ${v.status === 'Online' ? 'bg-emerald-500' : 'bg-slate-400'}`} />
+                            {v.status}
+                          </span>
+                        </td>
+                        <td className="px-4 py-3 sm:px-6 sm:py-3.5 text-right whitespace-nowrap">
+                          <button
+                            onClick={() => openVisitorProfile(v.visitorId)}
+                            className="px-3 py-1.5 rounded-xl bg-[#002B49]/10 text-[#002B49] hover:bg-[#002B49] hover:text-white font-bold text-[11px] transition-colors shrink-0"
+                          >
+                            Inspect
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            ) : (
+              <EmptyState icon={Users} label="No visitors recorded yet. Data will appear once real users visit your website." />
+            )}
+          </div>
         </div>
 
         {/* 🔘 Button Click Analytics */}
@@ -570,6 +626,172 @@ export default function AnalyticsDashboard() {
               >
                 Close Profile
               </button>
+            </div>
+          </div>
+        </div>
+      )}
+      {/* 🌐 All Visitors Modal */}
+      {showAllVisitorsModal && (
+        <div className="fixed inset-0 z-40 flex items-center justify-center p-3 sm:p-6 bg-slate-900/50 backdrop-blur-xs animate-in fade-in duration-200">
+          <div className="bg-white rounded-3xl max-w-5xl w-full max-h-[90vh] shadow-2xl border border-slate-100 flex flex-col overflow-hidden">
+            {/* Modal Header */}
+            <div className="p-5 sm:p-6 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
+              <div className="flex items-center gap-3">
+                <div className="p-2.5 rounded-2xl bg-[#002B49] text-white font-bold">
+                  <Users className="w-5 h-5" />
+                </div>
+                <div>
+                  <h2 className="text-lg font-bold text-[#002B49]">All Visitor Sessions</h2>
+                  <p className="text-xs text-slate-400">Complete privacy-friendly live traffic & session analytics</p>
+                </div>
+              </div>
+              <button
+                onClick={() => setShowAllVisitorsModal(false)}
+                className="p-2 rounded-xl text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Filter & Search Controls */}
+            <div className="p-4 sm:p-6 border-b border-slate-100 bg-white flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+              {/* Search Bar */}
+              <div className="relative flex-1 max-w-md">
+                <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+                <input
+                  type="text"
+                  placeholder="Search by Visitor ID, location, or page..."
+                  value={visitorSearch}
+                  onChange={(e) => {
+                    setVisitorSearch(e.target.value);
+                    setVisitorPage(1);
+                  }}
+                  className="w-full pl-10 pr-9 py-2 rounded-xl border border-slate-200 text-xs focus:outline-none focus:border-[#002B49] transition-colors"
+                />
+                {visitorSearch && (
+                  <button
+                    onClick={() => { setVisitorSearch(''); setVisitorPage(1); }}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                  >
+                    <X className="w-3.5 h-3.5" />
+                  </button>
+                )}
+              </div>
+
+              {/* Status Filter Pills */}
+              <div className="flex items-center gap-1.5 self-start sm:self-auto bg-slate-100 p-1 rounded-2xl">
+                <button
+                  onClick={() => { setVisitorStatusFilter('all'); setVisitorPage(1); }}
+                  className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-colors ${
+                    visitorStatusFilter === 'all' ? 'bg-white text-[#002B49] shadow-2xs' : 'text-slate-500 hover:text-slate-800'
+                  }`}
+                >
+                  All Status
+                </button>
+                <button
+                  onClick={() => { setVisitorStatusFilter('online'); setVisitorPage(1); }}
+                  className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-colors flex items-center gap-1.5 ${
+                    visitorStatusFilter === 'online' ? 'bg-white text-emerald-700 shadow-2xs' : 'text-slate-500 hover:text-slate-800'
+                  }`}
+                >
+                  <span className="w-2 h-2 rounded-full bg-emerald-500" />
+                  Online Only
+                </button>
+                <button
+                  onClick={() => { setVisitorStatusFilter('offline'); setVisitorPage(1); }}
+                  className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-colors ${
+                    visitorStatusFilter === 'offline' ? 'bg-white text-slate-700 shadow-2xs' : 'text-slate-500 hover:text-slate-800'
+                  }`}
+                >
+                  Offline
+                </button>
+              </div>
+            </div>
+
+            {/* Visitors Table Content */}
+            <div className="flex-1 overflow-y-auto min-h-[300px]">
+              {loadingAllVisitors ? (
+                <div className="py-16 text-center space-y-2">
+                  <RefreshCw className="w-7 h-7 text-[#002B49] animate-spin mx-auto" />
+                  <p className="text-xs text-slate-400 font-medium">Fetching visitors list...</p>
+                </div>
+              ) : allVisitors.length > 0 ? (
+                <div className="overflow-x-auto">
+                  <table className="w-full text-left border-collapse min-w-[650px]">
+                    <thead>
+                      <tr className="bg-slate-50/80 border-b border-slate-200/80 text-[11px] font-bold text-slate-500 uppercase tracking-wider sticky top-0 bg-slate-50">
+                        <th className="px-6 py-3.5 whitespace-nowrap">Visitor ID</th>
+                        <th className="px-6 py-3.5 whitespace-nowrap">Last Visited Page</th>
+                        <th className="px-6 py-3.5 whitespace-nowrap">Location</th>
+                        <th className="px-6 py-3.5 whitespace-nowrap">Device / Browser</th>
+                        <th className="px-6 py-3.5 whitespace-nowrap">Status</th>
+                        <th className="px-6 py-3.5 whitespace-nowrap text-right">Action</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-slate-100 text-xs">
+                      {allVisitors.map((v: any) => (
+                        <tr key={v.visitorId} className="hover:bg-slate-50/70 transition-colors">
+                          <td className="px-6 py-3.5 font-bold text-[#002B49] whitespace-nowrap">{v.visitorId}</td>
+                          <td className="px-6 py-3.5 text-slate-700 font-medium max-w-[200px] truncate" title={v.exitPage}>{v.exitPage}</td>
+                          <td className="px-6 py-3.5 text-slate-500 whitespace-nowrap">{v.city || 'Unknown'}, {v.country || 'Unknown'}</td>
+                          <td className="px-6 py-3.5 text-slate-500 whitespace-nowrap">{v.device} ({v.browser})</td>
+                          <td className="px-6 py-3.5 whitespace-nowrap">
+                            <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold ${
+                              v.status === 'Online' ? 'bg-emerald-500/10 text-emerald-600' : 'bg-slate-200/60 text-slate-500'
+                            }`}>
+                              <span className={`w-1.5 h-1.5 rounded-full ${v.status === 'Online' ? 'bg-emerald-500' : 'bg-slate-400'}`} />
+                              {v.status}
+                            </span>
+                          </td>
+                          <td className="px-6 py-3.5 text-right whitespace-nowrap">
+                            <button
+                              onClick={() => openVisitorProfile(v.visitorId)}
+                              className="px-3.5 py-1.5 rounded-xl bg-[#002B49]/10 text-[#002B49] hover:bg-[#002B49] hover:text-white font-bold text-[11px] transition-colors shrink-0"
+                            >
+                              Inspect
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              ) : (
+                <EmptyState icon={Users} label="No matching visitors found." />
+              )}
+            </div>
+
+            {/* Pagination Controls */}
+            <div className="p-4 border-t border-slate-100 bg-slate-50/50 flex items-center justify-between text-xs">
+              <div className="text-slate-500 font-medium">
+                {visitorPaginationMeta ? (
+                  <>Showing <span className="font-bold text-slate-800">{((visitorPage - 1) * visitorPaginationMeta.limit) + 1}</span> to <span className="font-bold text-slate-800">{Math.min(visitorPage * visitorPaginationMeta.limit, visitorPaginationMeta.total)}</span> of <span className="font-bold text-slate-800">{visitorPaginationMeta.total}</span> visitors</>
+                ) : (
+                  <span>Visitors count: {allVisitors.length}</span>
+                )}
+              </div>
+
+              {visitorPaginationMeta && visitorPaginationMeta.totalPages > 1 && (
+                <div className="flex items-center gap-2">
+                  <button
+                    disabled={visitorPage <= 1}
+                    onClick={() => setVisitorPage((p) => Math.max(1, p - 1))}
+                    className="p-1.5 rounded-xl border border-slate-200 disabled:opacity-40 hover:bg-slate-100 transition-colors"
+                  >
+                    <ChevronLeft className="w-4 h-4" />
+                  </button>
+                  <span className="font-bold text-slate-700 px-2">
+                    Page {visitorPage} of {visitorPaginationMeta.totalPages}
+                  </span>
+                  <button
+                    disabled={visitorPage >= visitorPaginationMeta.totalPages}
+                    onClick={() => setVisitorPage((p) => p + 1)}
+                    className="p-1.5 rounded-xl border border-slate-200 disabled:opacity-40 hover:bg-slate-100 transition-colors"
+                  >
+                    <ChevronRight className="w-4 h-4" />
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         </div>
