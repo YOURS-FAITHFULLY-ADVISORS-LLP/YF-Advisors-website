@@ -32,13 +32,25 @@ export const GET = withApiHandler(async (req: NextRequest) => {
     where.lastVisit = { gte: activeCutoff };
   }
 
+  const sortBy = searchParams.get('sortBy') || 'visitorId';
+  const sortOrder = (searchParams.get('sortOrder') || 'desc') as 'asc' | 'desc';
+
+  let orderBy: any = { visitorId: 'desc' };
+  if (sortBy === 'lastVisit') {
+    orderBy = { lastVisit: sortOrder };
+  } else if (sortBy === 'firstVisit') {
+    orderBy = { firstVisit: sortOrder };
+  } else {
+    orderBy = { visitorId: sortOrder };
+  }
+
   const [total, visitors] = await Promise.all([
     prisma.analyticsVisitor.count({ where }),
     prisma.analyticsVisitor.findMany({
       where,
       skip,
       take: limit,
-      orderBy: { lastVisit: 'desc' },
+      orderBy,
     }),
   ]);
 

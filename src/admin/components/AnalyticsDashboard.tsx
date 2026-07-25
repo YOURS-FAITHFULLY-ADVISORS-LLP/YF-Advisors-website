@@ -107,13 +107,15 @@ export default function AnalyticsDashboard() {
   const [loadingAllVisitors, setLoadingAllVisitors] = useState(false);
   const [visitorSearch, setVisitorSearch] = useState('');
   const [visitorStatusFilter, setVisitorStatusFilter] = useState<'all' | 'online' | 'offline'>('all');
+  const [visitorSortBy, setVisitorSortBy] = useState<'visitorId' | 'lastVisit'>('visitorId');
+  const [visitorSortOrder, setVisitorSortOrder] = useState<'desc' | 'asc'>('desc');
   const [visitorPage, setVisitorPage] = useState(1);
   const [visitorPaginationMeta, setVisitorPaginationMeta] = useState<any>(null);
 
   const fetchAllVisitors = useCallback(async () => {
     setLoadingAllVisitors(true);
     try {
-      let url = `/api/admin/analytics/visitors?page=${visitorPage}&limit=10`;
+      let url = `/api/admin/analytics/visitors?page=${visitorPage}&limit=10&sortBy=${visitorSortBy}&sortOrder=${visitorSortOrder}`;
       if (visitorSearch.trim()) {
         url += `&search=${encodeURIComponent(visitorSearch.trim())}`;
       }
@@ -137,7 +139,7 @@ export default function AnalyticsDashboard() {
     } finally {
       setLoadingAllVisitors(false);
     }
-  }, [visitorPage, visitorSearch, visitorStatusFilter]);
+  }, [visitorPage, visitorSearch, visitorStatusFilter, visitorSortBy, visitorSortOrder]);
 
   useEffect(() => {
     if (showAllVisitorsModal) {
@@ -678,33 +680,54 @@ export default function AnalyticsDashboard() {
                 )}
               </div>
 
-              {/* Status Filter Pills */}
-              <div className="flex items-center gap-1.5 self-start sm:self-auto bg-slate-100 p-1 rounded-2xl">
-                <button
-                  onClick={() => { setVisitorStatusFilter('all'); setVisitorPage(1); }}
-                  className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-colors ${
-                    visitorStatusFilter === 'all' ? 'bg-white text-[#002B49] shadow-2xs' : 'text-slate-500 hover:text-slate-800'
-                  }`}
-                >
-                  All Status
-                </button>
-                <button
-                  onClick={() => { setVisitorStatusFilter('online'); setVisitorPage(1); }}
-                  className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-colors flex items-center gap-1.5 ${
-                    visitorStatusFilter === 'online' ? 'bg-white text-emerald-700 shadow-2xs' : 'text-slate-500 hover:text-slate-800'
-                  }`}
-                >
-                  <span className="w-2 h-2 rounded-full bg-emerald-500" />
-                  Online Only
-                </button>
-                <button
-                  onClick={() => { setVisitorStatusFilter('offline'); setVisitorPage(1); }}
-                  className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-colors ${
-                    visitorStatusFilter === 'offline' ? 'bg-white text-slate-700 shadow-2xs' : 'text-slate-500 hover:text-slate-800'
-                  }`}
-                >
-                  Offline
-                </button>
+              {/* Controls Group */}
+              <div className="flex flex-wrap items-center gap-2 self-start sm:self-auto">
+                {/* Sort Order Selector */}
+                <div className="flex items-center gap-1.5 bg-slate-100 p-1 rounded-2xl">
+                  <select
+                    value={`${visitorSortBy}-${visitorSortOrder}`}
+                    onChange={(e) => {
+                      const [by, order] = e.target.value.split('-') as ['visitorId' | 'lastVisit', 'desc' | 'asc'];
+                      setVisitorSortBy(by);
+                      setVisitorSortOrder(order);
+                      setVisitorPage(1);
+                    }}
+                    className="bg-white text-xs font-bold text-[#002B49] px-3 py-1.5 rounded-xl border-none focus:outline-none cursor-pointer shadow-2xs"
+                  >
+                    <option value="visitorId-desc">Seq: Visitor ID (Newest first)</option>
+                    <option value="visitorId-asc">Seq: Visitor ID (Oldest first)</option>
+                    <option value="lastVisit-desc">Sort by: Last Active</option>
+                  </select>
+                </div>
+
+                {/* Status Filter Pills */}
+                <div className="flex items-center gap-1.5 bg-slate-100 p-1 rounded-2xl">
+                  <button
+                    onClick={() => { setVisitorStatusFilter('all'); setVisitorPage(1); }}
+                    className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-colors ${
+                      visitorStatusFilter === 'all' ? 'bg-white text-[#002B49] shadow-2xs' : 'text-slate-500 hover:text-slate-800'
+                    }`}
+                  >
+                    All Status
+                  </button>
+                  <button
+                    onClick={() => { setVisitorStatusFilter('online'); setVisitorPage(1); }}
+                    className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-colors flex items-center gap-1.5 ${
+                      visitorStatusFilter === 'online' ? 'bg-white text-emerald-700 shadow-2xs' : 'text-slate-500 hover:text-slate-800'
+                    }`}
+                  >
+                    <span className="w-2 h-2 rounded-full bg-emerald-500" />
+                    Online Only
+                  </button>
+                  <button
+                    onClick={() => { setVisitorStatusFilter('offline'); setVisitorPage(1); }}
+                    className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-colors ${
+                      visitorStatusFilter === 'offline' ? 'bg-white text-slate-700 shadow-2xs' : 'text-slate-500 hover:text-slate-800'
+                    }`}
+                  >
+                    Offline
+                  </button>
+                </div>
               </div>
             </div>
 

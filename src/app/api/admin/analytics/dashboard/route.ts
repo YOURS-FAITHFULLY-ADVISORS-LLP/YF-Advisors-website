@@ -108,7 +108,7 @@ export const GET = withApiHandler(async (req: NextRequest) => {
     // Recent Visitors list
     prisma.analyticsVisitor.findMany({
       take: 6,
-      orderBy: { lastVisit: 'desc' },
+      orderBy: { visitorId: 'desc' },
       select: {
         visitorId: true,
         exitPage: true,
