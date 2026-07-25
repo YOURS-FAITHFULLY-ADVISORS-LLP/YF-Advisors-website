@@ -164,12 +164,28 @@ export default function AnalyticsDashboard() {
 
   useEffect(() => {
     fetchDashboard();
-    // Auto-refresh analytics data every 2 minutes (120,000 ms) for live updates
-    const interval = setInterval(() => {
-      fetchDashboard();
-    }, 2 * 60 * 1000);
 
-    return () => clearInterval(interval);
+    // Auto-refresh analytics data every 1 minute (60,000 ms) for real-time updates
+    const interval = setInterval(() => {
+      // Only fetch if tab is active/visible (prevents background resource drain)
+      if (document.visibilityState === 'visible') {
+        fetchDashboard();
+      }
+    }, 1 * 60 * 1000);
+
+    // Instant refresh when user switches back to this browser tab
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        fetchDashboard();
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    return () => {
+      clearInterval(interval);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
   }, [fetchDashboard]);
 
   const openVisitorProfile = async (vId: string) => {
