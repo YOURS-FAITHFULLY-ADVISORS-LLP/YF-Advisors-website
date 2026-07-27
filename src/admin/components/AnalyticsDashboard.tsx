@@ -330,23 +330,31 @@ export default function AnalyticsDashboard() {
           </div>
 
           {data?.visitorTrends && data.visitorTrends.length > 0 && data.visitorTrends.some(t => t.count > 0) ? (
-            <div className="h-48 flex items-end justify-between gap-2 pt-6 px-2 border-b border-slate-100">
-              {data.visitorTrends.map((t, idx) => {
-                const max = Math.max(...data.visitorTrends.map(d => d.count), 1);
-                const heightPercent = Math.min(100, Math.round((t.count / max) * 100));
-                return (
-                  <div key={idx} className="flex-1 flex flex-col items-center gap-2 h-full justify-end group">
-                    <span className="text-[10px] font-bold text-slate-500 opacity-0 group-hover:opacity-100 transition-opacity">
-                      {t.count}
-                    </span>
-                    <div
-                      style={{ height: `${Math.max(heightPercent, t.count > 0 ? 4 : 0)}%` }}
-                      className="w-full bg-[#002B49] group-hover:bg-[#00A79D] rounded-t-xl transition-all duration-300 shadow-2xs"
-                    />
-                    <span className="text-[10px] font-semibold text-slate-500 mt-1 truncate w-full text-center">{t.day}</span>
-                  </div>
-                );
-              })}
+            <div className="space-y-2">
+              <div className="h-44 flex items-end justify-between gap-2 pt-6 px-2 border-b border-slate-100">
+                {data.visitorTrends.map((t, idx) => {
+                  const max = Math.max(...data.visitorTrends.map(d => d.count), 1);
+                  const heightPercent = Math.min(100, Math.round((t.count / max) * 100));
+                  return (
+                    <div key={idx} className="flex-1 flex flex-col items-center justify-end h-full group">
+                      <span className="text-[10px] font-bold text-slate-500 opacity-0 group-hover:opacity-100 transition-opacity mb-1 shrink-0">
+                        {t.count}
+                      </span>
+                      <div
+                        style={{ height: `${Math.max(heightPercent, t.count > 0 ? 4 : 0)}%` }}
+                        className="w-full bg-[#002B49] group-hover:bg-[#00A79D] rounded-t-xl transition-all duration-300 shadow-2xs"
+                      />
+                    </div>
+                  );
+                })}
+              </div>
+              <div className="flex items-center justify-between gap-2 px-2 pt-1">
+                {data.visitorTrends.map((t, idx) => (
+                  <span key={idx} className="flex-1 text-[10px] font-semibold text-slate-500 truncate text-center">
+                    {t.day}
+                  </span>
+                ))}
+              </div>
             </div>
           ) : (
             <EmptyState icon={BarChart3} label="No visitor data yet. Trends will appear once visitors start browsing your website." />
@@ -354,23 +362,23 @@ export default function AnalyticsDashboard() {
         </div>
 
         {/* 📄 Most Visited Pages */}
-        <div className="bg-white p-6 rounded-3xl border border-slate-200/80 shadow-2xs space-y-4">
-          <div>
+        <div className="bg-white p-6 rounded-3xl border border-slate-200/80 shadow-2xs space-y-4 flex flex-col h-full min-h-[280px] max-h-[300px]">
+          <div className="shrink-0">
             <h2 className="text-base font-bold text-[#002B49]">Most Visited Pages</h2>
             <p className="text-xs text-slate-400">Top performing pages by views</p>
           </div>
 
           {data?.mostVisitedPages && data.mostVisitedPages.length > 0 ? (
-            <div className="space-y-3">
+            <div className="space-y-2.5 overflow-y-auto flex-1 pr-1">
               {data.mostVisitedPages.map((p) => (
-                <div key={p.rank} className="flex items-center justify-between p-3 rounded-2xl bg-slate-50/70 border border-slate-100 text-xs">
-                  <div className="flex items-center gap-3">
-                    <span className="w-6 h-6 rounded-full bg-[#002B49]/10 text-[#002B49] font-bold text-[11px] flex items-center justify-center shrink-0">
+                <div key={p.rank} className="flex items-center justify-between p-2.5 rounded-2xl bg-slate-50/70 border border-slate-100 text-xs">
+                  <div className="flex items-center gap-2.5 min-w-0 pr-2">
+                    <span className="w-5 h-5 rounded-full bg-[#002B49]/10 text-[#002B49] font-bold text-[10px] flex items-center justify-center shrink-0">
                       {p.rank}
                     </span>
-                    <span className="font-semibold text-slate-800 truncate max-w-[130px]">{p.page}</span>
+                    <span className="font-semibold text-slate-800 truncate" title={p.page}>{p.page}</span>
                   </div>
-                  <div className="text-right">
+                  <div className="text-right shrink-0">
                     <div className="font-bold text-[#002B49]">{p.views.toLocaleString()} views</div>
                     <div className="text-[10px] text-slate-400">{p.avgTimeSpent} avg</div>
                   </div>
