@@ -85,11 +85,27 @@ function TrackerContent() {
       }
     };
 
-    // Track Section Scroll Changes
+    // Track Section Scroll Changes (debounced to prevent scroll-through inflation)
+    let sectionDebounceTimer: ReturnType<typeof setTimeout> | null = null;
+    let lastTrackedSection = '';
+
     const handleSectionChange = (e: Event) => {
       const customEvent = e as CustomEvent;
+      const section = customEvent.detail?.section || '';
       const fullPath = customEvent.detail?.fullPath || (window.location.pathname + (window.location.hash ? window.location.hash : ''));
-      sendEvent('page_view', { page: fullPath });
+
+      // Clear any pending section tracking
+      if (sectionDebounceTimer) {
+        clearTimeout(sectionDebounceTimer);
+      }
+
+      // Only track if user stays on this section for 1.5s (not just scrolling past)
+      sectionDebounceTimer = setTimeout(() => {
+        if (section !== lastTrackedSection) {
+          lastTrackedSection = section;
+          sendEvent('page_view', { page: fullPath });
+        }
+      }, 1500);
     };
 
     window.addEventListener('sectionchange', handleSectionChange);
