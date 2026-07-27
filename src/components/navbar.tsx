@@ -22,13 +22,22 @@ const Navbar = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Lock body scroll when the mobile menu is open
+  // Lock body scroll when the sidebar is open
   useEffect(() => {
     document.body.style.overflow = isMobileMenuOpen ? "hidden" : "";
     return () => {
       document.body.style.overflow = "";
     };
   }, [isMobileMenuOpen]);
+
+  // Close sidebar automatically if the viewport grows past the lg breakpoint
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth >= 1024) setIsMobileMenuOpen(false);
+    };
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   const navLinks = [
     { name: "Home", href: "/" },
@@ -112,7 +121,7 @@ const Navbar = () => {
             </div>
           </Link>
 
-          {/* --- 2. Desktop Navigation --- */}
+          {/* --- 2. Desktop Navigation (floating pill, lg and up only) --- */}
           <nav
             className={`hidden lg:flex items-center p-1 gap-0.5 xl:gap-1 shrink-0 ${glassPanel}`}
           >
@@ -154,80 +163,106 @@ const Navbar = () => {
               </Link>
             </motion.div>
 
+            {/* Floating rounded trigger — mobile/tablet only, opens the sidebar drawer */}
             <motion.button
               whileTap={{ scale: 0.9 }}
-              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              aria-label="Toggle menu"
+              onClick={() => setIsMobileMenuOpen(true)}
+              aria-label="Open menu"
               aria-expanded={isMobileMenuOpen}
               className={`lg:hidden relative z-50 p-3 rounded-full text-slate-700 ${glassPanel}`}
             >
-              <AnimatePresence mode="wait">
-                {isMobileMenuOpen ? (
-                  <motion.div
-                    key="close"
-                    initial={{ rotate: -90, opacity: 0 }}
-                    animate={{ rotate: 0, opacity: 1 }}
-                    exit={{ rotate: 90, opacity: 0 }}
-                  >
-                    <X size={20} />
-                  </motion.div>
-                ) : (
-                  <motion.div
-                    key="menu"
-                    initial={{ rotate: 90, opacity: 0 }}
-                    animate={{ rotate: 0, opacity: 1 }}
-                    exit={{ rotate: -90, opacity: 0 }}
-                  >
-                    <Menu size={20} />
-                  </motion.div>
-                )}
-              </AnimatePresence>
+              <Menu size={20} />
             </motion.button>
           </div>
         </div>
       </motion.header>
 
-      {/* --- Mobile Menu --- */}
+      {/* --- Mobile Sidebar Drawer --- */}
       <AnimatePresence>
         {isMobileMenuOpen && (
-          <motion.div
-            initial={{ opacity: 0, y: "-100%" }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: "-100%" }}
-            transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-            className="fixed inset-0 z-40 bg-[#F5F7FA] lg:hidden flex flex-col items-center justify-center space-y-8 overflow-y-auto py-24"
-          >
-            <div className="flex flex-col items-center gap-6 w-full px-6">
-              {[...navLinks, { name: "Contact", href: "/#contact" }].map(
-                (link, i) => (
+          <>
+            {/* Backdrop */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.3 }}
+              onClick={() => setIsMobileMenuOpen(false)}
+              className="fixed inset-0 z-40 bg-slate-900/40 backdrop-blur-sm lg:hidden"
+            />
+
+            {/* Sliding panel */}
+            <motion.div
+              initial={{ x: "100%" }}
+              animate={{ x: 0 }}
+              exit={{ x: "100%" }}
+              transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+              className="fixed top-0 right-0 z-50 h-full w-[80%] max-w-sm bg-[#F9FAFB] shadow-2xl lg:hidden flex flex-col"
+            >
+              {/* Drawer header */}
+              <div className="flex items-center justify-between px-6 py-5 border-b border-slate-200/70">
+                <div className="flex items-center gap-2.5">
+                  <div className="relative h-9 w-12 shrink-0">
+                    <Image
+                      src="/logo.png"
+                      alt="Yours Faithfully Advisors"
+                      fill
+                      className="object-contain"
+                    />
+                  </div>
+                  <span className="font-serif text-[11px] font-bold tracking-[0.15em] uppercase text-slate-900">
+                    YF Advisors
+                  </span>
+                </div>
+
+                <motion.button
+                  whileTap={{ scale: 0.9 }}
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  aria-label="Close menu"
+                  className="p-2.5 rounded-full bg-white border border-slate-200 text-slate-700 shadow-sm"
+                >
+                  <X size={18} />
+                </motion.button>
+              </div>
+
+              {/* Links */}
+              <nav className="flex-1 overflow-y-auto px-6 py-6 flex flex-col gap-1">
+                {navLinks.map((link, i) => (
                   <motion.div
                     key={link.name}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: 10 }}
-                    transition={{ delay: 0.1 + i * 0.06, duration: 0.4 }}
-                    className="w-full"
+                    initial={{ opacity: 0, x: 20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: 10 }}
+                    transition={{ delay: 0.05 + i * 0.04, duration: 0.3 }}
                   >
                     <Link
                       href={link.href}
                       onClick={(e) => handleLinkClick(e, link.href)}
-                      className="block w-full text-center text-2xl font-serif font-medium text-slate-800 hover:text-[#00A79D] transition-colors"
+                      className="group flex items-center justify-between py-3.5 px-4 rounded-2xl text-lg font-serif font-medium text-slate-800 hover:bg-white hover:text-[#00A79D] hover:shadow-sm transition-all"
                     >
                       {link.name}
+                      <ArrowRight className="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity" />
                     </Link>
                   </motion.div>
-                )
-              )}
-            </div>
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.5 }}
-              className="absolute bottom-10 text-slate-400 text-xs tracking-widest uppercase"
-            >
-              Yours Faithfully Advisors
+                ))}
+              </nav>
+
+              {/* CTA footer */}
+              <div className="px-6 py-6 border-t border-slate-200/70">
+                <Link
+                  href="/#contact"
+                  onClick={(e) => handleLinkClick(e, "/#contact")}
+                  className="flex items-center justify-center gap-2 w-full bg-[#002B49] text-white px-6 py-3.5 rounded-full text-sm font-bold tracking-wide shadow-lg shadow-blue-900/20 hover:bg-[#00A79D] transition-colors duration-300"
+                >
+                  <span>Let&apos;s Talk</span>
+                  <ArrowRight className="w-4 h-4" />
+                </Link>
+                <p className="mt-4 text-center text-[10px] tracking-widest uppercase text-slate-400">
+                  Yours Faithfully Advisors
+                </p>
+              </div>
             </motion.div>
-          </motion.div>
+          </>
         )}
       </AnimatePresence>
     </>
