@@ -57,6 +57,7 @@ export default function HighlightsAdminEditor() {
 
   const modalFileInputRef = useRef<HTMLInputElement | null>(null);
   const replaceInputRef = useRef<HTMLInputElement | null>(null);
+  const uploadingRef = useRef(false); // Ref-based mutex for upload
   const [replacingIndex, setReplacingIndex] = useState<number | null>(null);
 
   useEffect(() => {
@@ -106,12 +107,13 @@ export default function HighlightsAdminEditor() {
   // Upload Highlight from Modal
   const handleModalSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (isUploadingModal) return; // Prevent double submission
+    if (uploadingRef.current) return; // Ref-based mutex — bulletproof
     if (!modalFile) {
       setModalError('Please select an image file to upload.');
       return;
     }
 
+    uploadingRef.current = true;
     setIsUploadingModal(true);
     setMessage(null);
     setModalError(null);
@@ -141,7 +143,9 @@ export default function HighlightsAdminEditor() {
         });
         const createdData = await createRes.json();
         if (createdData.success && createdData.data) {
-          setHighlights(prev => [...prev, createdData.data]);
+          const newHighlights = [...highlights, createdData.data];
+          setHighlights(newHighlights);
+          setInitialHighlights(newHighlights); // Sync so Save Changes won't re-create
           setMessage({ type: 'success', text: 'Highlight uploaded and added to collection!' });
           // Reset and close modal
           setIsUploadModalOpen(false);
@@ -159,6 +163,7 @@ export default function HighlightsAdminEditor() {
       console.error('Upload modal error:', err);
       setMessage({ type: 'error', text: 'Network error uploading file.' });
     } finally {
+      uploadingRef.current = false;
       setIsUploadingModal(false);
     }
   };
@@ -213,7 +218,7 @@ export default function HighlightsAdminEditor() {
     setMessage({ type: 'success', text: 'Highlight deleted successfully.' });
   };
 
-  // Save all changes
+  // Save all changes (update displayOrder and metadata for existing items)
   const handleSaveAll = async () => {
     setSaving(true);
     setMessage(null);
@@ -221,18 +226,21 @@ export default function HighlightsAdminEditor() {
     try {
       for (let i = 0; i < highlights.length; i++) {
         const item = highlights[i];
-        if (item.src.trim()) {
-          await fetch('/api/admin/highlights', {
-            method: 'POST',
+        if (item.id && !item.id.startsWith('temp-')) {
+          // PATCH existing record — update order/metadata only
+          await fetch(`/api/admin/highlights/${item.id}`, {
+            method: 'PATCH',
+            credentials: 'include',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-              ...item,
+              alt: item.alt,
+              title: item.title,
               displayOrder: i
             })
           });
         }
       }
-      setInitialHighlights(highlights);
+      setInitialHighlights([...highlights]);
       setMessage({ type: 'success', text: 'Company Highlights saved successfully!' });
     } catch (err: any) {
       setMessage({ type: 'error', text: err.message || 'Failed to save highlights' });
