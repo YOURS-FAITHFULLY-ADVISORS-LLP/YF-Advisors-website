@@ -158,6 +158,7 @@ function TrackerContent() {
     window.addEventListener('beforeunload', handleUnload);
 
     return () => {
+      if (sectionDebounceTimer) clearTimeout(sectionDebounceTimer);
       window.removeEventListener('sectionchange', handleSectionChange);
       window.removeEventListener('click', handleClick);
       window.removeEventListener('beforeunload', handleUnload);
