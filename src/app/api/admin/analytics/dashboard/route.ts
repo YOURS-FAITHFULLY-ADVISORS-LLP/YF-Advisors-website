@@ -11,7 +11,16 @@ export const GET = withApiHandler(async (req: NextRequest) => {
   let startDate = new Date();
 
   if (range === 'today') {
-    startDate.setHours(0, 0, 0, 0);
+    // IST midnight = UTC previous day 18:30
+    const istMidnight = new Date(now);
+    istMidnight.setUTCHours(0, 0, 0, 0);
+    // Shift to IST: midnight IST = 18:30 UTC previous day
+    istMidnight.setTime(istMidnight.getTime() - 5.5 * 60 * 60 * 1000);
+    // If we're still before IST midnight (shouldn't happen in practice), adjust
+    if (istMidnight.getTime() > now.getTime()) {
+      istMidnight.setTime(istMidnight.getTime() - 24 * 60 * 60 * 1000);
+    }
+    startDate = istMidnight;
   } else if (range === '7d') {
     startDate.setDate(now.getDate() - 7);
   } else if (range === '30d') {
@@ -139,15 +148,22 @@ export const GET = withApiHandler(async (req: NextRequest) => {
     ? Math.round((bounces / totalSessionCount) * 100)
     : 0;
 
+  // ── IST Timezone Helper (UTC+5:30) ──
+  const IST_OFFSET_MS = 5.5 * 60 * 60 * 1000;
+  const toIST = (date: Date) => new Date(date.getTime() + IST_OFFSET_MS);
+  const nowIST = toIST(now);
+
   // ── Build REAL Visitor Trends from DB data ──
   const trendDays: { day: string; count: number }[] = [];
 
   if (range === 'today') {
-    // Group by hour for "today"
+    // Group by IST hour for "today"
+    const currentISTHour = nowIST.getUTCHours();
     const hourCounts: Record<number, number> = {};
-    for (let h = 0; h <= now.getHours(); h++) hourCounts[h] = 0;
+    for (let h = 0; h <= currentISTHour; h++) hourCounts[h] = 0;
     allPageViewsInRange.forEach((pv) => {
-      const hour = new Date(pv.enteredAt).getHours();
+      const pvIST = toIST(new Date(pv.enteredAt));
+      const hour = pvIST.getUTCHours();
       hourCounts[hour] = (hourCounts[hour] || 0) + 1;
     });
     Object.keys(hourCounts)
@@ -161,14 +177,14 @@ export const GET = withApiHandler(async (req: NextRequest) => {
     // Group by month for "12 months"
     const monthCounts: Record<string, number> = {};
     for (let i = 11; i >= 0; i--) {
-      const d = new Date();
-      d.setMonth(d.getMonth() - i);
-      const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+      const d = new Date(nowIST);
+      d.setUTCMonth(d.getUTCMonth() - i);
+      const key = `${d.getUTCFullYear()}-${String(d.getUTCMonth() + 1).padStart(2, '0')}`;
       monthCounts[key] = 0;
     }
     allPageViewsInRange.forEach((pv) => {
-      const d = new Date(pv.enteredAt);
-      const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+      const d = toIST(new Date(pv.enteredAt));
+      const key = `${d.getUTCFullYear()}-${String(d.getUTCMonth() + 1).padStart(2, '0')}`;
       if (key in monthCounts) monthCounts[key]++;
     });
     Object.entries(monthCounts).forEach(([key, count]) => {
@@ -177,24 +193,26 @@ export const GET = withApiHandler(async (req: NextRequest) => {
       trendDays.push({ day: label, count });
     });
   } else {
-    // Group by day for "7d" or "30d"
+    // Group by IST day for "7d" or "30d"
     const numDays = range === '7d' ? 7 : 30;
     const dayCounts: Record<string, number> = {};
     for (let i = numDays - 1; i >= 0; i--) {
-      const d = new Date();
-      d.setDate(d.getDate() - i);
-      const key = d.toISOString().split('T')[0]; // YYYY-MM-DD
+      const d = new Date(nowIST);
+      d.setUTCDate(d.getUTCDate() - i);
+      const key = `${d.getUTCFullYear()}-${String(d.getUTCMonth() + 1).padStart(2, '0')}-${String(d.getUTCDate()).padStart(2, '0')}`;
       dayCounts[key] = 0;
     }
     allPageViewsInRange.forEach((pv) => {
-      const key = new Date(pv.enteredAt).toISOString().split('T')[0];
+      const d = toIST(new Date(pv.enteredAt));
+      const key = `${d.getUTCFullYear()}-${String(d.getUTCMonth() + 1).padStart(2, '0')}-${String(d.getUTCDate()).padStart(2, '0')}`;
       if (key in dayCounts) dayCounts[key]++;
     });
     Object.entries(dayCounts).forEach(([key, count]) => {
-      const d = new Date(key);
+      const [y, m, d] = key.split('-').map(Number);
+      const dateObj = new Date(y, m - 1, d);
       const label = range === '30d'
-        ? d.toLocaleDateString('en-US', { day: 'numeric', month: 'short' })
-        : d.toLocaleDateString('en-US', { weekday: 'short' });
+        ? dateObj.toLocaleDateString('en-US', { day: 'numeric', month: 'short' })
+        : dateObj.toLocaleDateString('en-US', { weekday: 'short' });
       trendDays.push({ day: label, count });
     });
   }
