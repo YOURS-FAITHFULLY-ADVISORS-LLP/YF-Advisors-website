@@ -70,11 +70,11 @@ const products: Product[] = [
     color: "#f59e0b",
     mockupColor: "bg-amber-50",
     images: [
-      "https://nhkdhwochgfimbimomst.supabase.co/storage/v1/object/public/uploads/btl/image1.jpg",
-      "https://nhkdhwochgfimbimomst.supabase.co/storage/v1/object/public/uploads/btl/image2.jpg",
-      "https://nhkdhwochgfimbimomst.supabase.co/storage/v1/object/public/uploads/btl/image3.jpg",
-      "https://nhkdhwochgfimbimomst.supabase.co/storage/v1/object/public/uploads/btl/image4.jpg",
-      "https://nhkdhwochgfimbimomst.supabase.co/storage/v1/object/public/uploads/btl/image5.jpg",
+      "/product/btl/image1.jpg",
+      "/product/btl/image2.jpg",
+      "/product/btl/image3.jpg",
+      "/product/btl/image4.jpg",
+      "/product/btl/image5.jpg",
     ],
   },
 ];
@@ -100,6 +100,14 @@ const BTLCarousel = ({ images }: { images: string[] }) => {
           <motion.img
             key={currentIndex}
             src={images[currentIndex]}
+            onError={(e) => {
+              // Fallback to local asset if remote fails
+              const target = e.currentTarget;
+              const fallbackSrc = `/product/btl/image${(currentIndex % 5) + 1}.jpg`;
+              if (target.src !== fallbackSrc) {
+                target.src = fallbackSrc;
+              }
+            }}
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -20 }}
