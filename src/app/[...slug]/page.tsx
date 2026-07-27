@@ -19,6 +19,7 @@ import AdminAboutPage from '@/src/admin/app/about/page';
 import AdminContactPage from '@/src/admin/app/contact/page';
 import AdminInquiriesPage from '@/src/admin/app/inquiries/page';
 import AdminAnalyticsPage from '@/src/admin/app/analytics/page';
+import AdminHighlightsPage from '@/src/admin/app/highlights/page';
 
 interface DynamicRouteProps {
   params: Promise<{
@@ -52,6 +53,9 @@ export default async function DynamicRoute({ params }: DynamicRouteProps) {
       }
       if (slug[1] === 'contact') {
         return <AdminContactPage />;
+      }
+      if (slug[1] === 'highlights') {
+        return <AdminHighlightsPage />;
       }
       if (slug[1] === 'blogs') {
         return <AdminBlogsPage />;

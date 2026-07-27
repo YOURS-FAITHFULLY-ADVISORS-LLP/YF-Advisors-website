@@ -1,9 +1,9 @@
 "use client";
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import DomeGallery from "./DomeGallery";
 
-const COMPANY_HIGHLIGHT_IMAGES = [
+const DEFAULT_HIGHLIGHT_IMAGES = [
   {
     src: "/blog/diwali-celebration.jpg",
     alt: "YF Advisors Diwali Celebration"
@@ -47,6 +47,26 @@ const COMPANY_HIGHLIGHT_IMAGES = [
 ];
 
 export default function CompanyHighlights() {
+  const [images, setImages] = useState(DEFAULT_HIGHLIGHT_IMAGES);
+
+  useEffect(() => {
+    async function loadHighlights() {
+      try {
+        const res = await fetch('/api/admin/highlights');
+        const data = await res.json();
+        if (data.success && Array.isArray(data.data) && data.data.length > 0) {
+          setImages(data.data.map((item: any) => ({
+            src: item.src,
+            alt: item.alt || item.title || 'YF Advisors Highlight'
+          })));
+        }
+      } catch (err) {
+        console.error('Failed to load dynamic highlights:', err);
+      }
+    }
+    loadHighlights();
+  }, []);
+
   return (
     <section id="highlights" className="relative w-full bg-gradient-to-b from-white via-slate-50 to-white py-16 md:py-24 overflow-hidden border-t border-slate-100">
       <div className="max-w-7xl mx-auto px-6 text-center mb-8 relative z-10">
@@ -63,16 +83,16 @@ export default function CompanyHighlights() {
 
       <div className="relative w-full h-[400px] sm:h-[520px] md:h-[620px] lg:h-[720px] rounded-2xl md:rounded-3xl overflow-hidden shadow-xl shadow-slate-200/50">
         <DomeGallery
-          images={COMPANY_HIGHLIGHT_IMAGES}
+          images={images}
           fit={0.85}
           fitBasis="width"
           minRadius={600}
           segments={35}
           grayscale={false}
           overlayBlurColor="#FFFFFF"
-          openedImageWidth="min(90vw, 360px)"
-          openedImageHeight="min(90vw, 360px)"
-          imageBorderRadius="18px"
+          openedImageWidth="min(85vw, 300px)"
+          openedImageHeight="min(85vw, 380px)"
+          imageBorderRadius="16px"
           openedImageBorderRadius="20px"
         />
       </div>

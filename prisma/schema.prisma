@@ -190,6 +190,25 @@ model RelatedService {
   displayOrder Int @default(0)
 }
 
+enum HighlightStatus {
+  DRAFT
+  PUBLISHED
+}
+
+model Highlight {
+  id           String          @id @default(cuid())
+  src          String
+  alt          String?
+  title        String?
+  displayOrder Int             @default(0)
+  status       HighlightStatus @default(PUBLISHED)
+  createdAt    DateTime        @default(now())
+  updatedAt    DateTime        @updatedAt
+
+  @@index([status])
+  @@index([displayOrder])
+}
+
 model Testimonial {
   id            String   @id @default(cuid())
 

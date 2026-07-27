@@ -6,7 +6,7 @@ const SUPABASE_URL = process.env.SUPABASE_URL!;
 const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY!;
 const BUCKET = process.env.SUPABASE_BUCKET || 'uploads';
 
-const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB limit
+const MAX_FILE_SIZE = 2 * 1024 * 1024; // Strict 2MB limit
 
 export async function POST(req: NextRequest) {
   try {
@@ -29,10 +29,16 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Check size limit (max 5MB)
-    if (file.size > MAX_FILE_SIZE) {
+    // Check size limit: 2MB for highlights folder, 5MB for general sections
+    const maxAllowedSize = folder === 'highlights' ? 2 * 1024 * 1024 : 5 * 1024 * 1024;
+    if (file.size > maxAllowedSize) {
       return NextResponse.json(
-        { success: false, message: 'File size exceeds max 5MB limit.' },
+        { 
+          success: false, 
+          message: folder === 'highlights' 
+            ? 'Highlight file size exceeds the max 2MB limit.' 
+            : 'File size exceeds the max 5MB limit.' 
+        },
         { status: 400 }
       );
     }
