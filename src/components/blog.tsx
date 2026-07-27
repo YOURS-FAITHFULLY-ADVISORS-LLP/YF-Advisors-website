@@ -18,7 +18,7 @@ const Blog = () => {
         const res = await fetch('/api/admin/blogs?status=PUBLISHED');
         if (res.ok) {
           const json = await res.json();
-          if (isMounted && json.success && Array.isArray(json.data) && json.data.length > 0) {
+          if (isMounted && json.success && Array.isArray(json.data)) {
             const formatted = json.data.map((b: any) => ({
               id: b.id,
               title: b.title,
@@ -29,19 +29,12 @@ const Blog = () => {
               excerpt: b.cardDescription || b.excerpt || (b.content ? b.content.replace(/<[^>]*>?/gm, '').substring(0, 120) + "..." : "")
             }));
             setBlogs(formatted);
-            setLoading(false);
-            return;
           }
         }
-        if (isMounted) {
-          setBlogs(blogPosts);
-          setLoading(false);
-        }
       } catch (err) {
-        if (isMounted) {
-          setBlogs(blogPosts);
-          setLoading(false);
-        }
+        console.error("Error fetching blogs:", err);
+      } finally {
+        if (isMounted) setLoading(false);
       }
     }
     fetchBlogs();
@@ -63,7 +56,20 @@ const Blog = () => {
         {loading ? (
           <div className="grid">
             {[1, 2, 3].map((n) => (
-              <div key={n} className="h-96 bg-slate-200/80 rounded-3xl animate-pulse" />
+              <div key={n} className="bg-white rounded-3xl overflow-hidden border border-slate-100 shadow-sm animate-pulse flex flex-col h-[460px]">
+                <div className="w-full h-52 bg-slate-200/80 relative">
+                  <div className="absolute top-4 left-4 w-20 h-6 bg-slate-300/70 rounded-full" />
+                </div>
+                <div className="p-6 flex-1 flex flex-col justify-between">
+                  <div className="space-y-3">
+                    <div className="w-24 h-3.5 bg-slate-200 rounded-md" />
+                    <div className="w-4/5 h-6 bg-slate-200/90 rounded-md mt-2" />
+                    <div className="w-full h-3.5 bg-slate-100 rounded-md mt-3" />
+                    <div className="w-5/6 h-3.5 bg-slate-100 rounded-md" />
+                  </div>
+                  <div className="w-28 h-4 bg-slate-200/80 rounded-md pt-2" />
+                </div>
+              </div>
             ))}
           </div>
         ) : (
