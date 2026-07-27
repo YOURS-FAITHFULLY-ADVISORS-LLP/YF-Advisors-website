@@ -41,6 +41,19 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    // Prevent duplicate entries for the same image URL
+    const existing = await prisma.highlight.findFirst({
+      where: { src },
+    });
+
+    if (existing) {
+      return NextResponse.json({
+        success: true,
+        message: 'Highlight already exists',
+        data: existing,
+      });
+    }
+
     const highlight = await prisma.highlight.create({
       data: {
         src,
