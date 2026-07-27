@@ -5,12 +5,17 @@ const globalForPrisma = globalThis as unknown as {
   prisma?: PrismaClient;
 };
 
-const adapter = new PrismaPg({
-  connectionString: process.env.DATABASE_URL || '',
-});
-
-export const prisma = globalForPrisma.prisma ?? new PrismaClient({ adapter });
-
-if (process.env.NODE_ENV !== 'production') {
-  globalForPrisma.prisma = prisma;
+function createPrismaClient() {
+  const adapter = new PrismaPg({
+    connectionString: process.env.DATABASE_URL || '',
+  });
+  return new PrismaClient({ adapter });
 }
+
+// Always create a fresh client to ensure schema changes are picked up
+// The global cache prevents connection pool exhaustion in dev
+if (!globalForPrisma.prisma) {
+  globalForPrisma.prisma = createPrismaClient();
+}
+
+export const prisma = globalForPrisma.prisma;
