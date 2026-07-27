@@ -6,7 +6,7 @@ export function SectionRouteObserver() {
   useEffect(() => {
     const handleScroll = () => {
       // Find all sections or section container IDs on the page
-      const knownSectionIds = ["hero", "about-us", "services", "testimonials", "our-team", "products", "contact"];
+      const knownSectionIds = ["about-us", "services", "testimonials", "our-team", "products", "contact"];
       const selector = ["section[id]", ...knownSectionIds.map((id) => `#${id}`)].join(", ");
       const sections = document.querySelectorAll<HTMLElement>(selector);
       const viewportCenter = window.innerHeight * 0.4; // 40% threshold for snappy section detection
