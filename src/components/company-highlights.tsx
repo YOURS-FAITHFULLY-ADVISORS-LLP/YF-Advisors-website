@@ -48,24 +48,25 @@ const COMPANY_HIGHLIGHT_IMAGES = [
 
 export default function CompanyHighlights() {
   return (
-    <section id="highlights" className="relative w-full bg-[#001D33] py-16 md:py-24 overflow-hidden border-t border-slate-800">
+    <section id="highlights" className="relative w-full bg-gradient-to-b from-white via-slate-50 to-white py-16 md:py-24 overflow-hidden border-t border-slate-100">
       <div className="max-w-7xl mx-auto px-6 text-center mb-8 relative z-10">
-        <h4 className="text-xs font-bold tracking-widest text-[#00A79D] uppercase mb-2">
+        <span className="inline-block py-1 px-3 rounded-full bg-teal-50 text-[#00A79D] text-xs font-bold tracking-widest uppercase mb-3 border border-teal-100/60">
           LIFE AT YF ADVISORS
-        </h4>
-        <h2 className="text-3xl md:text-5xl font-black uppercase tracking-tight text-white font-serif">
+        </span>
+        <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight text-slate-900 font-serif">
           Company Highlights
         </h2>
-        <p className="mt-3 text-sm md:text-base text-slate-300 max-w-xl mx-auto">
+        <p className="mt-3 text-sm md:text-base text-slate-600 max-w-xl mx-auto">
           Drag to explore our interactive 3D 360° dome gallery showcasing team moments, field activations, and company milestones.
         </p>
       </div>
 
-      <div className="relative w-full h-[400px] sm:h-[520px] md:h-[620px] lg:h-[720px] rounded-2xl md:rounded-3xl overflow-hidden shadow-2xl">
+      <div className="relative w-full h-[400px] sm:h-[520px] md:h-[620px] lg:h-[720px] rounded-2xl md:rounded-3xl overflow-hidden shadow-xl shadow-slate-200/50">
         <DomeGallery
           images={COMPANY_HIGHLIGHT_IMAGES}
+          segments={20}
           grayscale={false}
-          overlayBlurColor="#001D33"
+          overlayBlurColor="#FFFFFF"
           minRadius={320}
           openedImageWidth="min(90vw, 360px)"
           openedImageHeight="min(90vw, 360px)"
