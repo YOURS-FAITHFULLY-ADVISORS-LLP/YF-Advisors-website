@@ -99,16 +99,16 @@ const StickyServiceCard = ({
     <div
       ref={container}
       style={{ zIndex: i + 1 }}
-      className="sticky top-[80px] md:top-0 isolate flex min-h-[auto] md:h-screen items-center justify-center px-4 py-4 md:py-0"
+      className="sticky top-[70px] sm:top-[90px] lg:top-0 isolate flex min-h-[auto] lg:h-screen items-center justify-center px-3 sm:px-6 lg:px-8 py-3 sm:py-6 lg:py-0"
     >
       <motion.div
         style={{ scale }}
         onClick={() => router.push(`/services/${service.id}`)}
-        className="group relative flex h-auto md:h-[400px] w-full max-w-[960px] origin-center cursor-pointer flex-col md:flex-row overflow-hidden rounded-[1.5rem] md:rounded-[2.5rem] border border-slate-100 bg-white p-5 sm:p-6 md:p-10 shadow-xl md:shadow-2xl transition-all duration-300 gap-4 sm:gap-6 md:gap-8"
+        className="group relative flex h-auto lg:h-[420px] xl:h-[450px] w-full max-w-[1100px] origin-center cursor-pointer flex-col lg:flex-row overflow-hidden rounded-2xl sm:rounded-3xl lg:rounded-[2.5rem] border border-slate-100 bg-white p-4 sm:p-6 lg:p-8 xl:p-10 shadow-xl lg:shadow-2xl transition-all duration-300 gap-4 sm:gap-6 lg:gap-8"
       >
         {/* Big background number */}
         <span
-          className="pointer-events-none absolute -top-4 -right-2 md:-top-8 md:-right-4 z-0 select-none text-[6rem] md:text-[9rem] font-black leading-none text-slate-100/70 transition-colors duration-500 group-hover:text-slate-200/50"
+          className="pointer-events-none absolute -top-3 -right-2 sm:-top-6 sm:-right-4 lg:-top-8 lg:-right-4 z-0 select-none text-[4.5rem] sm:text-[7rem] lg:text-[9rem] font-black leading-none text-slate-100/70 transition-colors duration-500 group-hover:text-slate-200/50"
           aria-hidden="true"
         >
           {(i + 1).toString().padStart(2, "0")}
@@ -118,42 +118,42 @@ const StickyServiceCard = ({
         <div className="relative z-10 flex flex-1 flex-col justify-between min-w-0">
           <div>
             {/* Soft Teal Icon Container */}
-            <div className="flex h-10 w-10 md:h-14 md:w-14 items-center justify-center rounded-xl md:rounded-2xl bg-[#E6F7F5] border border-[#00A79D]/15 text-[#00A79D] shadow-xs transition-transform duration-500 group-hover:scale-105">
-              <Icon className="h-5 w-5 md:h-7 md:w-7 text-[#00A79D]" />
+            <div className="flex h-10 w-10 sm:h-12 sm:w-12 lg:h-14 lg:w-14 items-center justify-center rounded-xl lg:rounded-2xl bg-[#E6F7F5] border border-[#00A79D]/15 text-[#00A79D] shadow-xs transition-transform duration-500 group-hover:scale-105">
+              <Icon className="h-5 w-5 sm:h-6 sm:w-6 lg:h-7 lg:w-7 text-[#00A79D]" />
             </div>
 
             {/* Title */}
-            <h3 className="mt-3 md:mt-5 text-xl sm:text-2xl md:text-4xl font-bold font-serif tracking-tight text-slate-900 break-words leading-tight">
+            <h3 className="mt-2.5 sm:mt-4 lg:mt-5 text-lg sm:text-2xl lg:text-3xl xl:text-4xl font-bold font-serif tracking-tight text-slate-900 break-words leading-tight">
               {service.title}
             </h3>
 
             {/* Description */}
-            <p className="mt-2 md:mt-3 text-xs sm:text-sm text-slate-500 leading-relaxed max-w-md break-words line-clamp-2 md:line-clamp-3">
+            <p className="mt-1.5 sm:mt-2.5 lg:mt-3 text-xs sm:text-sm text-slate-500 leading-relaxed max-w-md break-words line-clamp-2 sm:line-clamp-3">
               {service.shortDescription}
             </p>
           </div>
 
           {/* Solid Teal Pill Button */}
-          <div className="mt-4 md:mt-8">
-            <span className="inline-flex items-center gap-2 px-4 py-2 md:px-6 md:py-3 bg-[#00A79D] group-hover:bg-[#008f85] text-white rounded-full text-[10px] md:text-xs font-bold uppercase tracking-wider transition-all shadow-md group-hover:shadow-lg">
+          <div className="mt-3 sm:mt-5 lg:mt-8">
+            <span className="inline-flex items-center gap-2 px-3.5 py-2 sm:px-5 sm:py-2.5 lg:px-6 lg:py-3 bg-[#00A79D] group-hover:bg-[#008f85] text-white rounded-full text-[10px] sm:text-xs font-bold uppercase tracking-wider transition-all shadow-md group-hover:shadow-lg">
               <span>READ MORE</span>
-              <ArrowRight className="w-3 h-3 md:w-3.5 md:h-3.5" />
+              <ArrowRight className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
             </span>
           </div>
         </div>
 
         {/* Right Column (Core Capabilities & Key Value) */}
-        <div className="relative z-10 flex flex-1 flex-col justify-center border-t border-slate-100 pt-4 md:border-t-0 md:border-l md:border-slate-100 md:pt-0 md:pl-10 min-w-0">
+        <div className="relative z-10 flex flex-1 flex-col justify-center border-t border-slate-100 pt-3 sm:pt-4 lg:border-t-0 lg:border-l lg:border-slate-100 lg:pt-0 lg:pl-8 xl:pl-10 min-w-0">
           {/* CORE CAPABILITIES */}
           <div>
-            <h4 className="text-[10px] md:text-xs font-bold tracking-widest text-[#00A79D] uppercase mb-2 md:mb-4">
+            <h4 className="text-[10px] sm:text-xs font-bold tracking-widest text-[#00A79D] uppercase mb-2 lg:mb-4">
               CORE CAPABILITIES
             </h4>
 
-            <ul className="space-y-1.5 md:space-y-2.5">
+            <ul className="space-y-1.5 sm:space-y-2 lg:space-y-2.5">
               {service.capabilities.slice(0, 3).map((cap, idx) => (
                 <li key={idx} className="flex items-start gap-2 text-xs font-semibold text-slate-700 min-w-0">
-                  <span className="text-[#00A79D] font-bold text-xs md:text-sm leading-none shrink-0">•</span>
+                  <span className="text-[#00A79D] font-bold text-xs sm:text-sm leading-none shrink-0">•</span>
                   <span className="break-words line-clamp-1">{cap.title}</span>
                 </li>
               ))}
@@ -161,14 +161,14 @@ const StickyServiceCard = ({
           </div>
 
           {/* Divider */}
-          <div className="my-3 md:my-6 border-t border-slate-100" />
+          <div className="my-2.5 sm:my-4 lg:my-6 border-t border-slate-100" />
 
           {/* KEY VALUE */}
           <div className="min-w-0">
-            <h4 className="text-[10px] md:text-xs font-bold tracking-widest text-[#00A79D] uppercase mb-1 md:mb-1.5">
+            <h4 className="text-[10px] sm:text-xs font-bold tracking-widest text-[#00A79D] uppercase mb-1 lg:mb-1.5">
               KEY VALUE
             </h4>
-            <p className="text-xs text-slate-500 leading-relaxed line-clamp-2 md:line-clamp-3 break-words overflow-hidden">
+            <p className="text-xs text-slate-500 leading-relaxed line-clamp-2 lg:line-clamp-3 break-words overflow-hidden">
               {service.keyValueText || service.shortDescription}
             </p>
           </div>
