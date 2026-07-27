@@ -25,7 +25,9 @@ async function getOrCreateHomepageRecord() {
 
 export const GET = withApiHandler(async () => {
   const homepage = await getOrCreateHomepageRecord();
-  return apiSuccess(homepage, 'Homepage details retrieved successfully', undefined, 200);
+  const res = apiSuccess(homepage, 'Homepage details retrieved successfully', undefined, 200);
+  res.headers.set('Cache-Control', 'public, s-maxage=60, stale-while-revalidate=300');
+  return res;
 });
 
 export const PATCH = withApiHandler(async (req: NextRequest) => {

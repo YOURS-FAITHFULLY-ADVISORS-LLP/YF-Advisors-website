@@ -51,8 +51,13 @@ export const GET = withApiHandler(async (req: NextRequest) => {
   ]);
 
   const meta = buildPaginationMeta(total, page, limit);
+  const res = apiSuccess(services, 'Services retrieved successfully', meta, 200);
 
-  return apiSuccess(services, 'Services retrieved successfully', meta, 200);
+  if (!status || status === 'PUBLISHED') {
+    res.headers.set('Cache-Control', 'public, s-maxage=60, stale-while-revalidate=300');
+  }
+
+  return res;
 });
 
 export const POST = withApiHandler(async (req: NextRequest) => {

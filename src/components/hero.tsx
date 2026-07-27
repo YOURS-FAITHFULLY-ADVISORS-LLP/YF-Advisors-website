@@ -62,12 +62,20 @@ const HeroSkeleton = () => {
   );
 };
 
-const Hero = () => {
-  const [data, setData] = useState<HeroCMSData | null>(null);
-  const [loading, setLoading] = useState(true);
+interface HeroProps {
+  initialData?: HeroCMSData | null;
+}
+
+const Hero = ({ initialData }: HeroProps) => {
+  const [data, setData] = useState<HeroCMSData | null>(initialData || DEFAULT_HERO_DATA);
+  const [loading, setLoading] = useState(!initialData);
   const [hasError, setHasError] = useState(false);
 
   useEffect(() => {
+    if (initialData) {
+      setLoading(false);
+      return;
+    }
     let isMounted = true;
     async function loadCMSData() {
       try {

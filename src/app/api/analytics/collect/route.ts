@@ -144,24 +144,25 @@ export async function POST(req: NextRequest) {
       sessionId = session.id;
 
       if (!isNewVisitor) {
-        await prisma.analyticsVisitor.update({
+        // Non-blocking visitor count increment
+        prisma.analyticsVisitor.update({
           where: { visitorId },
           data: { visitCount: { increment: 1 } },
-        });
+        }).catch(() => {});
       }
     } else {
-      // Update session endedAt & duration
+      // Non-blocking session duration update
       const now = new Date();
       const durationSeconds = Math.max(0, Math.floor((now.getTime() - new Date(session.startedAt).getTime()) / 1000));
       const isBounce = (session.pages <= 1) && (durationSeconds < 10);
-      await prisma.analyticsSession.update({
+      prisma.analyticsSession.update({
         where: { id: sessionId },
         data: {
           endedAt: now,
           duration: durationSeconds,
           bounce: isBounce,
         },
-      });
+      }).catch(() => {});
     }
 
     // 3. Process Event Types
@@ -177,62 +178,68 @@ export async function POST(req: NextRequest) {
         },
       });
 
-      // Update session bounce state & pages count
-      const totalViews = await prisma.analyticsPageView.count({ where: { sessionId: sessionId! } });
-      const currentDuration = session?.duration || 0;
-      const isBounce = totalViews <= 1 && currentDuration < 10;
-      await prisma.analyticsSession.update({
-        where: { id: sessionId! },
-        data: {
-          pages: totalViews,
-          bounce: isBounce,
-        },
-      });
+      // Secondary session bounce & pages count update
+      (async () => {
+        try {
+          const totalViews = await prisma.analyticsPageView.count({ where: { sessionId: sessionId! } });
+          const currentDuration = session?.duration || 0;
+          const isBounce = totalViews <= 1 && currentDuration < 10;
+          await prisma.analyticsSession.update({
+            where: { id: sessionId! },
+            data: {
+              pages: totalViews,
+              bounce: isBounce,
+            },
+          });
+        } catch (e) {}
+      })();
     } else if (type === 'button_click' || type === 'event' || type === 'conversion') {
-      await prisma.analyticsEvent.create({
-        data: {
-          visitorId,
-          sessionId: sessionId!,
-          eventType: metadata?.eventType || type,
-          page: page || '/',
-          buttonName: buttonName || metadata?.buttonName || null,
-          metadata: metadata || {},
-        },
-      });
-
-      // If button click or conversion, session is not a bounce
-      await prisma.analyticsSession.update({
-        where: { id: sessionId! },
-        data: { bounce: false },
-      });
-    } else if (type === 'leave' && timeSpent) {
-      // Update last page view timeSpent
-      const lastPv = await prisma.analyticsPageView.findFirst({
-        where: { visitorId, sessionId: sessionId! },
-        orderBy: { enteredAt: 'desc' },
-      });
-      if (lastPv) {
-        await prisma.analyticsPageView.update({
-          where: { id: lastPv.id },
+      await Promise.all([
+        prisma.analyticsEvent.create({
           data: {
-            leftAt: new Date(),
-            timeSpent: (lastPv.timeSpent || 0) + timeSpent,
+            visitorId,
+            sessionId: sessionId!,
+            eventType: metadata?.eventType || type,
+            page: page || '/',
+            buttonName: buttonName || metadata?.buttonName || null,
+            metadata: metadata || {},
           },
-        });
-      }
-
-      // Check if session duration or timeSpent qualifies as engaged
-      if (session) {
-        const totalDuration = Math.max(session.duration, timeSpent);
-        const isBounce = (session.pages <= 1) && (totalDuration < 10);
-        await prisma.analyticsSession.update({
+        }),
+        prisma.analyticsSession.update({
           where: { id: sessionId! },
-          data: {
-            duration: totalDuration,
-            bounce: isBounce,
-          },
-        });
-      }
+          data: { bounce: false },
+        }),
+      ]);
+    } else if (type === 'leave' && timeSpent) {
+      // Async last page view & session duration updates
+      (async () => {
+        try {
+          const lastPv = await prisma.analyticsPageView.findFirst({
+            where: { visitorId, sessionId: sessionId! },
+            orderBy: { enteredAt: 'desc' },
+          });
+          if (lastPv) {
+            await prisma.analyticsPageView.update({
+              where: { id: lastPv.id },
+              data: {
+                leftAt: new Date(),
+                timeSpent: (lastPv.timeSpent || 0) + timeSpent,
+              },
+            });
+          }
+          if (session) {
+            const totalDuration = Math.max(session.duration, timeSpent);
+            const isBounce = (session.pages <= 1) && (totalDuration < 10);
+            await prisma.analyticsSession.update({
+              where: { id: sessionId! },
+              data: {
+                duration: totalDuration,
+                bounce: isBounce,
+              },
+            });
+          }
+        } catch (e) {}
+      })();
     }
 
     return NextResponse.json({
