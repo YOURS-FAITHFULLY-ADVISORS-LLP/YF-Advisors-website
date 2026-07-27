@@ -45,7 +45,7 @@ function TrackerContent() {
           type,
           visitorId: vId,
           sessionId: sId,
-          page: window.location.pathname,
+          page: window.location.pathname + (window.location.hash ? window.location.hash : ''),
           title: document.title,
           device,
           browser,
@@ -84,6 +84,15 @@ function TrackerContent() {
         // Silent catch for analytics
       }
     };
+
+    // Track Section Scroll Changes
+    const handleSectionChange = (e: Event) => {
+      const customEvent = e as CustomEvent;
+      const fullPath = customEvent.detail?.fullPath || (window.location.pathname + (window.location.hash ? window.location.hash : ''));
+      sendEvent('page_view', { page: fullPath });
+    };
+
+    window.addEventListener('sectionchange', handleSectionChange);
 
     // Track Page View on Route Change
     entryTimeRef.current = Date.now();
@@ -125,7 +134,7 @@ function TrackerContent() {
         type: 'leave',
         visitorId: vId,
         sessionId: sId,
-        page: window.location.pathname,
+        page: window.location.pathname + (window.location.hash ? window.location.hash : ''),
         timeSpent,
       }));
     };
@@ -133,6 +142,7 @@ function TrackerContent() {
     window.addEventListener('beforeunload', handleUnload);
 
     return () => {
+      window.removeEventListener('sectionchange', handleSectionChange);
       window.removeEventListener('click', handleClick);
       window.removeEventListener('beforeunload', handleUnload);
       clearInterval(interval);

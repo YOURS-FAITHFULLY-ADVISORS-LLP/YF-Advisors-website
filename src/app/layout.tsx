@@ -3,6 +3,7 @@ import { Playfair_Display, Montserrat, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import StyledComponentsRegistry from "./registry";
 import AnalyticsTracker from "@/src/components/AnalyticsTracker";
+import SectionRouteObserver from "@/src/components/SectionRouteObserver";
 
 const playfair = Playfair_Display({
   variable: "--font-playfair",
@@ -38,6 +39,7 @@ export default function RootLayout({
         className={`${playfair.variable} ${montserrat.variable} ${geistMono.variable} antialiased`}
       >
         <AnalyticsTracker />
+        <SectionRouteObserver />
         {/* WRAP CHILDREN WITH THE REGISTRY COMPONENT */}
         <StyledComponentsRegistry>
           {children}
