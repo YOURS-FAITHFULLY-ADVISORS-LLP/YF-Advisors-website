@@ -8,8 +8,8 @@ import { blogPosts } from "../data/blogs";
 
 const Blog = () => {
   const [hoveredId, setHoveredId] = useState<any>(null);
-  const [blogs, setBlogs] = useState<any[]>(blogPosts);
-  const [loading, setLoading] = useState(false);
+  const [blogs, setBlogs] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
 
   React.useEffect(() => {
     let isMounted = true;
@@ -29,10 +29,19 @@ const Blog = () => {
               excerpt: b.cardDescription || b.excerpt || (b.content ? b.content.replace(/<[^>]*>?/gm, '').substring(0, 120) + "..." : "")
             }));
             setBlogs(formatted);
+            setLoading(false);
+            return;
           }
         }
+        if (isMounted) {
+          setBlogs(blogPosts);
+          setLoading(false);
+        }
       } catch (err) {
-        // Silently keep static fallback
+        if (isMounted) {
+          setBlogs(blogPosts);
+          setLoading(false);
+        }
       }
     }
     fetchBlogs();
