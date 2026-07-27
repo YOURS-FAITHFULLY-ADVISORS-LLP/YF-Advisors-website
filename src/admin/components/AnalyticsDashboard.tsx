@@ -393,9 +393,9 @@ export default function AnalyticsDashboard() {
 
       {/* 👥 Recent Visitors & 🔘 Button Clicks */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <div className="lg:col-span-2 bg-white rounded-3xl border border-slate-200/80 shadow-2xs overflow-hidden flex flex-col justify-between">
-          <div>
-            <div className="p-5 sm:p-6 border-b border-slate-100 flex flex-wrap items-center justify-between gap-3">
+        <div className="lg:col-span-2 bg-white rounded-3xl border border-slate-200/80 shadow-2xs overflow-hidden flex flex-col h-[360px]">
+          <div className="flex flex-col h-full overflow-hidden">
+            <div className="p-5 sm:p-6 border-b border-slate-100 flex flex-wrap items-center justify-between gap-3 shrink-0">
               <div>
                 <h2 className="text-base font-bold text-[#002B49]">Recent Visitors</h2>
                 <p className="text-xs text-slate-400">Anonymous visitor sessions (No personal data collected)</p>
@@ -413,37 +413,37 @@ export default function AnalyticsDashboard() {
             </div>
 
             {data?.recentVisitors && data.recentVisitors.length > 0 ? (
-              <div className="overflow-x-auto">
-                <table className="w-full text-left border-collapse min-w-[560px]">
-                  <thead>
-                    <tr className="bg-slate-50/80 border-b border-slate-200/80 text-[11px] font-bold text-slate-500 uppercase tracking-wider">
-                      <th className="px-4 py-3 sm:px-6 sm:py-3.5 whitespace-nowrap">Visitor ID</th>
-                      <th className="px-4 py-3 sm:px-6 sm:py-3.5 whitespace-nowrap">Last Page</th>
-                      <th className="px-4 py-3 sm:px-6 sm:py-3.5 whitespace-nowrap">Location</th>
-                      <th className="px-4 py-3 sm:px-6 sm:py-3.5 whitespace-nowrap">Device</th>
-                      <th className="px-4 py-3 sm:px-6 sm:py-3.5 whitespace-nowrap">Status</th>
-                      <th className="px-4 py-3 sm:px-6 sm:py-3.5 whitespace-nowrap text-right">Action</th>
+              <div className="overflow-x-auto overflow-y-auto flex-1">
+                <table className="w-full text-left border-collapse min-w-[500px]">
+                  <thead className="sticky top-0 bg-slate-50 border-b border-slate-200/80 z-10 text-[11px] font-bold text-slate-500 uppercase tracking-wider">
+                    <tr>
+                      <th className="px-4 py-3 whitespace-nowrap">Visitor ID</th>
+                      <th className="px-4 py-3 whitespace-nowrap">Last Page</th>
+                      <th className="px-4 py-3 whitespace-nowrap">Location</th>
+                      <th className="px-4 py-3 whitespace-nowrap">Device</th>
+                      <th className="px-4 py-3 whitespace-nowrap">Status</th>
+                      <th className="px-4 py-3 whitespace-nowrap text-right">Action</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-100 text-xs">
                     {data.recentVisitors.map((v) => (
                       <tr key={v.visitorId} className="hover:bg-slate-50/60 transition-colors">
-                        <td className="px-4 py-3 sm:px-6 sm:py-3.5 font-bold text-[#002B49] whitespace-nowrap">{v.visitorId}</td>
-                        <td className="px-4 py-3 sm:px-6 sm:py-3.5 text-slate-700 font-medium max-w-[140px] truncate" title={v.exitPage}>{v.exitPage}</td>
-                        <td className="px-4 py-3 sm:px-6 sm:py-3.5 text-slate-500 whitespace-nowrap">{v.city}, {v.country}</td>
-                        <td className="px-4 py-3 sm:px-6 sm:py-3.5 text-slate-500 whitespace-nowrap">{v.device} ({v.browser})</td>
-                        <td className="px-4 py-3 sm:px-6 sm:py-3.5 whitespace-nowrap">
-                          <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold ${
+                        <td className="px-4 py-2.5 font-bold text-[#002B49] whitespace-nowrap">{v.visitorId}</td>
+                        <td className="px-4 py-2.5 text-slate-700 font-medium max-w-[130px] truncate" title={v.exitPage}>{v.exitPage}</td>
+                        <td className="px-4 py-2.5 text-slate-500 max-w-[120px] truncate" title={`${v.city}, ${v.country}`}>{v.city}, {v.country}</td>
+                        <td className="px-4 py-2.5 text-slate-500 max-w-[130px] truncate" title={`${v.device} (${v.browser})`}>{v.device} ({v.browser})</td>
+                        <td className="px-4 py-2.5 whitespace-nowrap">
+                          <span className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold ${
                             v.status === 'Online' ? 'bg-emerald-500/10 text-emerald-600' : 'bg-slate-200/60 text-slate-500'
                           }`}>
                             <span className={`w-1.5 h-1.5 rounded-full ${v.status === 'Online' ? 'bg-emerald-500' : 'bg-slate-400'}`} />
                             {v.status}
                           </span>
                         </td>
-                        <td className="px-4 py-3 sm:px-6 sm:py-3.5 text-right whitespace-nowrap">
+                        <td className="px-4 py-2.5 text-right whitespace-nowrap">
                           <button
                             onClick={() => openVisitorProfile(v.visitorId)}
-                            className="px-3 py-1.5 rounded-xl bg-[#002B49]/10 text-[#002B49] hover:bg-[#002B49] hover:text-white font-bold text-[11px] transition-colors shrink-0"
+                            className="px-3 py-1 rounded-xl bg-[#002B49]/10 text-[#002B49] hover:bg-[#002B49] hover:text-white font-bold text-[11px] transition-colors shrink-0"
                           >
                             Inspect
                           </button>
@@ -460,21 +460,21 @@ export default function AnalyticsDashboard() {
         </div>
 
         {/* 🔘 Button Click Analytics */}
-        <div className="bg-white p-6 rounded-3xl border border-slate-200/80 shadow-2xs space-y-6">
-          <div>
+        <div className="bg-white p-6 rounded-3xl border border-slate-200/80 shadow-2xs space-y-4 flex flex-col h-[360px]">
+          <div className="shrink-0">
             <h2 className="text-base font-bold text-[#002B49]">Button Click Analytics</h2>
             <p className="text-xs text-slate-400">Tracked Call-To-Action clicks</p>
           </div>
 
           {data?.buttonAnalytics && data.buttonAnalytics.length > 0 ? (
-            <div className="space-y-3">
+            <div className="space-y-2.5 overflow-y-auto flex-1 pr-1">
               {data.buttonAnalytics.map((b, idx) => (
-                <div key={idx} className="flex items-center justify-between p-3 rounded-2xl bg-slate-50 border border-slate-100 text-xs">
-                  <div className="flex items-center gap-2.5">
-                    <MousePointer className="w-3.5 h-3.5 text-[#00A79D]" />
-                    <span className="font-semibold text-slate-800">{b.button}</span>
+                <div key={idx} className="flex items-center justify-between p-2.5 rounded-2xl bg-slate-50 border border-slate-100 text-xs">
+                  <div className="flex items-center gap-2.5 min-w-0 pr-2">
+                    <MousePointer className="w-3.5 h-3.5 text-[#00A79D] shrink-0" />
+                    <span className="font-semibold text-slate-800 truncate" title={b.button}>{b.button}</span>
                   </div>
-                  <span className="font-bold text-[#002B49] bg-[#002B49]/10 px-2.5 py-1 rounded-lg">
+                  <span className="font-bold text-[#002B49] bg-[#002B49]/10 px-2.5 py-1 rounded-lg shrink-0 text-[11px]">
                     {b.clicks} clicks
                   </span>
                 </div>
