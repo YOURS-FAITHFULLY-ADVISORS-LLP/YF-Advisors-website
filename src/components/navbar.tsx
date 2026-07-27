@@ -90,7 +90,9 @@ const Navbar = () => {
         animate={{ y: 0 }}
         transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
         className={`fixed top-0 z-50 w-full transition-all duration-300 ${
-          scrolled ? "py-2 bg-white/60 backdrop-blur-md" : "py-3 md:py-5"
+          scrolled 
+            ? "py-2 bg-white/85 backdrop-blur-xl shadow-md border-b border-slate-200/50" 
+            : "py-3 md:py-4 bg-white/70 backdrop-blur-lg"
         }`}
       >
         <div className="max-w-7xl mx-auto px-4 md:px-6 flex items-center justify-between gap-3">
