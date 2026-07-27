@@ -68,14 +68,10 @@ interface HeroProps {
 
 const Hero = ({ initialData }: HeroProps) => {
   const [data, setData] = useState<HeroCMSData | null>(initialData || DEFAULT_HERO_DATA);
-  const [loading, setLoading] = useState(!initialData);
+  const [loading, setLoading] = useState(false);
   const [hasError, setHasError] = useState(false);
 
   useEffect(() => {
-    if (initialData) {
-      setLoading(false);
-      return;
-    }
     let isMounted = true;
     async function loadCMSData() {
       try {

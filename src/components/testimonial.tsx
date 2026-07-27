@@ -230,8 +230,8 @@ const Testimonials = () => {
         <section id="testimonials" className="py-20 bg-slate-50 overflow-hidden">
             <style>{`
                 @keyframes marqueeScroll {
-                    0% { transform: translateX(0); }
-                    100% { transform: translateX(-50%); }
+                    0% { transform: translate3d(0, 0, 0); }
+                    100% { transform: translate3d(-50%, 0, 0); }
                 }
 
                 .marquee-inner {

@@ -489,14 +489,14 @@ const StyledWrapper = styled.div`
   }
 
   @keyframes floating {
-    0% { transform: translateY(0px); }
-    50% { transform: translateY(10px); }
-    100% { transform: translateY(0px); }
+    0% { transform: translate3d(0, 0px, 0); }
+    50% { transform: translate3d(0, 10px, 0); }
+    100% { transform: translate3d(0, 0px, 0); }
   }
 
   @keyframes rotation_481 {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
+    0% { transform: rotate(0deg) translateZ(0); }
+    100% { transform: rotate(360deg) translateZ(0); }
   }
 `;
 
