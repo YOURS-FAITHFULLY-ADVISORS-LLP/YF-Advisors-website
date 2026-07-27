@@ -37,9 +37,10 @@ export default async function DynamicBlogPage(props: PageProps) {
   const category = dbBlog?.category || staticBlog?.category || "Services";
   const author = dbBlog?.author || "YF Advisors";
   const image = dbBlog?.image || staticBlog?.image || "/blog/spark.jpg";
-  const formattedDate = new Date(
-    dbBlog?.publishedAt || dbBlog?.createdAt || staticBlog?.date || Date.now()
-  ).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" });
+  const rawDate = dbBlog?.publishedAt || dbBlog?.createdAt || staticBlog?.date;
+  const formattedDate = rawDate
+    ? new Date(rawDate).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })
+    : "Recent";
 
   const introText = dbBlog?.excerpt || dbBlog?.cardDescription || staticBlog?.excerpt || "";
   const contentHtml = dbBlog?.content || "";

@@ -8,8 +8,8 @@ import { blogPosts } from "../data/blogs";
 
 const Blog = () => {
   const [hoveredId, setHoveredId] = useState<any>(null);
-  const [blogs, setBlogs] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [blogs, setBlogs] = useState<any[]>(blogPosts);
+  const [loading, setLoading] = useState(false);
 
   React.useEffect(() => {
     let isMounted = true;
@@ -29,19 +29,10 @@ const Blog = () => {
               excerpt: b.cardDescription || b.excerpt || (b.content ? b.content.replace(/<[^>]*>?/gm, '').substring(0, 120) + "..." : "")
             }));
             setBlogs(formatted);
-            setLoading(false);
-            return;
           }
         }
-        if (isMounted) {
-          setBlogs(blogPosts);
-          setLoading(false);
-        }
       } catch (err) {
-        if (isMounted) {
-          setBlogs(blogPosts);
-          setLoading(false);
-        }
+        // Silently keep static fallback
       }
     }
     fetchBlogs();
@@ -71,7 +62,7 @@ const Blog = () => {
             {blogs.map((post, index) => (
               <CardWrapper 
                 key={post.id}
-                $delay={index * 0.1}
+                $delay={Math.min(index * 0.05, 0.3)}
                 onMouseEnter={() => setHoveredId(post.id)}
                 onMouseLeave={() => setHoveredId(null)}
                 className={hoveredId === post.id ? 'card-hovered' : ''}
@@ -88,9 +79,9 @@ const Blog = () => {
                         src={post.image} 
                         alt={post.title} 
                         fill
-                        unoptimized
                         sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                         className="blog-img"
+                        loading={index < 6 ? "eager" : "lazy"}
                       />
                       <div className="gradient-overlay"></div>
                       <div className="category-tag">

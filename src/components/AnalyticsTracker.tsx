@@ -8,9 +8,10 @@ function TrackerContent() {
   const searchParams = useSearchParams();
   const visitorIdRef = useRef<string | null>(null);
   const sessionIdRef = useRef<string | null>(null);
-  const entryTimeRef = useRef<number>(Date.now());
+  const entryTimeRef = useRef<number>(0);
 
   useEffect(() => {
+    entryTimeRef.current = Date.now();
     // 1. Initialize Visitor storage
     if (typeof window === 'undefined') return;
 
