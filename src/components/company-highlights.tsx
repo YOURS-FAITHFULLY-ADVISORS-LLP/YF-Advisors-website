@@ -64,10 +64,12 @@ export default function CompanyHighlights() {
       <div className="relative w-full h-[400px] sm:h-[520px] md:h-[620px] lg:h-[720px] rounded-2xl md:rounded-3xl overflow-hidden shadow-xl shadow-slate-200/50">
         <DomeGallery
           images={COMPANY_HIGHLIGHT_IMAGES}
-          segments={20}
+          fit={0.85}
+          fitBasis="width"
+          minRadius={600}
+          segments={35}
           grayscale={false}
           overlayBlurColor="#FFFFFF"
-          minRadius={320}
           openedImageWidth="min(90vw, 360px)"
           openedImageHeight="min(90vw, 360px)"
           imageBorderRadius="18px"
