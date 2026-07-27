@@ -99,16 +99,16 @@ const StickyServiceCard = ({
     <div
       ref={container}
       style={{ zIndex: i + 1 }}
-      className="sticky top-0 isolate flex h-screen items-center justify-center px-4"
+      className="sticky top-[80px] md:top-0 isolate flex min-h-[auto] md:h-screen items-center justify-center px-4 py-4 md:py-0"
     >
       <motion.div
         style={{ scale }}
         onClick={() => router.push(`/services/${service.id}`)}
-        className="group relative flex min-h-[480px] md:min-h-0 md:h-[400px] w-[min(90vw,960px)] origin-center cursor-pointer flex-col md:flex-row overflow-hidden rounded-[2.5rem] border border-slate-100 bg-white p-8 md:p-10 shadow-2xl transition-all duration-300 gap-8"
+        className="group relative flex h-auto md:h-[400px] w-full max-w-[960px] origin-center cursor-pointer flex-col md:flex-row overflow-hidden rounded-[1.5rem] md:rounded-[2.5rem] border border-slate-100 bg-white p-5 sm:p-6 md:p-10 shadow-xl md:shadow-2xl transition-all duration-300 gap-4 sm:gap-6 md:gap-8"
       >
         {/* Big background number */}
         <span
-          className="pointer-events-none absolute -top-8 -right-4 z-0 select-none text-[9rem] font-black leading-none text-slate-100/70 transition-colors duration-500 group-hover:text-slate-200/50"
+          className="pointer-events-none absolute -top-4 -right-2 md:-top-8 md:-right-4 z-0 select-none text-[6rem] md:text-[9rem] font-black leading-none text-slate-100/70 transition-colors duration-500 group-hover:text-slate-200/50"
           aria-hidden="true"
         >
           {(i + 1).toString().padStart(2, "0")}
@@ -118,42 +118,42 @@ const StickyServiceCard = ({
         <div className="relative z-10 flex flex-1 flex-col justify-between min-w-0">
           <div>
             {/* Soft Teal Icon Container */}
-            <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-[#E6F7F5] border border-[#00A79D]/15 text-[#00A79D] shadow-xs transition-transform duration-500 group-hover:scale-105">
-              <Icon className="h-7 w-7 text-[#00A79D]" />
+            <div className="flex h-10 w-10 md:h-14 md:w-14 items-center justify-center rounded-xl md:rounded-2xl bg-[#E6F7F5] border border-[#00A79D]/15 text-[#00A79D] shadow-xs transition-transform duration-500 group-hover:scale-105">
+              <Icon className="h-5 w-5 md:h-7 md:w-7 text-[#00A79D]" />
             </div>
 
             {/* Title */}
-            <h3 className="mt-5 text-3xl font-bold font-serif tracking-tight text-slate-900 md:text-4xl break-words">
+            <h3 className="mt-3 md:mt-5 text-xl sm:text-2xl md:text-4xl font-bold font-serif tracking-tight text-slate-900 break-words leading-tight">
               {service.title}
             </h3>
 
             {/* Description */}
-            <p className="mt-3 text-sm text-slate-500 leading-relaxed max-w-md break-words line-clamp-3">
+            <p className="mt-2 md:mt-3 text-xs sm:text-sm text-slate-500 leading-relaxed max-w-md break-words line-clamp-2 md:line-clamp-3">
               {service.shortDescription}
             </p>
           </div>
 
           {/* Solid Teal Pill Button */}
-          <div className="mt-8">
-            <span className="inline-flex items-center gap-2.5 px-6 py-3 bg-[#00A79D] group-hover:bg-[#008f85] text-white rounded-full text-xs font-bold uppercase tracking-wider transition-all shadow-md group-hover:shadow-lg">
+          <div className="mt-4 md:mt-8">
+            <span className="inline-flex items-center gap-2 px-4 py-2 md:px-6 md:py-3 bg-[#00A79D] group-hover:bg-[#008f85] text-white rounded-full text-[10px] md:text-xs font-bold uppercase tracking-wider transition-all shadow-md group-hover:shadow-lg">
               <span>READ MORE</span>
-              <ArrowRight className="w-3.5 h-3.5" />
+              <ArrowRight className="w-3 h-3 md:w-3.5 md:h-3.5" />
             </span>
           </div>
         </div>
 
         {/* Right Column (Core Capabilities & Key Value) */}
-        <div className="relative z-10 flex flex-1 flex-col justify-center border-t border-slate-100 pt-6 md:border-t-0 md:border-l md:border-slate-100 md:pt-0 md:pl-10 min-w-0">
+        <div className="relative z-10 flex flex-1 flex-col justify-center border-t border-slate-100 pt-4 md:border-t-0 md:border-l md:border-slate-100 md:pt-0 md:pl-10 min-w-0">
           {/* CORE CAPABILITIES */}
           <div>
-            <h4 className="text-xs font-bold tracking-widest text-[#00A79D] uppercase mb-4">
+            <h4 className="text-[10px] md:text-xs font-bold tracking-widest text-[#00A79D] uppercase mb-2 md:mb-4">
               CORE CAPABILITIES
             </h4>
 
-            <ul className="space-y-2.5">
-              {service.capabilities.slice(0, 4).map((cap, idx) => (
-                <li key={idx} className="flex items-start gap-2.5 text-xs font-semibold text-slate-700 min-w-0">
-                  <span className="text-[#00A79D] font-bold text-sm leading-none shrink-0">•</span>
+            <ul className="space-y-1.5 md:space-y-2.5">
+              {service.capabilities.slice(0, 3).map((cap, idx) => (
+                <li key={idx} className="flex items-start gap-2 text-xs font-semibold text-slate-700 min-w-0">
+                  <span className="text-[#00A79D] font-bold text-xs md:text-sm leading-none shrink-0">•</span>
                   <span className="break-words line-clamp-1">{cap.title}</span>
                 </li>
               ))}
@@ -161,14 +161,14 @@ const StickyServiceCard = ({
           </div>
 
           {/* Divider */}
-          <div className="my-6 border-t border-slate-100" />
+          <div className="my-3 md:my-6 border-t border-slate-100" />
 
           {/* KEY VALUE */}
           <div className="min-w-0">
-            <h4 className="text-xs font-bold tracking-widest text-[#00A79D] uppercase mb-1.5">
+            <h4 className="text-[10px] md:text-xs font-bold tracking-widest text-[#00A79D] uppercase mb-1 md:mb-1.5">
               KEY VALUE
             </h4>
-            <p className="text-xs text-slate-500 leading-relaxed line-clamp-3 break-all break-words overflow-hidden">
+            <p className="text-xs text-slate-500 leading-relaxed line-clamp-2 md:line-clamp-3 break-words overflow-hidden">
               {service.keyValueText || service.shortDescription}
             </p>
           </div>
