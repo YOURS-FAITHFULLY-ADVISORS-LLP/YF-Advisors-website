@@ -56,7 +56,7 @@ export const GET = withApiHandler(async (req: NextRequest) => {
     prisma.analyticsPageView.count({ where: { enteredAt: { gte: startDate } } }),
     prisma.analyticsSession.findMany({
       where: { startedAt: { gte: startDate } },
-      select: { duration: true, bounce: true },
+      select: { duration: true, bounce: true, pages: true },
     }),
     prisma.analyticsSession.count({
       where: { startedAt: { gte: startDate }, bounce: true },
@@ -144,8 +144,9 @@ export const GET = withApiHandler(async (req: NextRequest) => {
     ? `${Math.floor(avgSessionSeconds / 60)}m ${avgSessionSeconds % 60}s`
     : '0m 0s';
 
+  const bouncesCount = sessions.filter(s => s.bounce && s.duration < 10 && (s.pages || 1) <= 1).length;
   const bounceRate = sessions.length > 0
-    ? Math.round((bounces / totalSessionCount) * 100)
+    ? Math.round((bouncesCount / totalSessionCount) * 100)
     : 0;
 
   // ── IST Timezone Helper (UTC+5:30) ──

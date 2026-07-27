@@ -153,11 +153,13 @@ export async function POST(req: NextRequest) {
       // Update session endedAt & duration
       const now = new Date();
       const durationSeconds = Math.max(0, Math.floor((now.getTime() - new Date(session.startedAt).getTime()) / 1000));
+      const isBounce = (session.pages <= 1) && (durationSeconds < 10);
       await prisma.analyticsSession.update({
         where: { id: sessionId },
         data: {
           endedAt: now,
           duration: durationSeconds,
+          bounce: isBounce,
         },
       });
     }
@@ -177,11 +179,13 @@ export async function POST(req: NextRequest) {
 
       // Update session bounce state & pages count
       const totalViews = await prisma.analyticsPageView.count({ where: { sessionId: sessionId! } });
+      const currentDuration = session?.duration || 0;
+      const isBounce = totalViews <= 1 && currentDuration < 10;
       await prisma.analyticsSession.update({
         where: { id: sessionId! },
         data: {
           pages: totalViews,
-          bounce: totalViews <= 1,
+          bounce: isBounce,
         },
       });
     } else if (type === 'button_click' || type === 'event' || type === 'conversion') {
@@ -213,6 +217,19 @@ export async function POST(req: NextRequest) {
           data: {
             leftAt: new Date(),
             timeSpent: (lastPv.timeSpent || 0) + timeSpent,
+          },
+        });
+      }
+
+      // Check if session duration or timeSpent qualifies as engaged
+      if (session) {
+        const totalDuration = Math.max(session.duration, timeSpent);
+        const isBounce = (session.pages <= 1) && (totalDuration < 10);
+        await prisma.analyticsSession.update({
+          where: { id: sessionId! },
+          data: {
+            duration: totalDuration,
+            bounce: isBounce,
           },
         });
       }
