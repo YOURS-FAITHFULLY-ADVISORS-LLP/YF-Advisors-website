@@ -104,7 +104,7 @@ const StickyServiceCard = ({
       <motion.div
         style={{ scale }}
         onClick={() => router.push(`/services/${service.id}`)}
-        className="group relative flex h-auto max-h-[82vh] lg:max-h-none lg:h-[420px] xl:h-[450px] w-full max-w-[1100px] origin-center cursor-pointer flex-col lg:flex-row overflow-hidden rounded-2xl sm:rounded-3xl lg:rounded-[2.5rem] border border-slate-100 bg-white p-5 sm:p-6 lg:p-8 xl:p-10 shadow-xl lg:shadow-2xl transition-all duration-300 gap-4 sm:gap-6 lg:gap-8"
+        className="group relative flex h-auto max-h-[82vh] lg:max-h-none lg:h-[420px] xl:h-[450px] w-full max-w-[1100px] origin-center cursor-pointer flex-col lg:flex-row overflow-hidden rounded-2xl sm:rounded-3xl lg:rounded-[2.5rem] border border-slate-100 bg-white p-5 sm:p-6 lg:p-8 xl:p-10 shadow-xl lg:shadow-2xl gap-4 sm:gap-6 lg:gap-8 will-change-transform transform-gpu"
       >
         {/* Big background number */}
         <span
