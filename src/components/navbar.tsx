@@ -22,6 +22,14 @@ const Navbar = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  // Lock body scroll when the mobile menu is open
+  useEffect(() => {
+    document.body.style.overflow = isMobileMenuOpen ? "hidden" : "";
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [isMobileMenuOpen]);
+
   const navLinks = [
     { name: "Home", href: "/" },
     { name: "About Us", href: "/#about-us" },
@@ -64,7 +72,7 @@ const Navbar = () => {
   };
 
   const glassPanel =
-    "bg-white/80 backdrop-blur-xl border border-white/40 shadow-lg shadow-slate-200/20 rounded-full transition-all duration-300";
+    "bg-white/80 backdrop-blur-xl border border-white/60 shadow-[0_8px_30px_rgba(15,23,42,0.08)] rounded-full transition-all duration-300";
 
   return (
     <>
@@ -72,43 +80,42 @@ const Navbar = () => {
         initial={{ y: -100 }}
         animate={{ y: 0 }}
         transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-        className={`fixed top-0 z-50 w-full transition-all duration-300 ${scrolled ? "py-2 bg-white/50 backdrop-blur-md" : "py-4 md:py-6"
-          }`}
+        className={`fixed top-0 z-50 w-full transition-all duration-300 ${
+          scrolled ? "py-2 bg-white/60 backdrop-blur-md" : "py-3 md:py-5"
+        }`}
       >
-        <div className="max-w-7xl mx-auto px-4 md:px-6 flex items-center justify-between">
-
-          {/* --- 1. Logo Section (Refined Uniform Font Styles) --- */}
+        <div className="max-w-7xl mx-auto px-4 md:px-6 flex items-center justify-between gap-3">
+          {/* --- 1. Logo Section --- */}
           <Link
             href="/"
             onClick={(e) => handleLinkClick(e, "/")}
-            className="group relative z-50 flex items-center gap-3 py-2 cursor-pointer"
+            className="group relative z-50 flex items-center gap-2.5 py-2 shrink-0 cursor-pointer"
           >
-            <div className="relative h-12 w-16 md:h-14 md:w-20 shrink-0">
+            <div className="relative h-10 w-14 md:h-14 md:w-20 shrink-0">
               <Image
                 src="/logo.png"
-                alt="YF Advisors"
+                alt="Yours Faithfully Advisors"
                 fill
                 className="object-contain"
                 priority
               />
             </div>
 
-            <div className="flex flex-col justify-center leading-none select-none text-slate-900">
-              {/* Standardized "Yours Faithfully" */}
-              <span className="font-serif text-[10px] md:text-[13px] font-bold tracking-[0.2em] uppercase mb-1">
+            <div className="flex flex-col justify-center leading-none select-none text-slate-900 whitespace-nowrap">
+              <span className="font-serif text-[9px] md:text-[12px] font-bold tracking-[0.18em] uppercase mb-1">
                 Yours Faithfully
               </span>
-              {/* Divider */}
               <div className="w-full h-[1.5px] bg-[#FDB913] rounded-full" />
-              {/* Standardized "Advisors" - Same weight and tracking */}
-              <span className="font-serif text-[10px] md:text-[13px] font-bold tracking-[0.2em] uppercase mt-1 text-center">
+              <span className="font-serif text-[9px] md:text-[12px] font-bold tracking-[0.18em] uppercase mt-1 text-center">
                 Advisors
               </span>
             </div>
           </Link>
 
           {/* --- 2. Desktop Navigation --- */}
-          <nav className={`hidden md:flex items-center p-1.5 gap-1 ${glassPanel}`}>
+          <nav
+            className={`hidden lg:flex items-center p-1 gap-0.5 xl:gap-1 shrink-0 ${glassPanel}`}
+          >
             {navLinks.map((link, index) => (
               <Link
                 key={link.name}
@@ -116,12 +123,12 @@ const Navbar = () => {
                 onClick={(e) => handleLinkClick(e, link.href)}
                 onMouseEnter={() => setHoveredIndex(index)}
                 onMouseLeave={() => setHoveredIndex(null)}
-                className="relative px-5 py-2.5 rounded-full text-sm font-medium tracking-wide text-slate-600 transition-colors hover:text-slate-900"
+                className="relative whitespace-nowrap px-3 xl:px-4 py-2.5 rounded-full text-[13px] xl:text-sm font-medium tracking-wide text-slate-600 transition-colors hover:text-slate-900"
               >
                 {hoveredIndex === index && (
                   <motion.span
                     layoutId="nav-pill"
-                    className="absolute inset-0 bg-white/80 shadow-sm rounded-full -z-10 border border-gray-100"
+                    className="absolute inset-0 bg-white shadow-sm rounded-full -z-10 border border-slate-100"
                     transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
                   />
                 )}
@@ -131,12 +138,16 @@ const Navbar = () => {
           </nav>
 
           {/* --- 3. Actions --- */}
-          <div className="flex items-center gap-3">
-            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+          <div className="flex items-center gap-3 shrink-0">
+            <motion.div
+              whileHover={{ scale: 1.04 }}
+              whileTap={{ scale: 0.96 }}
+              className="hidden lg:block"
+            >
               <Link
                 href="/#contact"
                 onClick={(e) => handleLinkClick(e, "/#contact")}
-                className="hidden md:flex items-center gap-2 bg-[#002B49] text-white px-6 py-3 rounded-full text-sm font-bold tracking-wide shadow-lg shadow-blue-900/20 hover:bg-[#00A79D] transition-colors duration-300 group"
+                className="flex items-center gap-2 whitespace-nowrap bg-[#002B49] text-white px-5 xl:px-6 py-3 rounded-full text-sm font-bold tracking-wide shadow-lg shadow-blue-900/20 hover:bg-[#00A79D] transition-colors duration-300 group"
               >
                 <span>Let&apos;s Talk</span>
                 <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
@@ -146,7 +157,9 @@ const Navbar = () => {
             <motion.button
               whileTap={{ scale: 0.9 }}
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className={`md:hidden relative z-50 p-3 rounded-full text-slate-700 ${glassPanel}`}
+              aria-label="Toggle menu"
+              aria-expanded={isMobileMenuOpen}
+              className={`lg:hidden relative z-50 p-3 rounded-full text-slate-700 ${glassPanel}`}
             >
               <AnimatePresence mode="wait">
                 {isMobileMenuOpen ? (
@@ -182,7 +195,7 @@ const Navbar = () => {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: "-100%" }}
             transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-            className="fixed inset-0 z-40 bg-[#F5F7FA] md:hidden flex flex-col items-center justify-center space-y-8"
+            className="fixed inset-0 z-40 bg-[#F5F7FA] lg:hidden flex flex-col items-center justify-center space-y-8 overflow-y-auto py-24"
           >
             <div className="flex flex-col items-center gap-6 w-full px-6">
               {[...navLinks, { name: "Contact", href: "/#contact" }].map(
@@ -192,7 +205,7 @@ const Navbar = () => {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: 10 }}
-                    transition={{ delay: 0.1 + i * 0.1, duration: 0.4 }}
+                    transition={{ delay: 0.1 + i * 0.06, duration: 0.4 }}
                     className="w-full"
                   >
                     <Link
