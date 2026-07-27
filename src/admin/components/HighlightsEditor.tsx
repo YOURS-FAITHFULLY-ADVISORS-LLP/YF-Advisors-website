@@ -45,6 +45,7 @@ export default function HighlightsAdminEditor() {
   const [modalTitle, setModalTitle] = useState('');
   const [modalAlt, setModalAlt] = useState('');
   const [isUploadingModal, setIsUploadingModal] = useState(false);
+  const [modalError, setModalError] = useState<string | null>(null);
 
   // Card Modals & States
   const [previewItem, setPreviewItem] = useState<HighlightItem | null>(null);
@@ -83,12 +84,15 @@ export default function HighlightsAdminEditor() {
   // Handle Modal File Selection
   const handleModalFileSelect = (file: File | null) => {
     if (!file) return;
+    setModalError(null);
+
     if (file.size > 2 * 1024 * 1024) {
-      setMessage({ type: 'error', text: `"${file.name}" exceeds max 2MB limit.` });
+      const sizeMB = (file.size / (1024 * 1024)).toFixed(1);
+      setModalError(`"${file.name}" is ${sizeMB}MB — exceeds the 2MB limit. Please choose a smaller image.`);
       return;
     }
     if (!file.type.startsWith('image/')) {
-      setMessage({ type: 'error', text: 'Please select a valid image file.' });
+      setModalError('Invalid file type. Only image files (PNG, JPG, WEBP, SVG) are allowed.');
       return;
     }
 
@@ -102,13 +106,15 @@ export default function HighlightsAdminEditor() {
   // Upload Highlight from Modal
   const handleModalSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (isUploadingModal) return; // Prevent double submission
     if (!modalFile) {
-      setMessage({ type: 'error', text: 'Please select an image file to upload.' });
+      setModalError('Please select an image file to upload.');
       return;
     }
 
     setIsUploadingModal(true);
     setMessage(null);
+    setModalError(null);
 
     try {
       const formData = new FormData();
@@ -296,7 +302,7 @@ export default function HighlightsAdminEditor() {
 
         <div className="flex items-center gap-3 shrink-0">
           <button
-            onClick={() => setIsUploadModalOpen(true)}
+            onClick={() => { setModalError(null); setModalFile(null); setModalPreview(null); setModalTitle(''); setModalAlt(''); setIsUploadModalOpen(true); }}
             className="inline-flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-[#00A79D] hover:bg-[#008f85] text-white text-xs font-bold shadow-md shadow-teal-500/20 transition-all cursor-pointer"
           >
             <PlusIcon className="w-4 h-4" />
@@ -570,6 +576,14 @@ export default function HighlightsAdminEditor() {
                   </>
                 )}
               </div>
+
+              {/* Modal-local error message */}
+              {modalError && (
+                <div className="flex items-start gap-2.5 px-3.5 py-2.5 bg-rose-50 border border-rose-200 rounded-xl">
+                  <AlertIcon className="w-4 h-4 text-rose-500 shrink-0 mt-0.5" />
+                  <p className="text-xs font-semibold text-rose-600 leading-relaxed">{modalError}</p>
+                </div>
+              )}
 
               <div>
                 <label className="block text-xs font-bold text-slate-700 mb-1">

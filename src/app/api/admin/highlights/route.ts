@@ -8,13 +8,6 @@ export async function GET(req: NextRequest) {
     const { searchParams } = new URL(req.url);
     const includeDrafts = searchParams.get('includeDrafts') === 'true';
 
-    if (!prisma.highlight) {
-      return NextResponse.json({
-        success: true,
-        data: [],
-      });
-    }
-
     const highlights = await prisma.highlight.findMany({
       where: includeDrafts ? {} : { status: 'PUBLISHED' },
       orderBy: { displayOrder: 'asc' },
@@ -33,11 +26,11 @@ export async function GET(req: NextRequest) {
   }
 }
 
-// POST create highlight (Admin or public submission fallback)
+// POST create highlight
 export async function POST(req: NextRequest) {
   try {
     const session = await getAdminSession();
-    
+
     const body = await req.json();
     const { src, alt, title, displayOrder, status } = body;
 
@@ -48,18 +41,10 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    if (!prisma.highlight) {
-      return NextResponse.json({
-        success: true,
-        message: 'Highlight created (mock)',
-        data: { id: 'temp-' + Date.now(), src, alt: alt || 'Highlight' }
-      });
-    }
-
     const highlight = await prisma.highlight.create({
       data: {
         src,
-        alt: alt || null,
+        alt: alt || '',
         title: title || null,
         displayOrder: typeof displayOrder === 'number' ? displayOrder : (displayOrder ? parseInt(displayOrder, 10) : 0),
         status: status || 'PUBLISHED',
