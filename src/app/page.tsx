@@ -6,6 +6,7 @@ import Testimonials from '../components/testimonial';
 import TeamSection from '../components/meet-the-team';
 import AboutUs from '../components/about-us'; 
 import Products from '../components/product';
+import CompanyHighlights from '../components/company-highlights';
 import ContactChat from '../components/contact';
 import Footer from '../components/footer';
 
@@ -20,6 +21,7 @@ export default function Home() {
       <Testimonials />
       <TeamSection />
       <Products />
+      <CompanyHighlights />
       <ContactChat />
       <Footer />
     </div>
