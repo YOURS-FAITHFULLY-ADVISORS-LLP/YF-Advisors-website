@@ -4,6 +4,7 @@ import "./globals.css";
 import StyledComponentsRegistry from "./registry";
 import AnalyticsTracker from "@/src/components/AnalyticsTracker";
 import SectionRouteObserver from "@/src/components/SectionRouteObserver";
+import SmoothScrolling from "@/src/components/SmoothScrolling";
 
 const playfair = Playfair_Display({
   variable: "--font-playfair",
@@ -41,12 +42,14 @@ export default function RootLayout({
       <body
         className={`${playfair.variable} ${montserrat.variable} ${geistMono.variable} antialiased`}
       >
-        <AnalyticsTracker />
-        <SectionRouteObserver />
-        {/* WRAP CHILDREN WITH THE REGISTRY COMPONENT */}
-        <StyledComponentsRegistry>
-          {children}
-        </StyledComponentsRegistry>
+        <SmoothScrolling>
+          <AnalyticsTracker />
+          <SectionRouteObserver />
+          {/* WRAP CHILDREN WITH THE REGISTRY COMPONENT */}
+          <StyledComponentsRegistry>
+            {children}
+          </StyledComponentsRegistry>
+        </SmoothScrolling>
       </body>
     </html>
   );

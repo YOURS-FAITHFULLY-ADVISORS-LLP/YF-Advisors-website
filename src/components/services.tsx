@@ -2,7 +2,6 @@
 
 import React, { useEffect, useRef, useState } from "react";
 import { motion, useScroll, useTransform, MotionValue } from "framer-motion";
-import ReactLenis from "lenis/react";
 import { 
   ArrowRight, 
   LucideIcon, 
@@ -245,37 +244,35 @@ export default function StickyServicesSection() {
   const activeServices = servicesList.length > 0 ? servicesList : defaultFormattedServices;
 
   return (
-    <ReactLenis root>
-      <section id="services" className="relative w-full bg-slate-50">
-        <main
-          ref={container}
-          className="relative flex w-full flex-col items-center justify-center"
-        >
-          <div className="grid w-full content-start justify-items-center gap-5 py-[1vh] text-center">
-            <h2 className="text-4xl font-black uppercase tracking-widest text-black md:text-6xl">
-              Services
-            </h2>
-            <span className="relative max-w-[16ch] text-xs uppercase leading-tight tracking-wider text-slate-400">
-              Scroll down
-            </span>
-          </div>
+    <section id="services" className="relative w-full bg-slate-50">
+      <main
+        ref={container}
+        className="relative flex w-full flex-col items-center justify-center"
+      >
+        <div className="grid w-full content-start justify-items-center gap-5 py-[1vh] text-center">
+          <h2 className="text-4xl font-black uppercase tracking-widest text-black md:text-6xl">
+            Services
+          </h2>
+          <span className="relative max-w-[16ch] text-xs uppercase leading-tight tracking-wider text-slate-400">
+            Scroll down
+          </span>
+        </div>
 
-          {activeServices.map((service, i) => {
-            const targetScale = Math.max(0.85, 1 - (activeServices.length - i - 1) * 0.05);
-            return (
-              <StickyServiceCard
-                key={service.id}
-                i={i}
-                totalCards={activeServices.length}
-                service={service}
-                progress={scrollYProgress}
-                range={[i * (1 / activeServices.length), 1]}
-                targetScale={targetScale}
-              />
-            );
-          })}
-        </main>
-      </section>
-    </ReactLenis>
+        {activeServices.map((service, i) => {
+          const targetScale = Math.max(0.85, 1 - (activeServices.length - i - 1) * 0.05);
+          return (
+            <StickyServiceCard
+              key={service.id}
+              i={i}
+              totalCards={activeServices.length}
+              service={service}
+              progress={scrollYProgress}
+              range={[i * (1 / activeServices.length), 1]}
+              targetScale={targetScale}
+            />
+          );
+        })}
+      </main>
+    </section>
   );
 }
