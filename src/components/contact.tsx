@@ -164,7 +164,7 @@ export default function ContactSection() {
   `;
 
   return (
-    <section className="relative w-full py-24 px-4 md:px-8 font-sans overflow-hidden bg-gray-50">
+    <section id="contact" className="relative w-full py-24 px-4 md:px-8 font-sans overflow-hidden bg-gray-50">
       
       <div className="absolute inset-0 opacity-[0.03]" 
         style={{ backgroundImage: 'radial-linear(#000 1px, transparent 1px)', backgroundSize: '24px 24px' }}>

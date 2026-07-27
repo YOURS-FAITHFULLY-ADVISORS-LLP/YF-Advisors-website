@@ -227,7 +227,7 @@ const Testimonials = () => {
     const secondRow = row2.length > 0 ? row2 : reviewsRow2;
 
     return (
-        <section className="py-20 bg-slate-50 overflow-hidden">
+        <section id="testimonials" className="py-20 bg-slate-50 overflow-hidden">
             <style>{`
                 @keyframes marqueeScroll {
                     0% { transform: translateX(0); }

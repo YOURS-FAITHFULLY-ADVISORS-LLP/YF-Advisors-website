@@ -134,7 +134,7 @@ const TeamSections = () => {
   const displayList = teamMembers.length > 0 ? teamMembers : teamData;
 
   return (
-    <div id='our-team' className="flex flex-col items-center p-10 bg-slate-50 min-h-screen">
+    <section id="our-team" className="flex flex-col items-center p-10 bg-slate-50 min-h-screen">
       <div className="w-full text-center mb-12">
         <h3 className="text-sm font-bold tracking-widest text-[#00A79D] uppercase mb-2">Our Leadership</h3>
         <h2 className="text-3xl md:text-4xl font-bold text-[#002B49] mb-4">Meet Our People</h2>
@@ -158,7 +158,7 @@ const TeamSections = () => {
           ))}
         </div>
       )}
-    </div>
+    </section>
   );
 };
 
