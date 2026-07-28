@@ -5,6 +5,7 @@ export interface HomepageCMSData {
   heroImage?: string | null;
   heroButtonText?: string | null;
   heroButtonLink?: string | null;
+  heroCards?: string | null;
   createdAt?: string;
   updatedAt?: string;
 }

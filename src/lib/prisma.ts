@@ -12,10 +12,16 @@ function createPrismaClient() {
   return new PrismaClient({ adapter });
 }
 
-// Always create a fresh client to ensure schema changes are picked up
-// The global cache prevents connection pool exhaustion in dev
-if (!globalForPrisma.prisma) {
-  globalForPrisma.prisma = createPrismaClient();
+// In development, clear old cached singleton so new Prisma schema changes load immediately
+if (process.env.NODE_ENV !== 'production') {
+  delete globalForPrisma.prisma;
 }
 
-export const prisma = globalForPrisma.prisma;
+export const prisma =
+  globalForPrisma.prisma || createPrismaClient();
+
+if (process.env.NODE_ENV !== 'production') {
+  globalForPrisma.prisma = prisma;
+}
+
+

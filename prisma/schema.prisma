@@ -306,6 +306,9 @@ model Homepage {
   heroButtonText    String?
   heroButtonLink    String?
 
+  // 7 Orbiting Feature Cards (JSON Array)
+  heroCards         String?  @db.Text
+
   createdAt         DateTime @default(now())
   updatedAt         DateTime @updatedAt
 }

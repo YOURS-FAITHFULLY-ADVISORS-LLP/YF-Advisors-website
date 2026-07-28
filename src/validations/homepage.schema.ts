@@ -6,4 +6,5 @@ export const updateHomepageSchema = z.object({
   heroImage: z.string().optional().nullable(),
   heroButtonText: z.string().optional().nullable(),
   heroButtonLink: z.string().optional().nullable(),
+  heroCards: z.string().optional().nullable(),
 });

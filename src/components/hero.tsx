@@ -23,7 +23,24 @@ export interface HeroCMSData {
   heroImage?: string | null;
   heroButtonText?: string | null;
   heroButtonLink?: string | null;
+  heroCards?: string | null;
 }
+
+export interface FeatureCardItem {
+  id: string;
+  title: string;
+  subtitle: string;
+}
+
+export const DEFAULT_FEATURE_CARDS: FeatureCardItem[] = [
+  { id: 'gst', title: 'GST Filing', subtitle: 'Compliant & On Time' },
+  { id: 'compliance', title: 'Compliance', subtitle: 'Stay 100% Compliant' },
+  { id: 'payroll', title: 'Payroll', subtitle: 'Accurate & Timely' },
+  { id: 'roc', title: 'ROC Filing', subtitle: 'Hassle Free' },
+  { id: 'bookkeeping', title: 'Bookkeeping', subtitle: 'Organized & Clean' },
+  { id: 'cfo', title: 'Virtual CFO', subtitle: 'Insightful & Strategic' },
+  { id: 'tax', title: 'Tax Filing', subtitle: 'Maximize Savings' },
+];
 
 const DEFAULT_HERO_DATA: HeroCMSData = {
   id: "homepage",
@@ -43,7 +60,7 @@ export default function Hero({ initialData }: { initialData?: HeroCMSData | null
     let isMounted = true;
     async function loadCMSData() {
       try {
-        const res = await fetch("/api/admin/homepage");
+        const res = await fetch("/api/admin/homepage", { cache: 'no-store' });
         if (res.ok) {
           const json = await res.json();
           if (isMounted && json.success && json.data) {
@@ -64,6 +81,32 @@ export default function Hero({ initialData }: { initialData?: HeroCMSData | null
   const description = currentData.heroDescription || DEFAULT_HERO_DATA.heroDescription!;
   const buttonText = currentData.heroButtonText || DEFAULT_HERO_DATA.heroButtonText!;
   const buttonLink = currentData.heroButtonLink || "https://wa.me/918080506185";
+
+  let featureCardsList: FeatureCardItem[] = DEFAULT_FEATURE_CARDS;
+  if (currentData.heroCards) {
+    try {
+      const json = JSON.parse(currentData.heroCards);
+      if (Array.isArray(json) && json.length > 0) {
+        featureCardsList = json;
+      }
+    } catch (e) {}
+  }
+
+  const getCard = (id: string, defaultTitle: string, defaultSub: string) => {
+    const found = featureCardsList.find((c) => c.id === id);
+    return {
+      title: found?.title || defaultTitle,
+      subtitle: found?.subtitle || defaultSub,
+    };
+  };
+
+  const gstCard = getCard('gst', 'GST Filing', 'Compliant & On Time');
+  const complianceCard = getCard('compliance', 'Compliance', 'Stay 100% Compliant');
+  const payrollCard = getCard('payroll', 'Payroll', 'Accurate & Timely');
+  const rocCard = getCard('roc', 'ROC Filing', 'Hassle Free');
+  const bookkeepingCard = getCard('bookkeeping', 'Bookkeeping', 'Organized & Clean');
+  const cfoCard = getCard('cfo', 'Virtual CFO', 'Insightful & Strategic');
+  const taxCard = getCard('tax', 'Tax Filing', 'Maximize Savings');
 
   // Smooth scroll handler for #services section using Lenis
   const handleScrollToServices = (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
@@ -266,8 +309,8 @@ export default function Hero({ initialData }: { initialData?: HeroCMSData | null
                   <FileText className="w-4 h-4" />
                 </div>
                 <div>
-                  <h4 className="text-xs font-bold text-slate-900 leading-tight">GST Filing</h4>
-                  <p className="text-[10px] text-slate-400 font-semibold">Compliant & On Time</p>
+                  <h4 className="text-xs font-bold text-slate-900 leading-tight">{gstCard.title}</h4>
+                  <p className="text-[10px] text-slate-400 font-semibold">{gstCard.subtitle}</p>
                 </div>
               </div>
             </motion.div>
@@ -284,8 +327,8 @@ export default function Hero({ initialData }: { initialData?: HeroCMSData | null
                   <ShieldCheck className="w-4 h-4" />
                 </div>
                 <div>
-                  <h4 className="text-xs font-bold text-slate-900 leading-tight">Compliance</h4>
-                  <p className="text-[10px] text-slate-400 font-semibold">Stay 100% Compliant</p>
+                  <h4 className="text-xs font-bold text-slate-900 leading-tight">{complianceCard.title}</h4>
+                  <p className="text-[10px] text-slate-400 font-semibold">{complianceCard.subtitle}</p>
                 </div>
               </div>
             </motion.div>
@@ -302,8 +345,8 @@ export default function Hero({ initialData }: { initialData?: HeroCMSData | null
                   <Users className="w-4 h-4" />
                 </div>
                 <div>
-                  <h4 className="text-xs font-bold text-slate-900 leading-tight">Payroll</h4>
-                  <p className="text-[10px] text-slate-400 font-semibold">Accurate & Timely</p>
+                  <h4 className="text-xs font-bold text-slate-900 leading-tight">{payrollCard.title}</h4>
+                  <p className="text-[10px] text-slate-400 font-semibold">{payrollCard.subtitle}</p>
                 </div>
               </div>
             </motion.div>
@@ -320,8 +363,8 @@ export default function Hero({ initialData }: { initialData?: HeroCMSData | null
                   <Building2 className="w-4 h-4" />
                 </div>
                 <div>
-                  <h4 className="text-xs font-bold text-slate-900 leading-tight">ROC Filing</h4>
-                  <p className="text-[10px] text-slate-400 font-semibold">Hassle Free</p>
+                  <h4 className="text-xs font-bold text-slate-900 leading-tight">{rocCard.title}</h4>
+                  <p className="text-[10px] text-slate-400 font-semibold">{rocCard.subtitle}</p>
                 </div>
               </div>
             </motion.div>
@@ -338,8 +381,8 @@ export default function Hero({ initialData }: { initialData?: HeroCMSData | null
                   <BookOpen className="w-4 h-4" />
                 </div>
                 <div>
-                  <h4 className="text-xs font-bold text-slate-900 leading-tight">Bookkeeping</h4>
-                  <p className="text-[10px] text-slate-400 font-semibold">Organized & Clean</p>
+                  <h4 className="text-xs font-bold text-slate-900 leading-tight">{bookkeepingCard.title}</h4>
+                  <p className="text-[10px] text-slate-400 font-semibold">{bookkeepingCard.subtitle}</p>
                 </div>
               </div>
             </motion.div>
@@ -356,8 +399,8 @@ export default function Hero({ initialData }: { initialData?: HeroCMSData | null
                   <BarChart3 className="w-4 h-4" />
                 </div>
                 <div>
-                  <h4 className="text-xs font-bold text-slate-900 leading-tight">Virtual CFO</h4>
-                  <p className="text-[10px] text-slate-400 font-semibold">Insightful & Strategic</p>
+                  <h4 className="text-xs font-bold text-slate-900 leading-tight">{cfoCard.title}</h4>
+                  <p className="text-[10px] text-slate-400 font-semibold">{cfoCard.subtitle}</p>
                 </div>
               </div>
             </motion.div>
@@ -374,8 +417,8 @@ export default function Hero({ initialData }: { initialData?: HeroCMSData | null
                   <Percent className="w-4 h-4" />
                 </div>
                 <div>
-                  <h4 className="text-xs font-bold text-slate-900 leading-tight">Tax Filing</h4>
-                  <p className="text-[10px] text-slate-400 font-semibold">Maximize Savings</p>
+                  <h4 className="text-xs font-bold text-slate-900 leading-tight">{taxCard.title}</h4>
+                  <p className="text-[10px] text-slate-400 font-semibold">{taxCard.subtitle}</p>
                 </div>
               </div>
             </motion.div>

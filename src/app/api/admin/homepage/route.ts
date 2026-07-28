@@ -6,6 +6,7 @@ import { updateHomepageSchema } from '@/src/validations/homepage.schema';
 import { sanitizeInput } from '@/src/lib/sanitize';
 import { revalidateCmsPaths } from '@/src/lib/revalidate';
 
+// Admin Homepage & Hero API Route
 async function getOrCreateHomepageRecord() {
   let homepage = await prisma.homepage.findFirst();
 
@@ -23,10 +24,23 @@ async function getOrCreateHomepageRecord() {
   return homepage;
 }
 
+const DEFAULT_FEATURE_CARDS_JSON = JSON.stringify([
+  { id: 'gst', title: 'GST Filing', subtitle: 'Compliant & On Time' },
+  { id: 'compliance', title: 'Compliance', subtitle: 'Stay 100% Compliant' },
+  { id: 'payroll', title: 'Payroll', subtitle: 'Accurate & Timely' },
+  { id: 'roc', title: 'ROC Filing', subtitle: 'Hassle Free' },
+  { id: 'bookkeeping', title: 'Bookkeeping', subtitle: 'Organized & Clean' },
+  { id: 'cfo', title: 'Virtual CFO', subtitle: 'Insightful & Strategic' },
+  { id: 'tax', title: 'Tax Filing', subtitle: 'Maximize Savings' },
+]);
+
 export const GET = withApiHandler(async () => {
   const homepage = await getOrCreateHomepageRecord();
-  const res = apiSuccess(homepage, 'Homepage details retrieved successfully', undefined, 200);
-  res.headers.set('Cache-Control', 'public, s-maxage=60, stale-while-revalidate=300');
+  const responseData = {
+    ...homepage,
+    heroCards: homepage.heroCards || DEFAULT_FEATURE_CARDS_JSON,
+  };
+  const res = apiSuccess(responseData, 'Homepage details retrieved successfully', undefined, 200);
   return res;
 });
 
@@ -51,6 +65,7 @@ export const PATCH = withApiHandler(async (req: NextRequest) => {
       ...(data.heroImage !== undefined ? { heroImage: data.heroImage || null } : {}),
       ...(data.heroButtonText !== undefined ? { heroButtonText: data.heroButtonText || null } : {}),
       ...(data.heroButtonLink !== undefined ? { heroButtonLink: data.heroButtonLink || null } : {}),
+      ...(data.heroCards !== undefined ? { heroCards: data.heroCards || null } : {}),
     },
   });
 
