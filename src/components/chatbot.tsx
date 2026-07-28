@@ -369,7 +369,7 @@ export default function ChatWidget() {
           <div className="flex gap-1 relative z-10 items-center">
             <button 
               onClick={handleManualRefresh} 
-              className={`text-white/70 hover:text-white hover:bg-white/10 p-2 rounded-full transition-all duration-200 ${isLoading ? 'animate-spin' : ''}`} 
+              className={`text-white/70 hover:text-white hover:bg-white/10 p-2 rounded-full transition-all duration-200 cursor-pointer ${isLoading ? 'animate-spin' : ''}`} 
               title="Refresh"
             >
               <RefreshCw size={18} />
@@ -378,7 +378,7 @@ export default function ChatWidget() {
             <div className="relative" ref={dropdownRef}>
                 <button 
                   onClick={() => setIsDropdownOpen(!isDropdownOpen)} 
-                  className="text-white/70 hover:text-white hover:bg-white/10 p-2 rounded-full transition-all duration-200"
+                  className="text-white/70 hover:text-white hover:bg-white/10 p-2 rounded-full transition-all duration-200 cursor-pointer"
                 >
                   <MoreVertical size={20} />
                 </button>
@@ -387,14 +387,14 @@ export default function ChatWidget() {
                   <div className="absolute right-0 top-full mt-2 w-48 bg-white rounded-xl shadow-xl border border-slate-100 overflow-hidden origin-top-right animate-in fade-in zoom-in-95 duration-200">
                     <button 
                       onClick={clearChat}
-                      className="w-full text-left px-4 py-3 text-sm text-red-600 hover:bg-red-50 flex items-center gap-2 transition-colors border-b border-slate-50"
+                      className="w-full text-left px-4 py-3 text-sm text-red-600 hover:bg-red-50 flex items-center gap-2 transition-colors border-b border-slate-50 cursor-pointer"
                     >
                       <Trash2 size={16} />
                       Clear Chat
                     </button>
                     <button 
                       onClick={temporaryClose}
-                      className="w-full text-left px-4 py-3 text-sm text-slate-700 hover:bg-slate-50 flex items-center gap-2 transition-colors"
+                      className="w-full text-left px-4 py-3 text-sm text-slate-700 hover:bg-slate-50 flex items-center gap-2 transition-colors cursor-pointer"
                     >
                       <Minimize2 size={16} />
                       Minimize
@@ -403,7 +403,7 @@ export default function ChatWidget() {
                 )}
             </div>
 
-            <button onClick={() => setIsOpen(false)} className="text-white/70 hover:text-white hover:bg-white/10 p-2 rounded-full transition-all duration-200 md:hidden">
+            <button onClick={() => setIsOpen(false)} className="text-white/70 hover:text-white hover:bg-white/10 p-2 rounded-full transition-all duration-200 md:hidden cursor-pointer">
               <ChevronDown size={24} />
             </button>
           </div>
@@ -481,7 +481,7 @@ export default function ChatWidget() {
               className="flex-1 bg-transparent border-none focus:ring-0 text-slate-800 placeholder-slate-400 text-sm md:text-[15px] h-10 md:h-11 font-medium px-2 min-w-0"
               disabled={isLoading}
             />
-            <button type="submit" disabled={!input.trim() || isLoading} className={`w-9 h-9 md:w-10 md:h-10 rounded-full flex items-center justify-center transition-all duration-200 ${!input.trim() || isLoading ? "bg-slate-200 text-slate-400 cursor-not-allowed" : "bg-[#00A79D] text-white hover:bg-teal-700 hover:scale-105 shadow-md"}`}>
+            <button type="submit" disabled={!input.trim() || isLoading} className={`w-9 h-9 md:w-10 md:h-10 rounded-full flex items-center justify-center transition-all duration-200 ${!input.trim() || isLoading ? "bg-slate-200 text-slate-400 cursor-not-allowed" : "bg-[#00A79D] text-white hover:bg-teal-700 hover:scale-105 shadow-md cursor-pointer"}`}>
               {isLoading ? <Loader2 size={18} className="animate-spin" /> : <Send size={18} className="ml-0.5" strokeWidth={2.5} />}
             </button>
           </form>
@@ -492,7 +492,7 @@ export default function ChatWidget() {
       <button
         ref={toggleBtnRef}
         onClick={() => setIsOpen(true)}
-        className={`fixed bottom-6 right-6 z-9990 group flex items-center justify-center w-14 h-14 md:w-16 md:h-16 rounded-[1.2rem] shadow-xl shadow-[#00A79D]/30 transition-all duration-500 bg-[#00A79D] hover:bg-teal-700 hover:-translate-y-1 ${isOpen ? "scale-0 opacity-0 pointer-events-none rotate-90" : "scale-100 opacity-100 rotate-0"}`}
+        className={`fixed bottom-6 right-6 z-9990 group flex items-center justify-center w-14 h-14 md:w-16 md:h-16 rounded-[1.2rem] shadow-xl shadow-[#00A79D]/30 transition-all duration-500 bg-[#00A79D] hover:bg-teal-700 hover:-translate-y-1 cursor-pointer ${isOpen ? "scale-0 opacity-0 pointer-events-none rotate-90" : "scale-100 opacity-100 rotate-0"}`}
       >
         <MessageCircle className="text-white w-7 h-7 md:w-8 md:h-8 transition-transform duration-500 group-hover:scale-110" strokeWidth={2} />
         <span className="absolute top-0 right-0 w-4 h-4 bg-red-500 rounded-full border-[3px] border-white shadow-sm animate-bounce"></span>
