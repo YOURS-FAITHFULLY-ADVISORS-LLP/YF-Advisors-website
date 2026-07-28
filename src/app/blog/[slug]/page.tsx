@@ -1,12 +1,29 @@
 import React from "react";
 import { notFound } from "next/navigation";
-import Image from "next/image";
 import Link from "next/link";
 import { prisma } from "@/src/lib/prisma";
 import { blogPosts } from "@/src/data/blogs";
+import BlogHeroSlider from "@/src/components/BlogHeroSlider";
 
 interface PageProps {
   params: Promise<{ slug: string }>;
+}
+
+function parseImageUrls(imageStr: string | null | undefined): string[] {
+  if (!imageStr || !imageStr.trim()) return [];
+  const trimmed = imageStr.trim();
+  if (trimmed.startsWith("[") && trimmed.endsWith("]")) {
+    try {
+      const parsed = JSON.parse(trimmed);
+      if (Array.isArray(parsed)) return parsed.filter((url) => typeof url === "string" && url.trim().length > 0);
+    } catch (e) {
+      // fallback
+    }
+  }
+  if (trimmed.includes(",")) {
+    return trimmed.split(",").map((s) => s.trim()).filter((s) => s.length > 0);
+  }
+  return [trimmed];
 }
 
 export default async function DynamicBlogPage(props: PageProps) {
@@ -35,9 +52,9 @@ export default async function DynamicBlogPage(props: PageProps) {
   }
 
   const title = blog.title;
-  const category = blog.category || "Services";
-  const author = blog.author || "YF Advisors";
-  const image = blog.image || "https://nhkdhwochgfimbimomst.supabase.co/storage/v1/object/public/uploads/blog/spark.jpg";
+  const category = ("category" in blog && blog.category) ? blog.category : "Services";
+  const author = ("author" in blog && blog.author) ? blog.author : "YF Advisors";
+  const images = parseImageUrls(blog.image);
   const rawDate = "publishedAt" in blog ? (blog.publishedAt || blog.createdAt) : (blog as any).date;
   const formattedDate = rawDate
     ? new Date(rawDate).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })
@@ -49,31 +66,14 @@ export default async function DynamicBlogPage(props: PageProps) {
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 font-sans pb-20">
-      {/* Hero Section */}
-      <div className="relative w-full h-[400px] md:h-[500px] bg-slate-900 text-white overflow-hidden">
-        <div className="absolute inset-0 bg-slate-900/60 z-10" />
-        <Image
-          src={image}
-          alt={title}
-          fill
-          priority
-          unoptimized
-          className="object-cover object-center"
-        />
-        <div className="relative z-20 max-w-5xl mx-auto h-full flex flex-col justify-end p-6 md:p-12 pb-16">
-          <span className="bg-[#00A79D] text-white text-xs font-bold uppercase tracking-wider px-3.5 py-1.5 rounded-full w-fit mb-4">
-            {category}
-          </span>
-          <h1 className="text-3xl md:text-5xl font-black font-serif tracking-tight text-white mb-4 max-w-4xl">
-            {title}
-          </h1>
-          <div className="text-xs md:text-sm text-slate-300 font-medium flex items-center gap-3">
-            <span>{formattedDate}</span>
-            <span>•</span>
-            <span>By {author}</span>
-          </div>
-        </div>
-      </div>
+      {/* Rotating Hero Section Slider */}
+      <BlogHeroSlider
+        images={images}
+        title={title}
+        category={category}
+        formattedDate={formattedDate}
+        author={author}
+      />
 
       <div className="max-w-5xl mx-auto px-6 pt-8">
         <Link

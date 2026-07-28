@@ -58,6 +58,20 @@ function ensureHtmlFormatting(input: string): string {
     .map((para) => `<p>${para.replace(/\n/g, '<br/>')}</p>`)
     .join('\n');
 }
+function parseImagesList(val: string): string[] {
+  if (!val || !val.trim()) return [];
+  const trimmed = val.trim();
+  if (trimmed.startsWith('[') && trimmed.endsWith(']')) {
+    try {
+      const parsed = JSON.parse(trimmed);
+      if (Array.isArray(parsed)) return parsed.filter((u) => typeof u === 'string' && u.trim().length > 0);
+    } catch (e) {}
+  }
+  if (trimmed.includes(',')) {
+    return trimmed.split(',').map((s) => s.trim()).filter((s) => s.length > 0);
+  }
+  return [trimmed];
+}
 
 export default function BlogEditor({ blogId }: BlogEditorProps) {
   const router = useRouter();
@@ -76,6 +90,7 @@ export default function BlogEditor({ blogId }: BlogEditorProps) {
     status: 'PUBLISHED' as 'DRAFT' | 'PUBLISHED',
   });
 
+  const [heroImages, setHeroImages] = useState<string[]>(['']);
   const [sections, setSections] = useState<BlogSection[]>([]);
   const [loading, setLoading] = useState(!isNew);
   const [saving, setSaving] = useState(false);
@@ -115,6 +130,8 @@ export default function BlogEditor({ blogId }: BlogEditorProps) {
           content: b.content || '',
           status: b.status || 'PUBLISHED',
         });
+        const parsedImages = parseImagesList(b.image);
+        setHeroImages(parsedImages.length > 0 ? parsedImages : ['']);
         if (Array.isArray(b.sections)) {
           const sortedSections = [...b.sections].sort(
             (a, b) => (a.displayOrder ?? 0) - (b.displayOrder ?? 0)
@@ -260,6 +277,15 @@ export default function BlogEditor({ blogId }: BlogEditorProps) {
     setSuccessMessage(null);
     setErrorMessage(null);
 
+    // Clean and serialize hero background images
+    const cleanImages = heroImages.map((u) => u.trim()).filter((u) => u.length > 0);
+    const finalImagePayload =
+      cleanImages.length === 1
+        ? cleanImages[0]
+        : cleanImages.length > 1
+        ? JSON.stringify(cleanImages)
+        : '';
+
     // Auto-format plain text into clean, structured semantic HTML
     const formattedContent = convertPlainTextToSemanticHtml(formData.content);
     const formattedSections = sections.map((sec, index) => ({
@@ -270,6 +296,7 @@ export default function BlogEditor({ blogId }: BlogEditorProps) {
 
     const payload = {
       ...formData,
+      image: finalImagePayload,
       content: formattedContent,
       sections: formattedSections,
     };
@@ -514,14 +541,76 @@ export default function BlogEditor({ blogId }: BlogEditorProps) {
               />
             </div>
 
-            {/* Featured Image */}
-            <ImageUploadInput
-              label="Card Cover Image / Featured Image"
-              value={formData.image}
-              onChange={(url) => setFormData((prev) => ({ ...prev, image: url }))}
-              folder="blog"
-              placeholder="https://.../spark.jpg"
-            />
+            {/* Featured Cover & Rotating Hero Background Images */}
+            <div className="space-y-4 pt-4 border-t border-slate-100">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-slate-50 p-4 rounded-2xl border border-slate-200/80">
+                <div>
+                  <label className="block text-xs font-bold text-[#002B49] uppercase tracking-wider">
+                    Hero Background & Card Cover Images (Multiple Images Allowed)
+                  </label>
+                  <p className="text-xs text-slate-500 font-medium mt-0.5">
+                    Image 1 is the main card cover. You can add multiple images (Image 1, Image 2, Image 3...) to create an auto-rotating background slideshow on the full blog page.
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setHeroImages((prev) => [...prev, ''])}
+                  className="inline-flex items-center gap-2 px-4 py-2 bg-[#00A79D] hover:bg-[#008f85] text-white rounded-xl text-xs font-bold transition-all shadow-sm cursor-pointer shrink-0"
+                >
+                  <Plus className="w-4 h-4" />
+                  <span>+ Add Image Slot</span>
+                </button>
+              </div>
+
+              <div className="space-y-4">
+                {heroImages.map((imgUrl, index) => (
+                  <div
+                    key={index}
+                    className="p-4 bg-white border border-slate-200 rounded-2xl space-y-3 shadow-2xs relative"
+                  >
+                    <div className="flex items-center justify-between border-b border-slate-100 pb-2">
+                      <span className="text-xs font-bold text-[#002B49] uppercase tracking-wider flex items-center gap-2">
+                        <span className="px-2.5 py-1 bg-[#002B49] text-white text-[11px] rounded-lg font-mono font-bold">
+                          Image {index + 1}
+                        </span>
+                        {index === 0 ? '(Featured Card Cover & Main Hero)' : `(Hero Slide ${index + 1})`}
+                      </span>
+
+                      {heroImages.length > 1 && (
+                        <button
+                          type="button"
+                          onClick={() => setHeroImages((prev) => prev.filter((_, i) => i !== index))}
+                          className="inline-flex items-center gap-1 px-2.5 py-1 text-red-600 hover:bg-red-50 rounded-lg text-xs font-semibold cursor-pointer border border-red-200/60"
+                          title="Remove Image"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                          <span>Remove</span>
+                        </button>
+                      )}
+                    </div>
+
+                    <ImageUploadInput
+                      label=""
+                      value={imgUrl}
+                      onChange={(newUrl) =>
+                        setHeroImages((prev) => prev.map((url, i) => (i === index ? newUrl : url)))
+                      }
+                      folder="blog"
+                      placeholder={`https://.../blog-image-${index + 1}.jpg`}
+                    />
+                  </div>
+                ))}
+
+                <button
+                  type="button"
+                  onClick={() => setHeroImages((prev) => [...prev, ''])}
+                  className="w-full py-3 bg-slate-50 hover:bg-slate-100 border border-dashed border-slate-300 rounded-2xl text-xs font-bold text-[#002B49] hover:text-[#00A79D] transition-all flex items-center justify-center gap-2 cursor-pointer"
+                >
+                  <Plus className="w-4 h-4 text-[#00A79D]" />
+                  <span>+ Add Another Hero Image (Image {heroImages.length + 1})</span>
+                </button>
+              </div>
+            </div>
           </div>
         </div>
 

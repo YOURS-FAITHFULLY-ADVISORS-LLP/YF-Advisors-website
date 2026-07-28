@@ -6,6 +6,21 @@ import Link from "next/link";
 import Image from "next/image";
 import { blogPosts } from "../data/blogs";
 
+function getFirstImage(imgVal: string | null | undefined): string {
+  if (!imgVal || !imgVal.trim()) return "https://nhkdhwochgfimbimomst.supabase.co/storage/v1/object/public/uploads/blog/spark.jpg";
+  const trimmed = imgVal.trim();
+  if (trimmed.startsWith("[") && trimmed.endsWith("]")) {
+    try {
+      const parsed = JSON.parse(trimmed);
+      if (Array.isArray(parsed) && parsed.length > 0 && typeof parsed[0] === "string") return parsed[0];
+    } catch (e) {}
+  }
+  if (trimmed.includes(",")) {
+    return trimmed.split(",")[0].trim();
+  }
+  return trimmed;
+}
+
 const Blog = () => {
   const [hoveredId, setHoveredId] = useState<any>(null);
   const [blogs, setBlogs] = useState<any[]>([]);
@@ -25,7 +40,7 @@ const Blog = () => {
               slug: b.slug,
               category: b.category || "Services",
               date: new Date(b.publishedAt || b.createdAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }),
-              image: b.image || "https://nhkdhwochgfimbimomst.supabase.co/storage/v1/object/public/uploads/blog/spark.jpg",
+              image: getFirstImage(b.image),
               excerpt: b.cardDescription || b.excerpt || (b.content ? b.content.replace(/<[^>]*>?/gm, '').substring(0, 120) + "..." : "")
             }));
             setBlogs(formatted);

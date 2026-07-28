@@ -42,6 +42,23 @@ export interface BlogItem {
   }>;
 }
 
+function getFirstImageUrl(imgVal?: string | null): string | null {
+  if (!imgVal || !imgVal.trim()) return null;
+  const trimmed = imgVal.trim();
+  if (trimmed.startsWith('[') && trimmed.endsWith(']')) {
+    try {
+      const parsed = JSON.parse(trimmed);
+      if (Array.isArray(parsed) && parsed.length > 0 && typeof parsed[0] === 'string') {
+        return parsed[0];
+      }
+    } catch (e) {}
+  }
+  if (trimmed.includes(',')) {
+    return trimmed.split(',')[0].trim();
+  }
+  return trimmed;
+}
+
 export default function BlogsList() {
   const [blogs, setBlogs] = useState<BlogItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -271,20 +288,23 @@ export default function BlogsList() {
                     {/* Article Details */}
                     <td className="py-4 px-6 max-w-xs sm:max-w-md">
                       <div className="flex items-start gap-3">
-                        {blog.image ? (
-                          <img
-                            src={blog.image}
-                            alt={blog.title}
-                            className="w-12 h-12 rounded-xl object-cover border border-slate-200 shrink-0 mt-0.5"
-                            onError={(e) => {
-                              (e.target as HTMLElement).style.display = 'none';
-                            }}
-                          />
-                        ) : (
-                          <div className="w-12 h-12 rounded-xl bg-slate-100 border border-slate-200 flex items-center justify-center shrink-0 mt-0.5 text-slate-400">
-                            <FileText className="w-5 h-5" />
-                          </div>
-                        )}
+                        {(() => {
+                          const thumbUrl = getFirstImageUrl(blog.image);
+                          return thumbUrl ? (
+                            <img
+                              src={thumbUrl}
+                              alt={blog.title}
+                              className="w-12 h-12 rounded-xl object-cover border border-slate-200 shrink-0 mt-0.5"
+                              onError={(e) => {
+                                (e.target as HTMLElement).style.display = 'none';
+                              }}
+                            />
+                          ) : (
+                            <div className="w-12 h-12 rounded-xl bg-slate-100 border border-slate-200 flex items-center justify-center shrink-0 mt-0.5 text-slate-400">
+                              <FileText className="w-5 h-5" />
+                            </div>
+                          );
+                        })()}
                         <div className="min-w-0">
                           <Link
                             href={`/admin/blogs/${blog.id}`}
