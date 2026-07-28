@@ -2,6 +2,7 @@
 
 import { usePathname } from "next/navigation";
 import { ReactLenis } from "lenis/react";
+import "lenis/dist/lenis.css";
 
 export default function SmoothScrolling({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -15,8 +16,8 @@ export default function SmoothScrolling({ children }: { children: React.ReactNod
     <ReactLenis
       root
       options={{
-        lerp: 0.1,
         duration: 1.2,
+        easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
         smoothWheel: true,
         wheelMultiplier: 1.0,
         touchMultiplier: 1.5,
@@ -27,3 +28,4 @@ export default function SmoothScrolling({ children }: { children: React.ReactNod
     </ReactLenis>
   );
 }
+

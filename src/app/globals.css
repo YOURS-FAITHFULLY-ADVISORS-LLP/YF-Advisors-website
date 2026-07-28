@@ -1,4 +1,13 @@
 @import "tailwindcss";
+@import "lenis/dist/lenis.css";
+
+html.lenis, html.lenis body {
+  height: auto;
+}
+
+html.lenis {
+  scroll-behavior: auto !important;
+}
 
 :root {
   --background: #ffffff;
@@ -10,6 +19,8 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-montserrat), sans-serif;
   --font-serif: var(--font-playfair), serif;
+  --font-bodoni: var(--font-bodoni), serif;
+  --font-cormorant: var(--font-cormorant), serif;
   --font-mono: var(--font-geist-mono);
 }
 
@@ -28,12 +39,22 @@ body {
 
 /* Headings: Playfair Display serif font with bold weights and elegant styling */
 h1, h2, h3,
-body h1, body h2, body h3,
-.font-serif, [class*="font-serif"] {
+body h1, body h2, body h3 {
   font-family: var(--font-playfair), serif !important;
   font-weight: 700 !important;
-  letter-spacing: -0.02em !important;
   line-height: 1.25 !important;
+}
+
+.font-serif {
+  font-family: var(--font-playfair), serif !important;
+}
+
+.font-bodoni {
+  font-family: var(--font-bodoni), serif !important;
+}
+
+.font-cormorant {
+  font-family: var(--font-cormorant), serif !important;
 }
 
 /* Nested elements in headings should inherit the serif font */
@@ -52,4 +73,3 @@ button, input, select, textarea {
   top: 100px;
   align-self: start;
 }
-

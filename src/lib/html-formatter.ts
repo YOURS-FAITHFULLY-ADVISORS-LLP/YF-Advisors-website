@@ -51,8 +51,8 @@ export function convertPlainTextToSemanticHtml(text: string): string {
       continue;
     }
 
-    // Check for explicit unordered list item (-, *, •, –, —, ›, »)
-    const ulMatch = line.match(/^[-*•–—›»]\s+(.+)/);
+    // Check for explicit unordered list item (-, *, •, –, —, ›, », >)
+    const ulMatch = line.match(/^[-*•–—›»>]\s*(.+)/);
 
     // Check for explicit ordered list item (1., 2., 1), etc.)
     const olMatch = line.match(/^\d+[\.\)]\s+(.+)/);
@@ -72,8 +72,10 @@ export function convertPlainTextToSemanticHtml(text: string): string {
     if (ulMatch || isImplicitListItem) {
       if (inOl) closeActiveLists();
       inUl = true;
-      const content = ulMatch ? ulMatch[1] : line;
-      currentListItems.push(formatInlineLinks(content));
+      const rawContent = ulMatch ? ulMatch[1] : line;
+      // Clean off any leading bullet or greater-than arrow characters
+      const cleanContent = rawContent.replace(/^[-*•–—›»>]\s*/, '');
+      currentListItems.push(formatInlineLinks(cleanContent));
       continue;
     }
 
@@ -180,8 +182,9 @@ export function cleanAndSanitizeHtml(html: string): string {
   cleaned = cleaned.replace(/<ul(?![^>]*class="[^"]*list-disc[^"]*")([^>]*)>/gi, '<ul class="list-disc pl-6 space-y-1.5 my-4 text-slate-800 font-sans"$1>');
   cleaned = cleaned.replace(/<ol(?![^>]*class="[^"]*list-decimal[^"]*")([^>]*)>/gi, '<ol class="list-decimal pl-6 space-y-1.5 my-4 text-slate-800 font-sans"$1>');
 
-  // 7. Inject <li> styles if unstyled
+  // 7. Inject <li> styles if unstyled & strip unwanted leading bullet/greater-than symbols inside list items
   cleaned = cleaned.replace(/<li(?!\s*class=)/gi, '<li class="leading-relaxed">');
+  cleaned = cleaned.replace(/(<li[^>]*>)\s*(?:&gt;|[>•\-*–—›»])\s*/gi, '$1');
 
   // 8. Ensure clickable links have target="_blank"
   cleaned = cleaned.replace(
@@ -192,6 +195,19 @@ export function cleanAndSanitizeHtml(html: string): string {
       }
       return match;
     }
+  );
+
+  // 9. Format HTML Tables & add responsive container wrapper
+  cleaned = cleaned.replace(/<table(?!\s*class=)([^>]*)>/gi, '<table class="w-full text-sm text-left border-collapse bg-white"$1>');
+  cleaned = cleaned.replace(/<thead(?!\s*class=)([^>]*)>/gi, '<thead class="bg-slate-100/90 text-[#002B49] font-bold text-xs uppercase tracking-wider border-b border-slate-200"$1>');
+  cleaned = cleaned.replace(/<th(?!\s*class=)([^>]*)>/gi, '<th class="p-3 border border-slate-200 font-bold text-xs uppercase tracking-wider text-[#002B49]"$1>');
+  cleaned = cleaned.replace(/<td(?!\s*class=)([^>]*)>/gi, '<td class="p-3 border border-slate-200 text-slate-700 font-medium"$1>');
+  cleaned = cleaned.replace(/<tr(?!\s*class=)([^>]*)>/gi, '<tr class="hover:bg-slate-50/60 transition-colors"$1>');
+
+  // Wrap un-wrapped <table> inside overflow-x-auto container for responsive mobile scrolling
+  cleaned = cleaned.replace(
+    /(?<!<div[^>]*class="[^"]*overflow-x-auto[^"]*"[^>]*>\s*)(<table[\s\S]*?<\/table>)/gi,
+    '<div class="overflow-x-auto my-6 border border-slate-200 rounded-2xl shadow-2xs">$1</div>'
   );
 
   return cleaned.trim();

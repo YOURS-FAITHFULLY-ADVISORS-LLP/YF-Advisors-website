@@ -6,6 +6,7 @@ import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { Menu, X, ArrowRight } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useLenis } from "lenis/react";
 
 const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
@@ -13,6 +14,7 @@ const Navbar = () => {
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
 
   const pathname = usePathname();
+  const lenis = useLenis();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -58,24 +60,26 @@ const Navbar = () => {
 
     if (href.includes("#")) {
       const targetId = href.split("#")[1];
-      const elem = document.getElementById(targetId);
-
-      if (elem) {
-        e.preventDefault();
-        const headerOffset = 100;
-        const elementPosition = elem.getBoundingClientRect().top;
-        const offsetPosition = elementPosition + window.scrollY - headerOffset;
-
-        window.scrollTo({
-          top: offsetPosition,
-          behavior: "smooth",
-        });
-
-        window.history.pushState(null, "", `#${targetId}`);
+      e.preventDefault();
+      if (lenis) {
+        lenis.scrollTo(`#${targetId}`, { offset: -80, duration: 1.2 });
+      } else {
+        const elem = document.getElementById(targetId);
+        if (elem) {
+          const headerOffset = 80;
+          const elementPosition = elem.getBoundingClientRect().top;
+          const offsetPosition = elementPosition + window.scrollY - headerOffset;
+          window.scrollTo({ top: offsetPosition, behavior: "smooth" });
+        }
       }
+      window.history.pushState(null, "", `#${targetId}`);
     } else if (href === "/" && pathname === "/") {
       e.preventDefault();
-      window.scrollTo({ top: 0, behavior: "smooth" });
+      if (lenis) {
+        lenis.scrollTo(0, { duration: 1.2 });
+      } else {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
       window.history.pushState(null, "", "/");
     }
   };
@@ -112,15 +116,11 @@ const Navbar = () => {
               />
             </div>
 
-            <div className="flex flex-col justify-center leading-none select-none text-slate-900 whitespace-nowrap">
-              <span className="font-serif text-[9px] md:text-[12px] font-bold tracking-[0.18em] uppercase mb-1">
-                Yours Faithfully
-              </span>
-              <div className="w-full h-[1.5px] bg-[#FDB913] rounded-full" />
-              <span className="font-serif text-[9px] md:text-[12px] font-bold tracking-[0.18em] uppercase mt-1 text-center">
-                Advisors
-              </span>
-            </div>
+            <span className="font-bodoni italic text-xl md:text-2xl font-bold tracking-tight select-none whitespace-nowrap">
+              <span className="text-[#2E5E7E]">YF</span>{" "}
+              <span className="text-[#0F172A]">Advisors</span>
+              <span className="text-[#C9A227] not-italic ml-[1px]">.</span>
+            </span>
           </Link>
 
           {/* --- 2. Desktop Navigation (floating pill, lg and up only) --- */}
