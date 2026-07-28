@@ -172,6 +172,8 @@ export default function ChatWidget() {
   
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const widgetRef = useRef<HTMLDivElement>(null);
+  const toggleBtnRef = useRef<HTMLButtonElement>(null);
 
   // Scroll to bottom helper
   const scrollToBottom = useCallback(() => {
@@ -180,16 +182,31 @@ export default function ChatWidget() {
     }
   }, []);
 
-  // --- CLICK OUTSIDE HANDLER (For Dropdown) ---
+  // --- CLICK OUTSIDE HANDLER (Closes chatbot when clicking on blank space outside) ---
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+      const target = event.target as Node;
+
+      // Close dropdown menu if open and clicked outside
+      if (dropdownRef.current && !dropdownRef.current.contains(target)) {
         setIsDropdownOpen(false);
       }
+
+      // Close chatbot widget if open and clicked on blank space outside
+      if (isOpen) {
+        const isOutsideWidget = widgetRef.current && !widgetRef.current.contains(target);
+        const isOutsideToggleBtn = toggleBtnRef.current && !toggleBtnRef.current.contains(target);
+
+        if (isOutsideWidget && isOutsideToggleBtn) {
+          setIsOpen(false);
+          setIsDropdownOpen(false);
+        }
+      }
     };
+
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
+  }, [isOpen]);
 
   // --- EFFECTS ---
   useEffect(() => {
@@ -314,6 +331,7 @@ export default function ChatWidget() {
   return (
     <>
       <div 
+        ref={widgetRef}
         className={`
           fixed z-9999 flex flex-col overflow-hidden bg-white/95 backdrop-blur-md shadow-2xl border border-white/20 ring-1 ring-black/5 transition-all duration-300 ease-in-out
           ${isOpen 
@@ -472,6 +490,7 @@ export default function ChatWidget() {
 
       {/* TOGGLE BUTTON */}
       <button
+        ref={toggleBtnRef}
         onClick={() => setIsOpen(true)}
         className={`fixed bottom-6 right-6 z-9990 group flex items-center justify-center w-14 h-14 md:w-16 md:h-16 rounded-[1.2rem] shadow-xl shadow-[#00A79D]/30 transition-all duration-500 bg-[#00A79D] hover:bg-teal-700 hover:-translate-y-1 ${isOpen ? "scale-0 opacity-0 pointer-events-none rotate-90" : "scale-100 opacity-100 rotate-0"}`}
       >
