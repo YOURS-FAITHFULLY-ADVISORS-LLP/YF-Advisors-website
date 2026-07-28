@@ -136,31 +136,41 @@ export default function Hero({ initialData }: { initialData?: HeroCMSData | null
 
   const renderFormattedTitle = (titleText: string) => {
     if (!titleText) return null;
-    const backOfficeMatch = titleText.match(/^(.*?)(Back Office\.?)$/i);
-    if (backOfficeMatch) {
-      return (
-        <>
-          {backOfficeMatch[1]}
-          <br />
-          <span className="text-[#00A79D] font-serif italic relative inline-block">
-            {backOfficeMatch[2]}
-            <svg
-              className="absolute -bottom-2 left-0 w-full h-3 text-[#00A79D]/30"
-              viewBox="0 0 200 9"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M2 7C50 2.5 150 2.5 198 7"
-                stroke="currentColor"
-                strokeWidth="3"
-                strokeLinecap="round"
-              />
-            </svg>
-          </span>
-        </>
-      );
+    
+    // Format "Grow your business, not your Back Office." cleanly
+    const commaIdx = titleText.indexOf(',');
+    if (commaIdx !== -1) {
+      const part1 = titleText.substring(0, commaIdx + 1);
+      const part2 = titleText.substring(commaIdx + 1);
+      const boMatch = part2.match(/^(.*?)(Back Office\.?)$/i);
+
+      if (boMatch) {
+        return (
+          <>
+            {part1}
+            <br />
+            {boMatch[1]}
+            <span className="text-[#00A79D] font-serif italic relative inline-block">
+              {boMatch[2]}
+              <svg
+                className="absolute -bottom-2 left-0 w-full h-3 text-[#00A79D]/30"
+                viewBox="0 0 200 9"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M2 7C50 2.5 150 2.5 198 7"
+                  stroke="currentColor"
+                  strokeWidth="3"
+                  strokeLinecap="round"
+                />
+              </svg>
+            </span>
+          </>
+        );
+      }
     }
+
     return titleText;
   };
 
@@ -195,6 +205,7 @@ export default function Hero({ initialData }: { initialData?: HeroCMSData | null
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.1 }}
               className="text-4xl sm:text-5xl lg:text-[58px] leading-[1.12] font-serif font-extrabold text-[#0F172A] tracking-tight"
+              suppressHydrationWarning
             >
               {renderFormattedTitle(rawTitle)}
             </motion.h1>

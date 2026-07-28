@@ -519,3 +519,16 @@ model AnalyticsEvent {
   @@index([eventType])
   @@index([createdAt])
 }
+
+model KnowledgeDocument {
+  id         String   @id @default(cuid())
+  pageUrl    String   @map("page_url")
+  pageTitle  String   @map("page_title")
+  chunkIndex Int      @map("chunk_index")
+  content    String   @db.Text
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+
+  @@map("knowledge_documents")
+  @@index([pageUrl])
+}

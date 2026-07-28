@@ -10,7 +10,8 @@
     "start": "next start",
     "lint": "eslint",
     "upload:images": "tsx scripts/upload-blog-images.ts",
-    "migrate:content": "tsx scripts/migrate-content.ts"
+    "migrate:content": "tsx scripts/migrate-content.ts",
+    "build-knowledge": "tsx scripts/build-knowledge.ts"
   },
   "dependencies": {
     "@prisma/adapter-pg": "^7.9.0",

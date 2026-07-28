@@ -50,17 +50,19 @@ interface ApiResponse {
 }
 
 // --- CONSTANTS ---
-const API_BASE = "https://telegram-chatbot-gmq4.onrender.com/api/chat";
+const API_BASE = "/api/chat";
 
 // --- API UTILITY ---
 async function apiCall(endpoint: string, options: RequestInit = {}) {
-  const url = `${API_BASE}${endpoint}`;
+  const url = endpoint.startsWith('/') ? endpoint : `${API_BASE}${endpoint}`;
   
   try {
     const fetchOptions = {
       ...options,
-      mode: 'cors' as RequestMode,
-      credentials: 'omit' as RequestCredentials,
+      headers: {
+        'Content-Type': 'application/json',
+        ...(options.headers || {}),
+      },
     };
     
     const response = await fetch(url, fetchOptions);
@@ -79,23 +81,96 @@ async function apiCall(endpoint: string, options: RequestInit = {}) {
     console.error(`❌ API Error:`, error);
     throw error;
   }
+}// --- FORMATTED MESSAGE RENDERER ---
+function parseBoldAndLinks(text: string): React.ReactNode {
+  const parts = text.split(/(\*\*.*?\*\*)/g);
+  return parts.map((part, i) => {
+    if (part.startsWith('**') && part.endsWith('**')) {
+      const boldText = part.slice(2, -2);
+      return (
+        <strong key={i} className="font-bold text-slate-900">
+          {boldText}
+        </strong>
+      );
+    }
+    return part;
+  });
 }
+
+function FormattedChatMessage({ content, isUser }: { content: string; isUser: boolean }) {
+  if (isUser) {
+    return <p className="whitespace-pre-wrap leading-relaxed">{content}</p>;
+  }
+
+  const lines = content.split('\n');
+  const elements: React.ReactNode[] = [];
+
+  lines.forEach((line, idx) => {
+    let cleanLine = line.trim();
+    if (!cleanLine) {
+      elements.push(<div key={idx} className="h-1" />);
+      return;
+    }
+
+    // 1. Handle markdown header symbols (###, ##, #)
+    if (cleanLine.startsWith('#')) {
+      cleanLine = cleanLine.replace(/^#+\s*/, '').replace(/\*\*/g, '');
+      elements.push(
+        <div key={idx} className="font-bold text-slate-900 text-sm mt-2 mb-1 border-b border-slate-100 pb-0.5 text-[#002B49]">
+          {cleanLine}
+        </div>
+      );
+      return;
+    }
+
+    // 2. Handle bullet items (- , * , • )
+    const isBullet = /^[•\-\*]\s+/.test(cleanLine);
+    if (isBullet) {
+      cleanLine = cleanLine.replace(/^[•\-\*]\s+/, '');
+      elements.push(
+        <div key={idx} className="flex items-start gap-2 my-1.5 text-slate-700">
+          <span className="w-1.5 h-1.5 rounded-full bg-[#00A79D] shrink-0 mt-1.5" />
+          <div className="flex-1 leading-normal">{parseBoldAndLinks(cleanLine)}</div>
+        </div>
+      );
+      return;
+    }
+
+    // 3. Normal paragraph line
+    elements.push(
+      <p key={idx} className="my-1 leading-relaxed text-slate-700">
+        {parseBoldAndLinks(cleanLine)}
+      </p>
+    );
+  });
+
+  return <div className="space-y-1 text-xs sm:text-sm">{elements}</div>;
+}
+
+const QUICK_SUGGESTIONS = [
+  "What services do you offer?",
+  "Bookkeeping & Payroll",
+  "GST & ROC Filing",
+  "Contact Info & Office Hours",
+];
 
 // --- COMPONENT ---
 export default function ChatWidget() {
   const [isOpen, setIsOpen] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [messages, setMessages] = useState<Message[]>([]);
+  const [messages, setMessages] = useState<Message[]>([
+    {
+      id: "welcome",
+      role: "bot",
+      content: "Hey there! 👋 Welcome to YF Advisors Client Support. How can I assist you today?",
+      timestamp: new Date(),
+    },
+  ]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [chatState, setChatState] = useState<ChatState>("init");
-  const [sessionId, setSessionId] = useState<string | null>(null);
-  const [userId, setUserId] = useState<string | null>(null);
-  const [userName, setUserName] = useState<string>("");
+  const [userId] = useState<string>(`user_${Date.now()}`);
   
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const pollingIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
-  const initRef = useRef(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   // Scroll to bottom helper
@@ -116,122 +191,9 @@ export default function ChatWidget() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // --- POLLING LOGIC ---
-  const fetchMessages = useCallback(async () => {
-    if (!userId) return;
-
-    try {
-      const { data, ok } = await apiCall(`/messages/${userId}`, {
-        method: "GET",
-      });
-      
-      if (!ok) return;
-
-      const messagesList = data?.messages || data?.data?.messages || [];
-      
-      if (Array.isArray(messagesList)) {
-        const serverMessages: Message[] = messagesList.map((msg: ServerMessage) => {
-          let role: "user" | "bot" = "bot";
-          if (msg.sender === "user" || msg.role === "user" || msg.from === "user") {
-            role = "user";
-          } else if (["owner", "bot", "admin", "assistant"].includes(msg.sender || "")) {
-            role = "bot";
-          }
-          
-          return {
-            id: msg._id || msg.id || `msg-${msg.timestamp || Date.now()}-${Math.random()}`,
-            role: role,
-            content: msg.text || msg.content || msg.message || "",
-            timestamp: new Date(msg.timestamp || msg.createdAt || Date.now()),
-          };
-        }).filter(msg => msg.content); 
-
-        setMessages((prevMessages) => {
-          const systemMessages = prevMessages.filter(m => 
-            (m.content.includes("What's your name") || 
-             m.content.includes("Nice to meet you") ||
-             m.content.includes("assist you") ||
-             m.content.includes("Welcome back")) &&
-            m.role === "bot"
-          );
-          
-          const existingContentMap = new Map(
-            prevMessages.map(m => [m.content.trim().toLowerCase(), m])
-          );
-          
-          const filteredServer = serverMessages.filter(sm => !existingContentMap.has(sm.content.trim().toLowerCase()));
-          
-          if (filteredServer.length > 0) {
-            const merged = [...systemMessages, ...serverMessages];
-            return merged.sort((a, b) => a.timestamp.getTime() - b.timestamp.getTime());
-          }
-          return prevMessages;
-        });
-      }
-    } catch (error) {
-      console.error("❌ Fetch messages error:", error);
-    }
-  }, [userId]);
-
-  const startPolling = useCallback(() => {
-    if (pollingIntervalRef.current) return;
-    pollingIntervalRef.current = setInterval(() => {
-      fetchMessages();
-    }, 3000);
-  }, [fetchMessages]);
-
-  const stopPolling = useCallback(() => {
-    if (pollingIntervalRef.current) {
-      clearInterval(pollingIntervalRef.current);
-      pollingIntervalRef.current = null;
-    }
-  }, []);
-
-  // --- INITIALIZATION ---
-  const initChat = useCallback(async () => {
-    try {
-      setIsLoading(true);
-      const newSessionId = `session_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
-      
-      const { response, data, ok } = await apiCall('/init', {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ sessionId: newSessionId }),
-      });
-
-      if (!ok) throw new Error(`Init failed with status ${response.status}`);
-
-      if (data?.success) {
-        setSessionId(newSessionId);
-        setChatState("name_verification");
-        const welcomeMessage = data?.message || "Hey there! 👋 Welcome to Client Support. What's your name?";
-        
-        setMessages([{
-          id: Date.now().toString(),
-          role: "bot",
-          content: welcomeMessage,
-          timestamp: new Date(),
-        }]);
-      }
-    } catch (error: unknown) {
-      const msg = error instanceof Error ? error.message : 'Unknown error';
-      setMessages([{
-        id: Date.now().toString(),
-        role: "bot",
-        content: `Sorry, I'm having trouble connecting. Error: ${msg}.`,
-        timestamp: new Date(),
-      }]);
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
-
   // --- EFFECTS ---
-  
-  // 1. Manage Body Scroll and Initial Scroll
   useEffect(() => {
     if (isOpen) {
-      // Small delay to ensure rendering is complete before scrolling
       setTimeout(scrollToBottom, 100);
       if (window.innerWidth < 768) {
         document.body.style.overflow = 'hidden'; 
@@ -242,107 +204,48 @@ export default function ChatWidget() {
     return () => { document.body.style.overflow = 'unset'; };
   }, [isOpen, scrollToBottom]);
 
-  // 2. Scroll on New Messages
   useEffect(() => {
     if (isOpen) {
       scrollToBottom();
     }
   }, [messages, isOpen, scrollToBottom, isLoading]);
 
-  // 3. Handle Mobile Keyboard / Resize
   useEffect(() => {
     if (!isOpen) return;
     const handleResize = () => {
-        // When viewport height changes (keyboard opens), scroll to bottom
-        setTimeout(scrollToBottom, 200);
+      setTimeout(scrollToBottom, 200);
     };
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, [isOpen, scrollToBottom]);
 
-  // 4. Init Chat Logic
-  useEffect(() => {
-    if (isOpen && chatState === "init" && !initRef.current) {
-      initRef.current = true;
-      initChat();
-    }
-  }, [isOpen, chatState, initChat]);
-
-  // 5. Polling Logic
-  useEffect(() => {
-    if (chatState === "chatting" && userId) {
-      startPolling();
-    } else {
-      stopPolling();
-    }
-    return () => stopPolling();
-  }, [chatState, userId, startPolling, stopPolling]);
-
   // --- ACTIONS ---
-  const verifyName = async (name: string) => {
-    if (!sessionId) return;
-    try {
-      setIsLoading(true);
-      const { data, ok } = await apiCall('/verify-name', {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ sessionId, name }),
-      });
-
-      if (!ok) throw new Error("Verification failed");
-
-      if (data?.success || data?.verified) {
-        setUserName(name);
-        const extractedUserId = data?.userId || data?.user_id || sessionId;
-        setUserId(extractedUserId);
-        setChatState("chatting");
-        
-        setMessages((prev) => [
-          ...prev, 
-          {
-            id: `bot-greet-${Date.now()}`,
-            role: "bot",
-            content: data?.message || `Nice to meet you, ${name}!`,
-            timestamp: new Date(),
-          },
-          {
-            id: `bot-ask-${Date.now() + 1}`,
-            role: "bot",
-            content: "How can I assist you today?",
-            timestamp: new Date(Date.now() + 100),
-          }
-        ]);
-      }
-    } catch (error: unknown) {
-      const msg = error instanceof Error ? error.message : 'Error';
-      setMessages((prev) => [...prev, {
-        id: Date.now().toString(),
-        role: "bot",
-        content: `Sorry, something went wrong: ${msg}`,
-        timestamp: new Date(),
-      }]);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   const sendMessage = async (messageText: string) => {
-    if (!userId) return;
     try {
-      const { data, ok } = await apiCall('/send', {
+      const { data, ok } = await apiCall('/api/chat', {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ userId, message: messageText }),
       });
 
       if (!ok || !data?.success) throw new Error("Failed to send message");
-      setTimeout(fetchMessages, 1000);
+
+      const botReply = data.message || data.messages?.[0]?.content || "Thank you for contacting YF Advisors!";
+
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: `bot-${Date.now()}`,
+          role: "bot",
+          content: botReply,
+          timestamp: new Date(),
+        },
+      ]);
     } catch (error: unknown) {
       const msg = error instanceof Error ? error.message : 'Error';
       setMessages((prev) => [...prev, {
         id: Date.now().toString(),
         role: "bot",
-        content: `Sorry, I couldn't send your message: ${msg}`,
+        content: `Sorry, I couldn't process your request: ${msg}`,
         timestamp: new Date(),
       }]);
     }
@@ -350,7 +253,7 @@ export default function ChatWidget() {
 
   const handleSend = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!input.trim()) return;
+    if (!input.trim() || isLoading) return;
 
     const messageText = input.trim();
     
@@ -364,37 +267,43 @@ export default function ChatWidget() {
     setInput("");
     setIsLoading(true);
 
-    if (chatState === "name_verification") {
-      await verifyName(messageText);
-    } else if (chatState === "chatting") {
-      await sendMessage(messageText);
-    }
+    await sendMessage(messageText);
+    setIsLoading(false);
+    setTimeout(scrollToBottom, 100);
+  };
+
+  const handleChipClick = async (chipText: string) => {
+    if (isLoading) return;
+    setMessages((prev) => [
+      ...prev,
+      {
+        id: `user-${Date.now()}`,
+        role: "user",
+        content: chipText,
+        timestamp: new Date(),
+      },
+    ]);
+    setIsLoading(true);
+    await sendMessage(chipText);
     setIsLoading(false);
     setTimeout(scrollToBottom, 100);
   };
 
   const handleManualRefresh = () => {
-    if (chatState === "chatting") {
-      setIsLoading(true);
-      fetchMessages().finally(() => setIsLoading(false));
-    }
+    setIsLoading(true);
+    setTimeout(() => setIsLoading(false), 500);
   };
 
   const clearChat = () => {
-    stopPolling();
-    initRef.current = false;
-    setMessages([]);
-    setChatState("init");
-    setSessionId(null);
-    setUserId(null);
-    setUserName("");
+    setMessages([
+      {
+        id: `welcome-${Date.now()}`,
+        role: "bot",
+        content: "Chat cleared! How can I help you today?",
+        timestamp: new Date(),
+      },
+    ]);
     setIsDropdownOpen(false);
-    
-    if (isOpen) {
-        setTimeout(() => {
-            initChat();
-        }, 300);
-    }
   };
 
   const temporaryClose = () => {
@@ -433,7 +342,7 @@ export default function ChatWidget() {
                   <span className="relative inline-flex rounded-full h-2 w-2 bg-green-400"></span>
                 </span>
                 <p className="text-teal-50 text-[10px] md:text-xs font-medium opacity-90">
-                  {chatState === "chatting" && userName ? `Chatting as ${userName}` : "Always Active"}
+                  Always Active
                 </p>
               </div>
             </div>
@@ -443,7 +352,7 @@ export default function ChatWidget() {
             <button 
               onClick={handleManualRefresh} 
               className={`text-white/70 hover:text-white hover:bg-white/10 p-2 rounded-full transition-all duration-200 ${isLoading ? 'animate-spin' : ''}`} 
-              title="Check for new messages"
+              title="Refresh"
             >
               <RefreshCw size={18} />
             </button>
@@ -490,22 +399,41 @@ export default function ChatWidget() {
                 {msg.role === "user" ? <User size={14} strokeWidth={2.5} /> : <Bot size={16} strokeWidth={2.5} />}
               </div>
               <div className={`
-                  max-w-[85%] md:max-w-[80%] 
+                  max-w-[85%] md:max-w-[82%] 
                   px-4 py-3 md:px-5 md:py-3.5 
-                  shadow-sm text-[14px] md:text-[15px] leading-relaxed 
-                  relative transition-all duration-200 wrap-break-word whitespace-pre-wrap
+                  shadow-sm text-[13px] md:text-[14px] leading-relaxed 
+                  relative transition-all duration-200 wrap-break-word
                   ${msg.role === "user" 
                     ? "bg-[#00A79D] text-white rounded-3xl rounded-tr-sm" 
                     : "bg-white text-slate-700 border border-slate-100 rounded-3xl rounded-tl-sm"
                   }
               `}>
-                <p>{msg.content}</p>
+                <FormattedChatMessage content={msg.content} isUser={msg.role === "user"} />
                 <span className={`text-[10px] font-medium absolute -bottom-5 opacity-0 group-hover:opacity-100 transition-opacity duration-200 ${msg.role === "user" ? "right-1 text-slate-400" : "left-1 text-slate-400"}`}>
                   {msg.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                 </span>
               </div>
             </div>
           ))}
+
+          {/* Quick Suggestion Chips */}
+          {messages.length <= 2 && !isLoading && (
+            <div className="space-y-2 pt-2 animate-in fade-in duration-300">
+              <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider pl-1">Suggested Questions:</p>
+              <div className="flex flex-wrap gap-2">
+                {QUICK_SUGGESTIONS.map((chip, idx) => (
+                  <button
+                    key={idx}
+                    type="button"
+                    onClick={() => handleChipClick(chip)}
+                    className="text-xs bg-white hover:bg-teal-50 border border-slate-200 hover:border-teal-200 text-slate-700 hover:text-[#00A79D] px-3 py-1.5 rounded-full font-medium shadow-2xs transition-all cursor-pointer text-left"
+                  >
+                    {chip}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
 
           {isLoading && (
             <div className="flex items-end gap-2 md:gap-3">
@@ -529,14 +457,13 @@ export default function ChatWidget() {
               value={input} 
               onChange={(e) => setInput(e.target.value)}
               onFocus={() => {
-                // Scroll to bottom when keyboard opens
                 setTimeout(scrollToBottom, 300);
               }}
-              placeholder={chatState === "name_verification" ? "Enter your name..." : "Ask anything..."}
+              placeholder="Ask anything about our services..."
               className="flex-1 bg-transparent border-none focus:ring-0 text-slate-800 placeholder-slate-400 text-sm md:text-[15px] h-10 md:h-11 font-medium px-2 min-w-0"
-              disabled={isLoading || chatState === "init"}
+              disabled={isLoading}
             />
-            <button type="submit" disabled={!input.trim() || isLoading || chatState === "init"} className={`w-9 h-9 md:w-10 md:h-10 rounded-full flex items-center justify-center transition-all duration-200 ${!input.trim() || isLoading || chatState === "init" ? "bg-slate-200 text-slate-400 cursor-not-allowed" : "bg-[#00A79D] text-white hover:bg-teal-700 hover:scale-105 shadow-md"}`}>
+            <button type="submit" disabled={!input.trim() || isLoading} className={`w-9 h-9 md:w-10 md:h-10 rounded-full flex items-center justify-center transition-all duration-200 ${!input.trim() || isLoading ? "bg-slate-200 text-slate-400 cursor-not-allowed" : "bg-[#00A79D] text-white hover:bg-teal-700 hover:scale-105 shadow-md"}`}>
               {isLoading ? <Loader2 size={18} className="animate-spin" /> : <Send size={18} className="ml-0.5" strokeWidth={2.5} />}
             </button>
           </form>
