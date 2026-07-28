@@ -156,24 +156,32 @@ const QUICK_SUGGESTIONS = [
 
 // --- COMPONENT ---
 export default function ChatWidget() {
+  const [mounted, setMounted] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [messages, setMessages] = useState<Message[]>([
-    {
-      id: "welcome",
-      role: "bot",
-      content: "Hey there! 👋 Welcome to YF Advisors Client Support. How can I assist you today?",
-      timestamp: new Date(),
-    },
-  ]);
+  const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [userId] = useState<string>(`user_${Date.now()}`);
+  const [userId, setUserId] = useState<string>("user_guest");
   
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const widgetRef = useRef<HTMLDivElement>(null);
   const toggleBtnRef = useRef<HTMLButtonElement>(null);
+
+  // Client Mount Guard to eliminate SSR Hydration Mismatch
+  useEffect(() => {
+    setMounted(true);
+    setUserId(`user_${Date.now()}`);
+    setMessages([
+      {
+        id: "welcome",
+        role: "bot",
+        content: "Hey there! 👋 Welcome to YF Advisors Client Support. How can I assist you today?",
+        timestamp: new Date(),
+      },
+    ]);
+  }, []);
 
   // Scroll to bottom helper
   const scrollToBottom = useCallback(() => {
@@ -327,6 +335,10 @@ export default function ChatWidget() {
     setIsDropdownOpen(false);
     setIsOpen(false);
   };
+
+  if (!mounted) {
+    return null;
+  }
 
   return (
     <>
