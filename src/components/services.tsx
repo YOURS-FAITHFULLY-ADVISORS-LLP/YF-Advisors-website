@@ -2,19 +2,19 @@
 
 import React, { useEffect, useRef, useState } from "react";
 import { motion, useScroll, useTransform, MotionValue } from "framer-motion";
-import { 
-  ArrowRight, 
-  LucideIcon, 
-  UserCheck, 
-  Settings, 
-  UserMinus, 
-  Headphones, 
-  FileText, 
-  PieChart, 
-  TrendingUp, 
-  Briefcase, 
-  Globe, 
-  Shield 
+import {
+  ArrowRight,
+  LucideIcon,
+  UserCheck,
+  Settings,
+  UserMinus,
+  Headphones,
+  FileText,
+  PieChart,
+  TrendingUp,
+  Briefcase,
+  Globe,
+  Shield
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { servicesData } from "../data/services/data";
@@ -53,11 +53,15 @@ interface Service {
 
 // --- Skeleton Loader Component ---
 const ServicesSkeleton = () => (
-  <section id="services" className="relative w-full bg-slate-50 py-20">
+  <section
+    id="services"
+    className="relative w-full py-20"
+    style={{ background: 'linear-gradient(180deg, #CEEBE8 0%, #E0F3F1 50%, #CEEBE8 100%)' }}
+  >
     <div className="max-w-5xl mx-auto px-6 text-center space-y-4 animate-pulse">
-      <div className="h-10 bg-slate-200 rounded-2xl w-48 mx-auto" />
-      <div className="h-4 bg-slate-200 rounded-xl w-32 mx-auto" />
-      <div className="mt-12 h-[400px] w-full bg-slate-200/90 rounded-[2.5rem] shadow-xl" />
+      <div className="h-10 bg-teal-200/50 rounded-2xl w-48 mx-auto" />
+      <div className="h-4 bg-teal-200/40 rounded-xl w-32 mx-auto" />
+      <div className="mt-12 h-[400px] w-full bg-white/80 rounded-[2.5rem] shadow-xl border border-teal-500/15" />
     </div>
   </section>
 );
@@ -104,7 +108,7 @@ const StickyServiceCard = ({
       <motion.div
         style={{ scale }}
         onClick={() => router.push(`/services/${service.id}`)}
-        className="group relative flex h-auto max-h-[82vh] lg:max-h-none lg:h-[420px] xl:h-[450px] w-full max-w-[1100px] origin-center cursor-pointer flex-col lg:flex-row overflow-hidden rounded-2xl sm:rounded-3xl lg:rounded-[2.5rem] border border-slate-100 bg-white p-5 sm:p-6 lg:p-8 xl:p-10 shadow-xl lg:shadow-2xl gap-4 sm:gap-6 lg:gap-8 will-change-transform transform-gpu"
+        className="group relative flex h-auto max-h-[82vh] lg:max-h-none lg:h-[420px] xl:h-[450px] w-full max-w-[1100px] origin-center cursor-pointer flex-col lg:flex-row overflow-hidden rounded-2xl sm:rounded-3xl lg:rounded-[2.5rem] border border-teal-500/20 bg-white/95 backdrop-blur-md p-5 sm:p-6 lg:p-8 xl:p-10 shadow-2xl shadow-teal-950/10 gap-4 sm:gap-6 lg:gap-8 will-change-transform transform-gpu hover:border-teal-500/40 transition-all duration-300"
       >
         {/* Big background number */}
         <span
@@ -224,8 +228,8 @@ export default function StickyServicesSection() {
               color: "#00A79D",
               shortDescription: item.cardDescription || stripHtml(item.description) || "Professional Solution",
               keyValueText: item.keyValue || stripHtml(item.description) || `Our ${item.title.toLowerCase()} services help businesses improve efficiency and reduce operational costs.`,
-              capabilities: item.offerings && item.offerings.length > 0 
-                ? item.offerings 
+              capabilities: item.offerings && item.offerings.length > 0
+                ? item.offerings
                 : (item.capabilities && item.capabilities.length > 0 ? item.capabilities : [])
             }));
             setServicesList(formatted);
@@ -244,17 +248,31 @@ export default function StickyServicesSection() {
   const activeServices = servicesList.length > 0 ? servicesList : defaultFormattedServices;
 
   return (
-    <section id="services" className="relative w-full bg-slate-50">
+    <section
+      id="services"
+      className="relative w-full"
+      style={{ background: 'linear-gradient(180deg, #CEEBE8 0%, #E0F3F1 50%, #CEEBE8 100%)' }}
+    >
+      {/* Rich Matchable Background Layer */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden">
+        <div className="absolute inset-0 bg-soft-grid opacity-80" />
+        <div className="absolute top-1/4 right-[-5%] w-[600px] h-[600px] bg-[#56D8FF]/35 rounded-full blur-[120px] animate-pulse-glow" />
+        <div className="absolute bottom-1/4 left-[-5%] w-[550px] h-[550px] bg-[#00A79D]/25 rounded-full blur-[110px] animate-float-slow" />
+      </div>
       <main
         ref={container}
         className="relative flex w-full flex-col items-center justify-center"
       >
-        <div className="grid w-full content-start justify-items-center gap-5 py-[1vh] text-center">
-          <h2 className="text-4xl font-black uppercase tracking-widest text-black md:text-6xl">
+        <div className="grid w-full content-start justify-items-center gap-5 py-[2vh] text-center">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/80 backdrop-blur-md border border-teal-500/20 shadow-xs text-[#00A79D]">
+            <span className="w-2 h-2 rounded-full bg-[#00A79D]" />
+            <span className="text-xs font-bold uppercase tracking-widest">What We Do</span>
+          </div>
+          <h2 className="text-4xl md:text-6xl font-extrabold tracking-tight text-[#0B2F56] font-serif uppercase">
             Services
           </h2>
-          <span className="relative max-w-[16ch] text-xs uppercase leading-tight tracking-wider text-slate-400">
-            Scroll down
+          <span className="relative max-w-[16ch] text-xs font-bold uppercase leading-tight tracking-widest text-[#00A79D]">
+            Scroll to explore
           </span>
         </div>
 

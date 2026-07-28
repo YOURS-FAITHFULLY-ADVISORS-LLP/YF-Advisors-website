@@ -1,12 +1,12 @@
 "use client";
 
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import { 
-  motion, 
-  useMotionValue, 
-  useTransform, 
-  type MotionValue, 
-  type Transition, 
+import {
+  motion,
+  useMotionValue,
+  useTransform,
+  type MotionValue,
+  type Transition,
   type PanInfo,
   Variants
 } from "framer-motion";
@@ -170,7 +170,7 @@ function CarouselItem({ item, index, itemWidth, trackItemOffset, x, transition }
         <div className={`mb-3 font-bold text-2xl ${item.title.includes("Who") || (item.title.includes("Choose") && item.bg.includes("text-white")) ? "text-white" : "text-[#002B49]"}`}>
           {item.title}
         </div>
-        
+
         {item.points ? (
           <ul className="space-y-3">
             {item.points.map((point, i) => (
@@ -194,7 +194,7 @@ function CarouselItem({ item, index, itemWidth, trackItemOffset, x, transition }
 
 const AboutCarousel = ({ featuresData, statsData }: { featuresData: FeatureCardItem[]; statsData: StatItem[] }) => {
   const items = featuresData;
-  const baseWidth = 340; 
+  const baseWidth = 340;
   const autoplay = true;
   const autoplayDelay = 3500;
   const pauseOnHover = true;
@@ -202,7 +202,7 @@ const AboutCarousel = ({ featuresData, statsData }: { featuresData: FeatureCardI
   const containerPadding = 16;
   const itemWidth = baseWidth - containerPadding * 2;
   const trackItemOffset = itemWidth + GAP;
-  
+
   const itemsForRender = useMemo(() => {
     if (!items.length) return [];
     return [items[items.length - 1], ...items, items[0]];
@@ -218,7 +218,7 @@ const AboutCarousel = ({ featuresData, statsData }: { featuresData: FeatureCardI
   // Initialize position
   useEffect(() => {
     x.set(-1 * trackItemOffset);
-  }, [trackItemOffset, x]); 
+  }, [trackItemOffset, x]);
 
   // Handle Hover State
   useEffect(() => {
@@ -228,7 +228,7 @@ const AboutCarousel = ({ featuresData, statsData }: { featuresData: FeatureCardI
       const handleMouseLeave = () => setIsHovered(false);
       container.addEventListener('mouseenter', handleMouseEnter);
       container.addEventListener('mouseleave', handleMouseLeave);
-      
+
       container.addEventListener('touchstart', handleMouseEnter);
       container.addEventListener('touchend', handleMouseLeave);
 
@@ -254,12 +254,12 @@ const AboutCarousel = ({ featuresData, statsData }: { featuresData: FeatureCardI
 
   const handleAnimationComplete = () => {
     const lastCloneIndex = itemsForRender.length - 1;
-    
+
     if (position >= lastCloneIndex) {
       setIsJumping(true);
       setPosition(1);
       x.set(-1 * trackItemOffset);
-      
+
       requestAnimationFrame(() => {
         setIsJumping(false);
         setIsAnimating(false);
@@ -268,7 +268,7 @@ const AboutCarousel = ({ featuresData, statsData }: { featuresData: FeatureCardI
       setIsJumping(true);
       setPosition(items.length);
       x.set(-items.length * trackItemOffset);
-      
+
       requestAnimationFrame(() => {
         setIsJumping(false);
         setIsAnimating(false);
@@ -281,7 +281,7 @@ const AboutCarousel = ({ featuresData, statsData }: { featuresData: FeatureCardI
   const handleDragEnd = (_: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
     const { offset, velocity } = info;
     const direction = offset.x < -DRAG_BUFFER || velocity.x < -VELOCITY_THRESHOLD ? 1 : offset.x > DRAG_BUFFER || velocity.x > VELOCITY_THRESHOLD ? -1 : 0;
-    
+
     if (direction !== 0) {
       setPosition(prev => prev + direction);
     }
@@ -292,10 +292,10 @@ const AboutCarousel = ({ featuresData, statsData }: { featuresData: FeatureCardI
 
   return (
     <div className="flex flex-col items-center justify-center w-full overflow-hidden">
-      <div 
+      <div
         ref={containerRef}
         className="relative p-4"
-        style={{ width: `${baseWidth}px`, height: "380px" }} 
+        style={{ width: `${baseWidth}px`, height: "380px" }}
       >
         <motion.div
           className="flex h-full"
@@ -334,9 +334,8 @@ const AboutCarousel = ({ featuresData, statsData }: { featuresData: FeatureCardI
           {items.map((_, index) => (
             <motion.div
               key={index}
-              className={`h-2 w-2 rounded-full cursor-pointer transition-colors duration-200 ${
-                activeIndex === index ? 'bg-[#00A79D]' : 'bg-slate-300 hover:bg-slate-400'
-              }`}
+              className={`h-2 w-2 rounded-full cursor-pointer transition-colors duration-200 ${activeIndex === index ? 'bg-[#00A79D]' : 'bg-slate-300 hover:bg-slate-400'
+                }`}
               animate={{ scale: activeIndex === index ? 1.2 : 1 }}
               onClick={() => setPosition(index + 1)}
               transition={{ duration: 0.15 }}
@@ -414,7 +413,7 @@ const AboutGrid = ({ featuresData, statsData }: { featuresData: FeatureCardItem[
                   <div className={`p-3.5 rounded-2xl ${feature.iconBg} ${feature.iconColor} flex items-center justify-center`}>
                     {React.cloneElement(feature.icon as React.ReactElement<{ className?: string }>, { className: `w-6 h-6 ${feature.title.includes("Who") ? "text-white" : "text-current"}` })}
                   </div>
-                  
+
                   {isWide && (
                     <div className={`opacity-0 group-hover:opacity-100 transition-opacity duration-300 ${feature.title === "Who We Are" ? "text-white/50" : "text-teal-600/50"}`}>
                       <ArrowUpRight size={24} />
@@ -564,15 +563,15 @@ export default function AboutUs() {
   // Dynamically build statistics section from API data
   const statsData: StatItem[] = (currentData.statistics && currentData.statistics.length > 0)
     ? [...currentData.statistics].sort((a, b) => (a.order ?? 0) - (b.order ?? 0)).map((s) => ({
-        icon: getIconComponent(s.icon),
-        label: s.title,
-        sub: s.value
-      }))
+      icon: getIconComponent(s.icon),
+      label: s.title,
+      sub: s.value
+    }))
     : [
-        { icon: Globe, label: "Global Presence", sub: "India, USA & Dubai" },
-        { icon: Shield, label: "Trusted By", sub: "10+ Partners" },
-        { icon: TrendingUp, label: "Expert Team", sub: "50+ Professionals" }
-      ];
+      { icon: Globe, label: "Global Presence", sub: "India, USA & Dubai" },
+      { icon: Shield, label: "Trusted By", sub: "10+ Partners" },
+      { icon: TrendingUp, label: "Expert Team", sub: "50+ Professionals" }
+    ];
 
   const title = currentData.title || DEFAULT_ABOUT_DATA.title;
   const subtitle = currentData.subtitle || DEFAULT_ABOUT_DATA.subtitle;

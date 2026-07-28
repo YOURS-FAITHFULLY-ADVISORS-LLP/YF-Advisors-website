@@ -89,7 +89,7 @@ export default function Hero({ initialData }: { initialData?: HeroCMSData | null
       if (Array.isArray(json) && json.length > 0) {
         featureCardsList = json;
       }
-    } catch (e) {}
+    } catch (e) { }
   }
 
   const getCard = (id: string, defaultTitle: string, defaultSub: string) => {
@@ -136,7 +136,7 @@ export default function Hero({ initialData }: { initialData?: HeroCMSData | null
 
   const renderFormattedTitle = (titleText: string) => {
     if (!titleText) return null;
-    
+
     // Format "Grow your business, not your Back Office." cleanly
     const commaIdx = titleText.indexOf(',');
     if (commaIdx !== -1) {
@@ -185,7 +185,7 @@ export default function Hero({ initialData }: { initialData?: HeroCMSData | null
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center">
-          
+
           {/* ================= LEFT COLUMN: TYPOGRAPHY & CTA (Lifted Up) ================= */}
           <div className="lg:col-span-6 space-y-6 text-left -mt-4 lg:-mt-10">
             {/* Eyebrow Tag */}
@@ -318,7 +318,7 @@ export default function Hero({ initialData }: { initialData?: HeroCMSData | null
                 className="w-full h-full object-contain pointer-events-none select-none p-2 transform group-hover:scale-105 transition-transform duration-700"
               />
 
-             
+
             </motion.div>
 
             {/* ================= 7 ORBITING FLOATING FEATURE CARDS ================= */}
