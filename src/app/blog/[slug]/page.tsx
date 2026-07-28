@@ -26,25 +26,26 @@ export default async function DynamicBlogPage(props: PageProps) {
     },
   });
 
-  // 2. Static fallback if not in DB
+  // 2. Static fallback if not yet present in DB
   const staticBlog = blogPosts.find((b) => b.slug === slug || String(b.id) === slug);
+  const blog = dbBlog || staticBlog;
 
-  if (!dbBlog && !staticBlog) {
+  if (!blog) {
     return notFound();
   }
 
-  const title = dbBlog?.title || staticBlog?.title || "";
-  const category = dbBlog?.category || staticBlog?.category || "Services";
-  const author = dbBlog?.author || "YF Advisors";
-  const image = dbBlog?.image || staticBlog?.image || "/blog/spark.jpg";
-  const rawDate = dbBlog?.publishedAt || dbBlog?.createdAt || staticBlog?.date;
+  const title = blog.title;
+  const category = blog.category || "Services";
+  const author = blog.author || "YF Advisors";
+  const image = blog.image || "https://nhkdhwochgfimbimomst.supabase.co/storage/v1/object/public/uploads/blog/spark.jpg";
+  const rawDate = "publishedAt" in blog ? (blog.publishedAt || blog.createdAt) : (blog as any).date;
   const formattedDate = rawDate
     ? new Date(rawDate).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })
     : "Recent";
 
-  const introText = dbBlog?.excerpt || dbBlog?.cardDescription || staticBlog?.excerpt || "";
-  const contentHtml = dbBlog?.content || "";
-  const sections = dbBlog?.sections || [];
+  const introText = "excerpt" in blog ? (blog.excerpt || (blog as any).cardDescription) : "";
+  const contentHtml = "content" in blog ? (blog.content || "") : "";
+  const sections = "sections" in blog ? (blog.sections || []) : [];
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 font-sans pb-20">

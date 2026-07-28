@@ -5,43 +5,43 @@ import DomeGallery from "./DomeGallery";
 
 const DEFAULT_HIGHLIGHT_IMAGES = [
   {
-    src: "/blog/diwali-celebration.jpg",
+    src: "https://nhkdhwochgfimbimomst.supabase.co/storage/v1/object/public/uploads/blog/diwali-celebration.jpg",
     alt: "YF Advisors Diwali Celebration"
   },
   {
-    src: "/blog/food-and-team-bonding.jpg",
+    src: "https://nhkdhwochgfimbimomst.supabase.co/storage/v1/object/public/uploads/blog/food-and-team-bonding.jpg",
     alt: "Team Outing and Bonding"
   },
   {
-    src: "/blog/optimism.jpg",
+    src: "https://nhkdhwochgfimbimomst.supabase.co/storage/v1/object/public/uploads/blog/optimism.jpg",
     alt: "YF Advisors Team Strategy Session"
   },
   {
-    src: "/product/btl/image1.jpg",
+    src: "https://nhkdhwochgfimbimomst.supabase.co/storage/v1/object/public/uploads/product/btl/image1.jpg",
     alt: "On-Ground BTL Activation Execution"
   },
   {
-    src: "/product/btl/image2.jpg",
+    src: "https://nhkdhwochgfimbimomst.supabase.co/storage/v1/object/public/uploads/product/btl/image2.jpg",
     alt: "Field Event Campaign Execution"
   },
   {
-    src: "/product/btl/image3.jpg",
+    src: "https://nhkdhwochgfimbimomst.supabase.co/storage/v1/object/public/uploads/product/btl/image3.jpg",
     alt: "Retail Operations Audit"
   },
   {
-    src: "/product/btl/image4.jpg",
+    src: "https://nhkdhwochgfimbimomst.supabase.co/storage/v1/object/public/uploads/product/btl/image4.jpg",
     alt: "Field Team Excellence"
   },
   {
-    src: "/product/btl/image5.jpg",
+    src: "https://nhkdhwochgfimbimomst.supabase.co/storage/v1/object/public/uploads/product/btl/image5.jpg",
     alt: "Brand Activation Drive"
   },
   {
-    src: "/blog/bookeeping&account.jpg",
+    src: "https://nhkdhwochgfimbimomst.supabase.co/storage/v1/object/public/uploads/blog/bookeeping&account.jpg",
     alt: "Financial & Accounting Team Work"
   },
   {
-    src: "/blog/new-year-2022.jpg",
+    src: "https://nhkdhwochgfimbimomst.supabase.co/storage/v1/object/public/uploads/blog/new-year-2022.jpg",
     alt: "Annual Kickoff & Celebrations"
   }
 ];

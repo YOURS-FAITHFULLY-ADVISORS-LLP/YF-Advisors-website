@@ -12,7 +12,7 @@ const teamData = [
     role: "Founder and Partner",
     description: "Chartered Accountant. Specialization: Business Process Re-engineering & Advisory.",
     experience: "Experience: 14+ years",
-    image: "/meet-team/vishal.png",
+    image: "https://nhkdhwochgfimbimomst.supabase.co/storage/v1/object/public/uploads/team/vishal.png",
     linkedin: "https://www.linkedin.com/in/vishal777/"
   },
   {
@@ -21,7 +21,7 @@ const teamData = [
     role: "Co-Founder and Partner",
     description: "Chartered Accountant. Specialization: Finance and legal operations in MNCs.",
     experience: "Experience: 12+ years",
-    image: "/meet-team/kirti.png",
+    image: "https://nhkdhwochgfimbimomst.supabase.co/storage/v1/object/public/uploads/team/kirti.png",
     linkedin: "https://www.linkedin.com/in/kkirti-aggarwal-a14a20125/"
   },
   {
@@ -30,7 +30,7 @@ const teamData = [
     role: "Partner",
     description: "Post Graduate IIM. Specialization: International offshoring & Op Excellence.",
     experience: "Experience: 26+ years",
-    image: "/meet-team/saket.png",
+    image: "https://nhkdhwochgfimbimomst.supabase.co/storage/v1/object/public/uploads/team/saket.png",
     linkedin: "https://www.linkedin.com/in/saket-drona-30b0571/"
   },
   {
@@ -39,7 +39,7 @@ const teamData = [
     role: "Partner",
     description: "Specializes in Strategic Financial Management, Cash Flow & Systems.",
     experience: "Experience: 21+ years",
-    image: "/meet-team/shiv.png",
+    image: "https://nhkdhwochgfimbimomst.supabase.co/storage/v1/object/public/uploads/team/shiv.png",
     linkedin: "https://www.linkedin.com/in/shiv-mittal-02227344/"
   },
   {
@@ -48,7 +48,7 @@ const teamData = [
     role: "Partner",
     description: "Specializes in Internal Audits, Data Analytics & Outsourcing Ops.",
     experience: "Experience: 15+ years",
-    image: "/meet-team/deepak.png",
+    image: "https://nhkdhwochgfimbimomst.supabase.co/storage/v1/object/public/uploads/team/deepak.png",
     linkedin: "https://www.linkedin.com/in/deepak-babel-1b576722b/"
   },
   {
@@ -57,7 +57,7 @@ const teamData = [
     role: "Growth Partner",
     description: "Masters, IIM Calcutta. Specialization: Operations & Delivery Quality.",
     experience: "Experience: 30+ years",
-    image: "/meet-team/sanjay.png",
+    image: "https://nhkdhwochgfimbimomst.supabase.co/storage/v1/object/public/uploads/team/sanjay.png",
     linkedin: "https://www.linkedin.com/in/sanjay-kumar-choudhary-10a5b516/"
   },
   {
@@ -66,7 +66,7 @@ const teamData = [
     role: "Growth Partner",
     description: "Masters in Marketing & HR. Specialization: Talent Mgmt & Acquisition.",
     experience: "Experience: 27+ years",
-    image: "/meet-team/jyoti.png",
+    image: "https://nhkdhwochgfimbimomst.supabase.co/storage/v1/object/public/uploads/team/jyoti.png",
     linkedin: "https://www.linkedin.com/in/jyoti-mittal-99a2794/"
   },
   {
@@ -75,7 +75,7 @@ const teamData = [
     role: "Advocate",
     description: "B.E., CS. | Fintech, e-Commerce & Blockchain Lawyer",
     experience: "Experience: 25+ years",
-    image: "/meet-team/pawan.png",
+    image: "https://nhkdhwochgfimbimomst.supabase.co/storage/v1/object/public/uploads/team/pawan.png",
     linkedin: "https://www.linkedin.com/in/pawan-l-0b82716/"
   },
   {
@@ -84,7 +84,7 @@ const teamData = [
     role: "Chartered Accountant",
     description: "Specialization: Income Tax & GST Litigation, Appeal Matters",
     experience: "Experience: 15+ years",
-    image: "/meet-team/nipun.png",
+    image: "https://nhkdhwochgfimbimomst.supabase.co/storage/v1/object/public/uploads/team/nipun.png",
     linkedin: "https://www.linkedin.com/in/ca-nipun-khanna-5875ba3a/"
   }
 ];

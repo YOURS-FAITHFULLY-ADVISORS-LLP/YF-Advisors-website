@@ -7,7 +7,7 @@ export const blogPosts = [
     category: "News and Events",
     date: "November 15, 2024",
     excerpt: "Diwali Celebration 2024 – Festive vibes and togetherness. Join us as we celebrate Diwali 2024 with vibrant decorations, festive lights, and joy.",
-    image: "/blog/diwali-celebration.jpg"
+    image: "https://nhkdhwochgfimbimomst.supabase.co/storage/v1/object/public/uploads/blog/diwali-celebration.jpg"
   },
   {
     id: 2,
@@ -16,7 +16,7 @@ export const blogPosts = [
     category: "Services",
     date: "August 30, 2024",
     excerpt: "Whether you’re a startup or a growing business, managing finances is crucial for long-term sustainability and compliance.",
-    image: "/blog/bookeeping&account.jpg"
+    image: "https://nhkdhwochgfimbimomst.supabase.co/storage/v1/object/public/uploads/blog/bookeeping&account.jpg"
   },
   {
     id: 3,
@@ -25,7 +25,7 @@ export const blogPosts = [
     category: "Services",
     date: "August 26, 2024",
     excerpt: "Managing finances is a cornerstone of running a successful business. Learn how professional bookkeeping services can help small businesses grow.",
-    image: "/blog/bk-services.jpg"
+    image: "https://nhkdhwochgfimbimomst.supabase.co/storage/v1/object/public/uploads/blog/bk-services.jpg"
   },
   {
     id: 4,
@@ -34,7 +34,7 @@ export const blogPosts = [
     category: "Brochure",
     date: "August 11, 2024",
     excerpt: "Start using this style on your website and make your platform more flexible and conversion-focused with effective call-to-action strategies.",
-    image: "/blog/brochure.png"
+    image: "https://nhkdhwochgfimbimomst.supabase.co/storage/v1/object/public/uploads/blog/brochure.png"
   },
   {
     id: 5,
@@ -43,7 +43,7 @@ export const blogPosts = [
     category: "News and Events",
     date: "October 7, 2022",
     excerpt: "Wishing you a Happy New Year! Stay safe and healthy as we begin new financial journeys together.",
-    image: "/blog/new-year-2022.jpg"
+    image: "https://nhkdhwochgfimbimomst.supabase.co/storage/v1/object/public/uploads/blog/new-year-2022.jpg"
   },
   {
     id: 6,
@@ -52,7 +52,7 @@ export const blogPosts = [
     category: "Services",
     date: "October 6, 2022",
     excerpt: "Streamline your business operations by outsourcing financial accounting and payroll services to improve efficiency and reduce costs.",
-    image: "/blog/Outsourcing-of-financial-accounting-payroll.jpg"
+    image: "https://nhkdhwochgfimbimomst.supabase.co/storage/v1/object/public/uploads/blog/Outsourcing-of-financial-accounting-payroll.jpg"
   },
   {
     id: 7,
@@ -61,7 +61,7 @@ export const blogPosts = [
     category: "News and Events",
     date: "October 6, 2022",
     excerpt: "We live in a world of uncertainty. Discover how optimism and self-belief can help individuals and organizations navigate challenges.",
-    image: "/blog/optimism.jpg"
+    image: "https://nhkdhwochgfimbimomst.supabase.co/storage/v1/object/public/uploads/blog/optimism.jpg"
   },
   {
     id: 8,
@@ -70,7 +70,7 @@ export const blogPosts = [
     category: "Services",
     date: "October 6, 2022",
     excerpt: "The outsourcing and shared services market continues to grow rapidly. Learn why businesses are increasingly choosing outsourcing.",
-    image: "/blog/benefits-of-outsourcing.jpg"
+    image: "https://nhkdhwochgfimbimomst.supabase.co/storage/v1/object/public/uploads/blog/benefits-of-outsourcing.jpg"
   },
   {
     id: 9,
@@ -79,7 +79,7 @@ export const blogPosts = [
     category: "Services",
     date: "October 6, 2022",
     excerpt: "The success of modern businesses depends on providing value beyond cost. Shared services help simplify operations and enhance efficiency.",
-    image: "/blog/shared-services.jpg"
+    image: "https://nhkdhwochgfimbimomst.supabase.co/storage/v1/object/public/uploads/blog/shared-services.jpg"
   },
   {
     id: 10,
@@ -88,7 +88,7 @@ export const blogPosts = [
     category: "Services",
     date: "October 6, 2022",
     excerpt: "Globalization and emerging technologies require businesses to adopt more adaptable and cost-effective back-office models.",
-    image: "/blog/rethink-your-office.jpg"
+    image: "https://nhkdhwochgfimbimomst.supabase.co/storage/v1/object/public/uploads/blog/rethink-your-office.jpg"
   },
   {
     id: 11,
@@ -97,8 +97,8 @@ export const blogPosts = [
     category: "Services",
     date: "October 6, 2022",
     excerpt: "Food and team bonding never fail. Discover how shared meals and activities strengthen workplace relationships and morale.",
-    image: "/blog/food-and-team-bonding.jpg"  
-},
+    image: "https://nhkdhwochgfimbimomst.supabase.co/storage/v1/object/public/uploads/blog/food-and-team-bonding.jpg"
+  },
   {
     id: 12,
     title: "Invoice Validation AP Process (P2P)",
@@ -106,7 +106,7 @@ export const blogPosts = [
     category: "Services",
     date: "October 6, 2022",
     excerpt: "Vendor management and cost tracking can be complex. Learn how invoice validation improves the procure-to-pay (P2P) process.",
-    image: "/blog/invoice-validation.jpg"
+    image: "https://nhkdhwochgfimbimomst.supabase.co/storage/v1/object/public/uploads/blog/invoice-validation.jpg"
   },
   {
     id: 13,
@@ -115,6 +115,6 @@ export const blogPosts = [
     category: "Services",
     date: "September 6, 2022",
     excerpt: "A way to live and work aligned with the new normal — a more balanced, welcoming, and hopeful future for organizations.",
-    image: "/blog/spark.jpg"
-  },
+    image: "https://nhkdhwochgfimbimomst.supabase.co/storage/v1/object/public/uploads/blog/spark.jpg"
+  }
 ];

@@ -18,21 +18,26 @@ const Blog = () => {
         const res = await fetch('/api/admin/blogs?status=PUBLISHED');
         if (res.ok) {
           const json = await res.json();
-          if (isMounted && json.success && Array.isArray(json.data)) {
+          if (isMounted && json.success && Array.isArray(json.data) && json.data.length > 0) {
             const formatted = json.data.map((b: any) => ({
               id: b.id,
               title: b.title,
               slug: b.slug,
               category: b.category || "Services",
               date: new Date(b.publishedAt || b.createdAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }),
-              image: b.image || "/blog/spark.jpg",
+              image: b.image || "https://nhkdhwochgfimbimomst.supabase.co/storage/v1/object/public/uploads/blog/spark.jpg",
               excerpt: b.cardDescription || b.excerpt || (b.content ? b.content.replace(/<[^>]*>?/gm, '').substring(0, 120) + "..." : "")
             }));
             setBlogs(formatted);
+          } else if (isMounted) {
+            setBlogs(blogPosts);
           }
+        } else if (isMounted) {
+          setBlogs(blogPosts);
         }
       } catch (err) {
         console.error("Error fetching blogs:", err);
+        if (isMounted) setBlogs(blogPosts);
       } finally {
         if (isMounted) setLoading(false);
       }
@@ -56,7 +61,7 @@ const Blog = () => {
         {loading ? (
           <div className="grid">
             {[1, 2, 3].map((n) => (
-              <div key={n} className="bg-white rounded-3xl overflow-hidden border border-slate-100 shadow-sm animate-pulse flex flex-col h-[460px]">
+              <div key={n} className="w-full bg-white rounded-3xl overflow-hidden border border-slate-100 shadow-sm animate-pulse flex flex-col h-[460px]">
                 <div className="w-full h-52 bg-slate-200/80 relative">
                   <div className="absolute top-4 left-4 w-20 h-6 bg-slate-300/70 rounded-full" />
                 </div>
