@@ -260,19 +260,19 @@ export default function RichTextEditor({
               <span>Visual Editor</span>
             </button>
 
-            {/* 2. Raw HTML Code View (For power users) */}
+            {/* 2. Editor View (Clean White Textarea) */}
             <button
               type="button"
               onClick={() => setMode('code')}
               className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
                 mode === 'code'
-                  ? 'bg-slate-800 text-white shadow-2xs'
+                  ? 'bg-white text-[#002B49] shadow-2xs'
                   : 'text-slate-600 hover:text-slate-900'
               }`}
-              title="View or Edit raw HTML tags"
+              title="Standard Editor view"
             >
-              <Code className="w-3.5 h-3.5 text-amber-400" />
-              <span>HTML Code</span>
+              <Code className="w-3.5 h-3.5 text-[#00A79D]" />
+              <span>Editor</span>
             </button>
 
             {/* 3. Live Preview Tab */}
@@ -472,7 +472,7 @@ export default function RichTextEditor({
               </div>
             )}
 
-            {/* 2. MODE: RAW HTML CODE VIEW (For power users) */}
+            {/* 2. MODE: STANDARD EDITOR (Clean White Background) */}
             {mode === 'code' && (
               <textarea
                 ref={textareaRef}
@@ -480,8 +480,8 @@ export default function RichTextEditor({
                 value={value}
                 onChange={(e) => onChange(e.target.value)}
                 onPaste={handleCodePaste}
-                placeholder="Raw HTML code editor..."
-                className="w-full p-4 border-0 text-slate-900 font-mono text-xs leading-relaxed focus:outline-none bg-slate-900 text-slate-100 transition-all"
+                placeholder={placeholder}
+                className="w-full p-4 border-0 text-slate-900 text-sm font-medium focus:outline-none bg-white transition-all"
               />
             )}
           </>

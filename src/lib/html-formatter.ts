@@ -162,9 +162,10 @@ export function cleanAndSanitizeHtml(html: string): string {
   cleaned = cleaned.replace(/\s*on\w+='[^']*'/gi, '');
   cleaned = cleaned.replace(/href="javascript:[^"]*"/gi, 'href="#"');
 
-  // 2. Strip Microsoft Word / Office XML comments & metadata
+  // 2. Strip Microsoft Word / Office XML comments, DOCTYPE, html, body, head metadata
   cleaned = cleaned.replace(/<!--[\s\S]*?-->/g, '');
-  cleaned = cleaned.replace(/<\/?(meta|link|style|xml|w:[^>]+|o:[^>]+)[^>]*>/gi, '');
+  cleaned = cleaned.replace(/<!DOCTYPE[^>]*>/gi, '');
+  cleaned = cleaned.replace(/<\/?(html|body|head|title|meta|link|style|xml|w:[^>]+|o:[^>]+)[^>]*>/gi, '');
 
   // 3. Remove inline styles & font classes from Word/Google Docs (e.g. style="font-family: Arial;", dir="ltr", aria-level="1")
   cleaned = cleaned.replace(/\s+style="[^"]*"/gi, '');
