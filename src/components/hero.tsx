@@ -132,6 +132,38 @@ export default function Hero({ initialData }: { initialData?: HeroCMSData | null
     { id: "tax", path: "M 250 330 L 250 460", endDot: { x: 250, y: 460 }, startDot: { x: 250, y: 330 }, dur: 2.5 },
   ];
 
+  const rawTitle = currentData.heroTitle || DEFAULT_HERO_DATA.heroTitle!;
+
+  const renderFormattedTitle = (titleText: string) => {
+    if (!titleText) return null;
+    const backOfficeMatch = titleText.match(/^(.*?)(Back Office\.?)$/i);
+    if (backOfficeMatch) {
+      return (
+        <>
+          {backOfficeMatch[1]}
+          <br />
+          <span className="text-[#00A79D] font-serif italic relative inline-block">
+            {backOfficeMatch[2]}
+            <svg
+              className="absolute -bottom-2 left-0 w-full h-3 text-[#00A79D]/30"
+              viewBox="0 0 200 9"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M2 7C50 2.5 150 2.5 198 7"
+                stroke="currentColor"
+                strokeWidth="3"
+                strokeLinecap="round"
+              />
+            </svg>
+          </span>
+        </>
+      );
+    }
+    return titleText;
+  };
+
   return (
     <section className="relative w-full pt-24 pb-16 lg:pt-28 lg:pb-24 overflow-hidden bg-gradient-to-b from-slate-50/80 via-white to-slate-50/50">
       {/* Background Subtle Grid Pattern */}
@@ -164,24 +196,7 @@ export default function Hero({ initialData }: { initialData?: HeroCMSData | null
               transition={{ duration: 0.6, delay: 0.1 }}
               className="text-4xl sm:text-5xl lg:text-[58px] leading-[1.12] font-serif font-extrabold text-[#0F172A] tracking-tight"
             >
-              Grow your business, <br />
-              not your{" "}
-              <span className="text-[#00A79D] font-serif italic relative inline-block">
-                Back Office.
-                <svg
-                  className="absolute -bottom-2 left-0 w-full h-3 text-[#00A79D]/30"
-                  viewBox="0 0 200 9"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    d="M2 7C50 2.5 150 2.5 198 7"
-                    stroke="currentColor"
-                    strokeWidth="3"
-                    strokeLinecap="round"
-                  />
-                </svg>
-              </span>
+              {renderFormattedTitle(rawTitle)}
             </motion.h1>
 
             {/* Paragraph Subtitle */}

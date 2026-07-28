@@ -9,12 +9,15 @@ import Products from '../components/product';
 import CompanyHighlights from '../components/company-highlights';
 import ContactChat from '../components/contact';
 import Footer from '../components/footer';
+import { getHomepageData } from '@/src/lib/cms-server';
 
-export default function Home() {
+export default async function Home() {
+  const homepageData = await getHomepageData();
+
   return (
     <div className="min-h-screen font-sans text-slate-900 bg-gray-50">
       <Navbar />
-      <Hero />
+      <Hero initialData={homepageData} />
       <StatsSection />
       <AboutUs />
       <ServicesSection />

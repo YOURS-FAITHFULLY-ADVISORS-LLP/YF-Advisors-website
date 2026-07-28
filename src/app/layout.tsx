@@ -5,6 +5,7 @@ import StyledComponentsRegistry from "./registry";
 import AnalyticsTracker from "@/src/components/AnalyticsTracker";
 import SectionRouteObserver from "@/src/components/SectionRouteObserver";
 import SmoothScrolling from "@/src/components/SmoothScrolling";
+import ChatWidget from "@/src/components/chatbot";
 
 const playfair = Playfair_Display({
   variable: "--font-playfair",
@@ -64,6 +65,7 @@ export default function RootLayout({
           {/* WRAP CHILDREN WITH THE REGISTRY COMPONENT */}
           <StyledComponentsRegistry>
             {children}
+            <ChatWidget />
           </StyledComponentsRegistry>
         </SmoothScrolling>
       </body>

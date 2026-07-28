@@ -6,17 +6,22 @@ import { updateHomepageSchema } from '@/src/validations/homepage.schema';
 import { sanitizeInput } from '@/src/lib/sanitize';
 import { revalidateCmsPaths } from '@/src/lib/revalidate';
 
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 // Admin Homepage & Hero API Route
 async function getOrCreateHomepageRecord() {
-  let homepage = await prisma.homepage.findFirst();
+  let homepage = await prisma.homepage.findFirst({
+    orderBy: { createdAt: 'asc' },
+  });
 
   if (!homepage) {
     homepage = await prisma.homepage.create({
       data: {
-        heroTitle: 'Welcome to YF Advisors',
-        heroDescription: 'Your trusted partner for financial planning and advisory services.',
-        heroButtonText: 'Explore Services',
-        heroButtonLink: '/services',
+        heroTitle: 'Grow your business, not your Back Office.',
+        heroDescription: 'We deliver smart, reliable and technology-driven business solutions so you can focus on what matters most – growing your business.',
+        heroButtonText: 'Connect Now',
+        heroButtonLink: 'https://wa.me/918080506185',
       },
     });
   }
