@@ -166,13 +166,20 @@ export function cleanAndSanitizeHtml(html: string): string {
   cleaned = cleaned.replace(/<!--[\s\S]*?-->/g, '');
   cleaned = cleaned.replace(/<\/?(meta|link|style|xml|w:[^>]+|o:[^>]+)[^>]*>/gi, '');
 
-  // 3. Remove inline styles & font classes from Word/Google Docs (e.g. style="font-family: Arial; color: red;")
+  // 3. Remove inline styles & font classes from Word/Google Docs (e.g. style="font-family: Arial;", dir="ltr", aria-level="1")
   cleaned = cleaned.replace(/\s+style="[^"]*"/gi, '');
   cleaned = cleaned.replace(/\s+style='[^']*'/gi, '');
+  cleaned = cleaned.replace(/\s+(dir|aria-\w+|role|id|lang|start)="[^"]*"/gi, '');
+  cleaned = cleaned.replace(/\s+(dir|aria-\w+|role|id|lang|start)='[^']*'/gi, '');
 
-  // 4. Unwrap useless <span> tags
+  // Strip orphan Google Docs / Word attribute text fragments if pasted as text (e.g. dir="ltr" aria-level="1">)
+  cleaned = cleaned.replace(/(?:dir=["'][^"']*["']\s*)?aria-level=["'][^"']*["']\s*>/gi, '');
+  cleaned = cleaned.replace(/dir=["']ltr["']\s*>/gi, '');
+
+  // 4. Unwrap useless <span> tags & nested <p> tags inside <li>
   cleaned = cleaned.replace(/<span>([\s\S]*?)<\/span>/gi, '$1');
   cleaned = cleaned.replace(/<span\s*\/?>/gi, '');
+  cleaned = cleaned.replace(/<li([^>]*)>\s*<p\b[^>]*>([\s\S]*?)<\/p>\s*<\/li>/gi, '<li$1>$2</li>');
 
   // 5. Clean up empty paragraphs or paragraph spaces like <p>&nbsp;</p> or <p></p>
   cleaned = cleaned.replace(/<p>\s*(&nbsp;)?\s*<\/p>/gi, '');
@@ -182,9 +189,10 @@ export function cleanAndSanitizeHtml(html: string): string {
   cleaned = cleaned.replace(/<ul(?![^>]*class="[^"]*list-disc[^"]*")([^>]*)>/gi, '<ul class="list-disc pl-6 space-y-1.5 my-4 text-slate-800 font-sans"$1>');
   cleaned = cleaned.replace(/<ol(?![^>]*class="[^"]*list-decimal[^"]*")([^>]*)>/gi, '<ol class="list-decimal pl-6 space-y-1.5 my-4 text-slate-800 font-sans"$1>');
 
-  // 7. Inject <li> styles if unstyled & strip unwanted leading bullet/greater-than symbols inside list items
+  // 7. Inject <li> styles if unstyled & strip unwanted leading bullet/greater-than/attribute symbols inside list items
   cleaned = cleaned.replace(/<li(?!\s*class=)/gi, '<li class="leading-relaxed">');
   cleaned = cleaned.replace(/(<li[^>]*>)\s*(?:&gt;|[>•\-*–—›»])\s*/gi, '$1');
+  cleaned = cleaned.replace(/(<li[^>]*>)\s*(?:dir=["'][^"']*["']|aria-level=["'][^"']*["']|>)+\s*/gi, '$1');
 
   // 8. Ensure clickable links have target="_blank"
   cleaned = cleaned.replace(

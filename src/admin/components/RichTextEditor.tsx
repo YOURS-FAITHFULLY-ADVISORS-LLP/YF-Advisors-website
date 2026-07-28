@@ -510,11 +510,6 @@ export default function RichTextEditor({
           </div>
         )}
       </div>
-
-      <p className="text-[10px] text-slate-400 font-medium flex items-center gap-1.5 pt-1">
-        <Sparkles className="w-3 h-3 text-[#00A79D]" />
-        <span>Non-technical admins can type and edit directly in <strong>Visual Editor</strong> without knowing code. Switch to <strong>HTML Code</strong> only if you want raw code tags.</span>
-      </p>
     </div>
   );
 }

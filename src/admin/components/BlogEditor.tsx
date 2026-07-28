@@ -637,21 +637,6 @@ export default function BlogEditor({ blogId }: BlogEditorProps) {
               placeholder="Paste or type article main body here..."
               rows={8}
             />
-
-            {/* Tags */}
-            <div className="space-y-1.5">
-              <label className="block text-xs font-bold text-[#002B49] uppercase tracking-wider">
-                Article Tags (Comma separated)
-              </label>
-              <input
-                type="text"
-                name="tags"
-                value={formData.tags}
-                onChange={handleChange}
-                placeholder="e.g. outsourcing, advisory, finance"
-                className="block w-full px-4 py-3 bg-slate-50/50 border border-slate-200 rounded-2xl text-slate-900 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#002B49]/30 focus:border-[#002B49] focus:bg-white transition-all"
-              />
-            </div>
           </div>
         </div>
 
