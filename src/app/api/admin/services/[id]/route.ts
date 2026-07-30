@@ -169,7 +169,7 @@ export const PATCH = withApiHandler(async (req: NextRequest, { params }: { param
   });
 
   if (updatedService) {
-    revalidateCmsPaths(['/services', `/services/${updatedService.slug}`, '/']);
+    revalidateCmsPaths(['/services', `/services/${updatedService.slug}`, `/${updatedService.slug}`, '/']);
   }
 
   return apiSuccess(updatedService, 'Service updated successfully', undefined, 200);
@@ -191,7 +191,7 @@ export const DELETE = withApiHandler(async (req: NextRequest, { params }: { para
     where: { id },
   });
 
-  revalidateCmsPaths(['/services', `/services/${existingService.slug}`, '/']);
+  revalidateCmsPaths(['/services', `/services/${existingService.slug}`, `/${existingService.slug}`, '/']);
 
   return apiSuccess(null, 'Service deleted successfully', undefined, 200);
 });

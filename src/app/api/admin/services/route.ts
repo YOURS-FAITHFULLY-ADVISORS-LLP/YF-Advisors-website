@@ -138,7 +138,7 @@ export const POST = withApiHandler(async (req: NextRequest) => {
     },
   });
 
-  revalidateCmsPaths(['/services', `/services/${service.slug}`, '/']);
+  revalidateCmsPaths(['/services', `/services/${service.slug}`, `/${service.slug}`, '/']);
 
   return apiSuccess(service, 'Service created successfully', undefined, 201);
 });

@@ -332,7 +332,7 @@ export default function ServicesList() {
                     <td className="py-4 px-6 text-right whitespace-nowrap">
                       <div className="flex items-center justify-end gap-2">
                         <Link
-                          href={`/services/${service.slug}`}
+                          href={`/${service.slug}`}
                           target="_blank"
                           className="p-2 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors"
                           title="View Live Page"

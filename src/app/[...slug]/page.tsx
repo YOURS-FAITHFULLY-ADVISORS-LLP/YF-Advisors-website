@@ -20,6 +20,7 @@ import AdminContactPage from '@/src/admin/app/contact/page';
 import AdminInquiriesPage from '@/src/admin/app/inquiries/page';
 import AdminAnalyticsPage from '@/src/admin/app/analytics/page';
 import AdminHighlightsPage from '@/src/admin/app/highlights/page';
+import ServiceDetail from '@/src/app/services/[id]/page';
 
 interface DynamicRouteProps {
   params: Promise<{
@@ -99,6 +100,10 @@ export default async function DynamicRoute({ params }: DynamicRouteProps) {
         return <AdminEditTestimonialPage params={Promise.resolve({ id: slug[2] })} />;
       }
     }
+  }
+
+  if (slug.length === 1) {
+    return <ServiceDetail params={Promise.resolve({ id: slug[0] })} />;
   }
 
   notFound();
