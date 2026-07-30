@@ -127,6 +127,36 @@ export async function crawlWebsite(prisma: PrismaClient): Promise<ScannedPage[]>
           `- End-to-end field-led & last-mile execution initiatives.`;
       },
     },
+    {
+      url: '/#testimonials',
+      title: 'Client Testimonials & Feedback - YF Advisors',
+      category: 'static' as const,
+      fetchContent: async () => {
+        const testimonials = await prisma.testimonial.findMany({
+          where: { status: 'PUBLISHED' },
+        });
+        if (!testimonials || testimonials.length === 0) {
+          return `Client Testimonials & Feedback for YF Advisors:\n` +
+            `- "YF Advisors simplified our payroll and GST compliance completely." - Client Feedback\n` +
+            `- "Outstanding finance consulting and back-office audit support." - Business Partner`;
+        }
+        return `YF Advisors Client Testimonials:\n` +
+          testimonials.map((t) => `- "${t.review}" — ${t.name}, ${t.designation || ''} at ${t.company || ''} (Rating: ${t.rating}/5)`).join('\n');
+      },
+    },
+    {
+      url: '/#team',
+      title: 'Leadership & Team - YF Advisors',
+      category: 'static' as const,
+      fetchContent: async () => {
+        const teamMembers = await prisma.team.findMany({
+          where: { status: 'PUBLISHED' },
+        });
+        if (!teamMembers || teamMembers.length === 0) return 'Leadership & Expert Advisory Team at YF Advisors.';
+        return `YF Advisors Leadership & Advisory Team:\n` +
+          teamMembers.map((tm) => `• ${tm.name} (${tm.role}): ${tm.bio || tm.shortBio || ''}`).join('\n');
+      },
+    },
   ];
 
   for (const p of staticPages) {

@@ -461,7 +461,14 @@ export default function ChatWidget() {
         </div>
 
         {/* MESSAGES AREA */}
-        <div className="flex-1 overflow-y-auto p-4 md:p-5 space-y-4 md:space-y-6 bg-slate-50 min-h-0 overscroll-contain pointer-events-auto touch-pan-y focus:outline-none">
+        <div 
+          className="flex-1 overflow-y-auto p-4 md:p-5 space-y-4 md:space-y-6 bg-slate-50 min-h-0 overscroll-contain pointer-events-auto touch-pan-y focus:outline-none select-text border-t border-b border-slate-100"
+          style={{
+            WebkitOverflowScrolling: 'touch',
+            scrollbarWidth: 'thin',
+            scrollbarColor: '#00A79D #f1f5f9',
+          }}
+        >
           {messages.map((msg) => (
             <div key={msg.id} className={`flex items-end gap-2 md:gap-3 ${msg.role === "user" ? "flex-row-reverse" : "flex-row"} group`}>
               <div className={`w-7 h-7 md:w-8 md:h-8 rounded-full flex items-center justify-center shrink-0 shadow-sm border border-black/5 ${msg.role === "user" ? "bg-gray-900 text-white" : "bg-white text-[#00A79D]"}`}>

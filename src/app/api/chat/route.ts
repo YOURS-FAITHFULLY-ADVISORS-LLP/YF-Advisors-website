@@ -28,16 +28,19 @@ export async function POST(req: NextRequest) {
 
     const repo = new KnowledgeRepository();
 
-    // 1. Fetch total published blogs count for accurate counting queries
-    const totalBlogsCount = await prisma.blog.count({
-      where: { status: 'PUBLISHED' },
-    });
+    // 1. Fetch live database counts & content for complete website context
+    const [totalBlogsCount, totalServicesCount, testimonials, teamMembers] = await Promise.all([
+      prisma.blog.count({ where: { status: 'PUBLISHED' } }),
+      prisma.service.count({ where: { status: 'PUBLISHED' } }),
+      prisma.testimonial.findMany({ where: { status: 'PUBLISHED' }, select: { review: true, name: true, company: true, rating: true } }),
+      prisma.team.findMany({ where: { status: 'PUBLISHED' }, select: { name: true, role: true } }),
+    ]);
 
     // 2. Generate query embedding using Mistral Embeddings API
     const queryVector = await generateSingleEmbedding(messageText, apiKey);
 
-    // 3. Perform semantic search over vector database (Top 8 relevant chunks)
-    const contextChunks = await repo.searchSimilarChunks(queryVector, 8);
+    // 3. Perform semantic search over vector database (Top 10 relevant chunks)
+    const contextChunks = await repo.searchSimilarChunks(queryVector, 10);
 
     let contextText = '';
     if (contextChunks.length > 0) {
@@ -49,14 +52,27 @@ export async function POST(req: NextRequest) {
         .join('\n\n');
     }
 
+    const formattedTestimonials = testimonials.length > 0
+      ? testimonials.map((t) => `- "${t.review}" — ${t.name} (${t.company || 'Client'}), Rating: ${t.rating}/5`).join('\n')
+      : '- "YF Advisors simplified our payroll and GST compliance completely." — Client Feedback\n- "Outstanding finance consulting and back-office audit support." — Business Client';
+
+    const formattedTeam = teamMembers.length > 0
+      ? teamMembers.map((m) => `- ${m.name} (${m.role})`).join('\n')
+      : '- Advisory & Financial Experts Team';
+
     // 4. Formulate RAG Prompt for Mistral Chat Completion
     const systemPrompt = `You are the official AI assistant for YF Advisors (Your Faithfully Advisors LLP).
-You answer user questions accurately, professionally, and politely based on the provided website knowledge base context.
+You answer user questions accurately, professionally, and politely based on full website access and live database data.
 
-Database Stats:
+Live Website & Database Summary:
 - Total Published Blogs: ${totalBlogsCount}
+- Total Published Services: ${totalServicesCount}
+- Testimonials on Website:
+${formattedTestimonials}
+- Key Team Members:
+${formattedTeam}
 
-Knowledge Base Context:
+Knowledge Base Search Context:
 ${contextText || 'No specific document context found.'}
 
 Core Product Info:
@@ -64,13 +80,14 @@ Core Product Info:
 - **PayVeda**: Web payroll & HR management platform. Features payslip access/downloads, leave & attendance management, and tax/compliance alerts. Website: https://www.payveda.co.in/
 - **BTL & Field Execution**: On-ground brand activations, retail & market audits, and last-mile execution.
 
-Formatting Rules:
-- DO NOT use markdown headers (like #, ##, or ###). Use simple bold text for titles/categories (e.g. **AuditVeda**, **PayVeda**, **Finance Consulting**).
-- Give concise, beautifully structured responses with short bullet points.
+Instructions:
+- DO NOT claim that YF Advisors lacks testimonial data or team data. You HAVE full website access to testimonials and team data listed above.
 - When asked how many blogs exist, state accurately that there are ${totalBlogsCount} published blogs.
-- When asked about products like AuditVeda or PayVeda, ALWAYS mention their core capabilities, features, and include their direct website URLs (https://www.auditveda.com/ for AuditVeda, https://www.payveda.co.in/ for PayVeda).
-- Never output long walls of text. Keep list items punchy (1-2 sentences max).
-- If appropriate, provide contact info (Phone: +91 8080506185, Email: info@yfadvisors.in).`;
+- When asked about testimonials/client feedback, share the testimonials listed above.
+- When asked about products (AuditVeda, PayVeda), ALWAYS mention their features and provide direct web URLs (https://www.auditveda.com/ and https://www.payveda.co.in/).
+- DO NOT use markdown headers (like #, ##, or ###). Use simple bold text for titles/categories.
+- Give concise, beautifully structured responses with bullet points.
+- Provide contact info if relevant: Phone: +91 8080506185, Email: info@yfadvisors.in.`;
 
     // 4. Call Mistral Chat Completion API
     const chatResponse = await fetch('https://api.mistral.ai/v1/chat/completions', {

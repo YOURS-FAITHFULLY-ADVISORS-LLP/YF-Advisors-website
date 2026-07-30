@@ -30,7 +30,7 @@ const Blog = () => {
     let isMounted = true;
     async function fetchBlogs() {
       try {
-        const res = await fetch('/api/admin/blogs?status=PUBLISHED');
+        const res = await fetch('/api/admin/blogs?status=PUBLISHED&limit=100');
         if (res.ok) {
           const json = await res.json();
           if (isMounted && json.success && Array.isArray(json.data) && json.data.length > 0) {
