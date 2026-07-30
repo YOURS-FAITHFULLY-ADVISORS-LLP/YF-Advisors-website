@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { generateSingleEmbedding } from '@/scripts/knowledge/embedding';
 import { KnowledgeRepository } from '@/scripts/knowledge/repository';
+import { prisma } from '@/src/lib/prisma';
 
 export const dynamic = 'force-dynamic';
 
@@ -27,11 +28,16 @@ export async function POST(req: NextRequest) {
 
     const repo = new KnowledgeRepository();
 
-    // 1. Generate query embedding using Mistral Embeddings API
+    // 1. Fetch total published blogs count for accurate counting queries
+    const totalBlogsCount = await prisma.blog.count({
+      where: { status: 'PUBLISHED' },
+    });
+
+    // 2. Generate query embedding using Mistral Embeddings API
     const queryVector = await generateSingleEmbedding(messageText, apiKey);
 
-    // 2. Perform semantic search over vector database (Top 4 relevant chunks)
-    const contextChunks = await repo.searchSimilarChunks(queryVector, 4);
+    // 3. Perform semantic search over vector database (Top 8 relevant chunks)
+    const contextChunks = await repo.searchSimilarChunks(queryVector, 8);
 
     let contextText = '';
     if (contextChunks.length > 0) {
@@ -43,9 +49,12 @@ export async function POST(req: NextRequest) {
         .join('\n\n');
     }
 
-    // 3. Formulate RAG Prompt for Mistral Chat Completion
+    // 4. Formulate RAG Prompt for Mistral Chat Completion
     const systemPrompt = `You are the official AI assistant for YF Advisors (Your Faithfully Advisors LLP).
 You answer user questions accurately, professionally, and politely based on the provided website knowledge base context.
+
+Database Stats:
+- Total Published Blogs: ${totalBlogsCount}
 
 Knowledge Base Context:
 ${contextText || 'No specific document context found.'}
@@ -58,6 +67,7 @@ Core Product Info:
 Formatting Rules:
 - DO NOT use markdown headers (like #, ##, or ###). Use simple bold text for titles/categories (e.g. **AuditVeda**, **PayVeda**, **Finance Consulting**).
 - Give concise, beautifully structured responses with short bullet points.
+- When asked how many blogs exist, state accurately that there are ${totalBlogsCount} published blogs.
 - When asked about products like AuditVeda or PayVeda, ALWAYS mention their core capabilities, features, and include their direct website URLs (https://www.auditveda.com/ for AuditVeda, https://www.payveda.co.in/ for PayVeda).
 - Never output long walls of text. Keep list items punchy (1-2 sentences max).
 - If appropriate, provide contact info (Phone: +91 8080506185, Email: info@yfadvisors.in).`;

@@ -83,8 +83,13 @@ async function apiCall(endpoint: string, options: RequestInit = {}) {
   }
 }// --- FORMATTED MESSAGE RENDERER ---
 function parseBoldAndLinks(text: string): React.ReactNode {
-  const parts = text.split(/(\*\*.*?\*\*)/g);
+  // Regex matches markdown links [Text](URL), raw URLs, or bold text **Bold**
+  const regex = /(\[[^\]]+\]\([^)]+\)|https?:\/\/[^\s]+|\*\*.*?\*\*)/g;
+  const parts = text.split(regex);
+
   return parts.map((part, i) => {
+    if (!part) return null;
+
     if (part.startsWith('**') && part.endsWith('**')) {
       const boldText = part.slice(2, -2);
       return (
@@ -93,6 +98,40 @@ function parseBoldAndLinks(text: string): React.ReactNode {
         </strong>
       );
     }
+
+    if (part.startsWith('[') && part.includes('](') && part.endsWith(')')) {
+      const match = part.match(/^\[([^\]]+)\]\(([^)]+)\)$/);
+      if (match) {
+        const linkText = match[1];
+        const url = match[2];
+        return (
+          <a
+            key={i}
+            href={url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-[#00A79D] font-medium underline underline-offset-2 hover:text-teal-700 transition-colors"
+          >
+            {linkText}
+          </a>
+        );
+      }
+    }
+
+    if (/^https?:\/\/[^\s]+$/.test(part)) {
+      return (
+        <a
+          key={i}
+          href={part}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-[#00A79D] font-medium underline underline-offset-2 hover:text-teal-700 transition-colors break-all"
+        >
+          {part}
+        </a>
+      );
+    }
+
     return part;
   });
 }
@@ -422,7 +461,7 @@ export default function ChatWidget() {
         </div>
 
         {/* MESSAGES AREA */}
-        <div className="flex-1 overflow-y-auto p-4 md:p-5 space-y-4 md:space-y-6 bg-slate-50 scroll-smooth min-h-0 overscroll-contain">
+        <div className="flex-1 overflow-y-auto p-4 md:p-5 space-y-4 md:space-y-6 bg-slate-50 min-h-0 overscroll-contain pointer-events-auto touch-pan-y focus:outline-none">
           {messages.map((msg) => (
             <div key={msg.id} className={`flex items-end gap-2 md:gap-3 ${msg.role === "user" ? "flex-row-reverse" : "flex-row"} group`}>
               <div className={`w-7 h-7 md:w-8 md:h-8 rounded-full flex items-center justify-center shrink-0 shadow-sm border border-black/5 ${msg.role === "user" ? "bg-gray-900 text-white" : "bg-white text-[#00A79D]"}`}>
