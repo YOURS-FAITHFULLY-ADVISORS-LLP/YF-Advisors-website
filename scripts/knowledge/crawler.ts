@@ -154,7 +154,7 @@ export async function crawlWebsite(prisma: PrismaClient): Promise<ScannedPage[]>
         });
         if (!teamMembers || teamMembers.length === 0) return 'Leadership & Expert Advisory Team at YF Advisors.';
         return `YF Advisors Leadership & Advisory Team:\n` +
-          teamMembers.map((tm) => `• ${tm.name} (${tm.role}): ${tm.bio || tm.shortBio || ''}`).join('\n');
+          teamMembers.map((tm) => `• ${tm.name} (${tm.designation}): ${tm.bio || ''}`).join('\n');
       },
     },
   ];
