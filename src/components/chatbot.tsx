@@ -462,11 +462,11 @@ export default function ChatWidget() {
 
         {/* MESSAGES AREA */}
         <div 
-          className="flex-1 overflow-y-auto p-4 md:p-5 space-y-4 md:space-y-6 bg-slate-50 min-h-0 overscroll-contain pointer-events-auto touch-pan-y focus:outline-none select-text border-t border-b border-slate-100"
+          className="flex-1 overflow-y-auto no-scrollbar p-4 md:p-5 space-y-4 md:space-y-6 bg-slate-50 min-h-0 overscroll-contain pointer-events-auto touch-pan-y focus:outline-none select-text border-t border-b border-slate-100"
           style={{
             WebkitOverflowScrolling: 'touch',
-            scrollbarWidth: 'thin',
-            scrollbarColor: '#00A79D #f1f5f9',
+            scrollbarWidth: 'none',
+            msOverflowStyle: 'none',
           }}
         >
           {messages.map((msg) => (
