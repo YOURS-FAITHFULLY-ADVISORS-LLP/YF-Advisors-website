@@ -93,6 +93,40 @@ export async function crawlWebsite(prisma: PrismaClient): Promise<ScannedPage[]>
         return `YF Advisors Insights & Articles:\n` + blogs.map((b) => `• ${b.title}: ${b.cardDescription}`).join('\n');
       },
     },
+    {
+      url: '/#products',
+      title: 'Digital & Field Products (AuditVeda, PayVeda, BTL) - YF Advisors',
+      category: 'static' as const,
+      fetchContent: async () => {
+        return `YF Advisors Digital & Field Solutions Products:\n\n` +
+          `Product 1: AuditVeda\n` +
+          `Tagline: Audit Management Simplified\n` +
+          `Type: Mobile App\n` +
+          `Description: A comprehensive solution designed to streamline your audit processes. Track compliance, manage checklists, and generate real-time reports directly from your device.\n` +
+          `Key Features:\n` +
+          `- Real-time Audit Tracking\n` +
+          `- Digital Checklists & Evidence\n` +
+          `- Instant Report Generation\n` +
+          `Official Website & Link: https://www.auditveda.com/\n\n` +
+          `Product 2: PayVeda\n` +
+          `Tagline: Payroll in Your Pocket\n` +
+          `Type: Web Platform\n` +
+          `Description: Experience seamless payroll and HR management on the web. PayVeda empowers employees and employers with instant access to payslips, leave management, and attendance tracking.\n` +
+          `Key Features:\n` +
+          `- View & Download Payslips\n` +
+          `- Leave & Attendance Management\n` +
+          `- Tax & Compliance Alerts\n` +
+          `Official Website & Link: https://www.payveda.co.in/\n\n` +
+          `Product 3: BTL & Field Execution\n` +
+          `Tagline: Last-Mile Excellence & On-Ground Activation\n` +
+          `Type: Field Execution\n` +
+          `Description: Comprehensive on-ground activations and brand promotions designed to recreate real-world conditions for last-mile excellence and operational intelligence.\n` +
+          `Key Features:\n` +
+          `- On-ground activations & brand promotions\n` +
+          `- Retail and market audits\n` +
+          `- End-to-end field-led & last-mile execution initiatives.`;
+      },
+    },
   ];
 
   for (const p of staticPages) {
