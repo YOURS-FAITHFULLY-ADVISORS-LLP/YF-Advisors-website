@@ -66,8 +66,8 @@ export default function BlogHeroSlider({
               src={imgUrl}
               alt="Hero Ambient Fill"
               fill
-              unoptimized
-              className="object-cover object-center blur-3xl scale-125 opacity-60 brightness-75"
+              sizes="(max-width: 768px) 100vw, 50vw"
+              className="object-cover object-center blur-xl scale-110 opacity-40 brightness-75"
             />
           </div>
 
@@ -77,8 +77,8 @@ export default function BlogHeroSlider({
               src={imgUrl}
               alt={`${title} hero ${index + 1}`}
               fill
+              sizes="(max-width: 768px) 100vw, 1200px"
               priority={index === 0}
-              unoptimized
               className="object-contain object-center drop-shadow-2xl transition-all duration-700"
             />
           </div>

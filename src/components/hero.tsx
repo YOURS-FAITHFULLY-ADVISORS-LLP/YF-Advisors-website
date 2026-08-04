@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import {
   ArrowUpRight,
   PlayCircle,
@@ -311,10 +312,12 @@ export default function Hero({ initialData }: { initialData?: HeroCMSData | null
               className="relative w-64 h-64 sm:w-[380px] sm:h-[380px] rounded-full bg-gradient-to-tr from-teal-50/80 via-white to-blue-50/80 border border-teal-100/80 shadow-2xl flex items-center justify-center z-10 overflow-hidden group select-none pointer-events-none"
             >
               {/* 3D Ecosystem Render Image (Non-Draggable) */}
-              <img
-                src="/hero-3d-ecosystem.png"
+              <Image
+                src="/hero-3d-ecosystem.webp"
                 alt="YF Advisors 3D Business Ecosystem"
-                draggable={false}
+                width={380}
+                height={380}
+                priority
                 className="w-full h-full object-contain pointer-events-none select-none p-2 transform group-hover:scale-105 transition-transform duration-700"
               />
             </motion.div>

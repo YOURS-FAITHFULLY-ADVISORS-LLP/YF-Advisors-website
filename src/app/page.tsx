@@ -1,15 +1,17 @@
+import dynamic from 'next/dynamic';
 import Navbar from '@/src/components/navbar';
 import Hero from '@/src/components/hero';
 import StatsSection from '@/src/components/StatSection';
 import ServicesSection from '../components/services';
-import Testimonials from '../components/testimonial';
-import TeamSection from '../components/meet-the-team';
 import AboutUs from '../components/about-us'; 
-import Products from '../components/product';
-import CompanyHighlights from '../components/company-highlights';
-import ContactChat from '../components/contact';
 import Footer from '../components/footer';
 import { getHomepageData } from '@/src/lib/cms-server';
+
+const Testimonials = dynamic(() => import('../components/testimonial'));
+const TeamSection = dynamic(() => import('../components/meet-the-team'));
+const Products = dynamic(() => import('../components/product'));
+const CompanyHighlights = dynamic(() => import('../components/company-highlights'));
+const ContactChat = dynamic(() => import('../components/contact'));
 
 export default async function Home() {
   const homepageData = await getHomepageData();

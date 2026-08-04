@@ -175,11 +175,9 @@ const Card = ({ member }: { member: any }) => {
                 <Image
                   src={member.image}
                   alt={member.name}
-                  width={100}
-                  height={100}
+                  width={110}
+                  height={110}
                   className="profile-img"
-                  priority
-                  unoptimized
                 />
               </div>
               <strong className="name-text">{member.name}</strong>
@@ -299,6 +297,9 @@ const StyledWrapper = styled.div`
       var(--primary),
       transparent
     );
+  }
+
+  .card:hover .back::before {
     animation: rotation_481 6000ms infinite linear;
   }
 

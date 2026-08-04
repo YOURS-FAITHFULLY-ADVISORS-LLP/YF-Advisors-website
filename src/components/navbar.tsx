@@ -126,7 +126,7 @@ const Navbar = () => {
           >
             <div className="relative h-10 w-14 md:h-14 md:w-20 shrink-0">
               <Image
-                src="/logo.png"
+                src="/logo.webp"
                 alt="Yours Faithfully Advisors"
                 fill
                 className="object-contain"
@@ -224,7 +224,7 @@ const Navbar = () => {
                 <div className="flex items-center gap-2.5">
                   <div className="relative h-9 w-12 shrink-0">
                     <Image
-                      src="/logo.png"
+                      src="/logo.webp"
                       alt="Yours Faithfully Advisors"
                       fill
                       className="object-contain"

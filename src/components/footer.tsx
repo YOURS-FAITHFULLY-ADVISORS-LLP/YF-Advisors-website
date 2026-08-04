@@ -97,17 +97,21 @@ export default function Footer() {
             </p>
             {/* Social Icons */}
             <div className="flex gap-3">
-              {dynamicSocialLinks.map(({ icon: Icon, url }, idx) => (
-                <a
-                  key={idx}
-                  href={url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="w-10 h-10 flex items-center justify-center rounded-full bg-white text-slate-500 border border-slate-200 hover:bg-[#00A79D] hover:text-white hover:border-[#00A79D] transition-all duration-300 shadow-sm"
-                >
-                  <Icon size={18} />
-                </a>
-              ))}
+              {dynamicSocialLinks.map(({ icon: Icon, url }, idx) => {
+                const labelName = url.includes('linkedin') ? 'LinkedIn' : url.includes('youtube') ? 'YouTube' : url.includes('instagram') ? 'Instagram' : url.includes('facebook') ? 'Facebook' : 'Social Media';
+                return (
+                  <a
+                    key={idx}
+                    href={url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={`Visit YF Advisors on ${labelName}`}
+                    className="w-10 h-10 flex items-center justify-center rounded-full bg-white text-slate-500 border border-slate-200 hover:bg-[#00A79D] hover:text-white hover:border-[#00A79D] transition-all duration-300 shadow-sm"
+                  >
+                    <Icon size={18} />
+                  </a>
+                );
+              })}
             </div>
           </div>
 

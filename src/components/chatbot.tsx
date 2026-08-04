@@ -420,6 +420,7 @@ export default function ChatWidget() {
           <div className="flex gap-1 relative z-10 items-center">
             <button 
               onClick={handleManualRefresh} 
+              aria-label="Refresh conversation"
               className={`text-white/70 hover:text-white hover:bg-white/10 p-2 rounded-full transition-all duration-200 cursor-pointer ${isLoading ? 'animate-spin' : ''}`} 
               title="Refresh"
             >
@@ -429,6 +430,7 @@ export default function ChatWidget() {
             <div className="relative" ref={dropdownRef}>
                 <button 
                   onClick={() => setIsDropdownOpen(!isDropdownOpen)} 
+                  aria-label="Chat options"
                   className="text-white/70 hover:text-white hover:bg-white/10 p-2 rounded-full transition-all duration-200 cursor-pointer"
                 >
                   <MoreVertical size={20} />
@@ -454,7 +456,7 @@ export default function ChatWidget() {
                 )}
             </div>
 
-            <button onClick={() => setIsOpen(false)} className="text-white/70 hover:text-white hover:bg-white/10 p-2 rounded-full transition-all duration-200 md:hidden cursor-pointer">
+            <button onClick={() => setIsOpen(false)} aria-label="Minimize chatbot" className="text-white/70 hover:text-white hover:bg-white/10 p-2 rounded-full transition-all duration-200 md:hidden cursor-pointer">
               <ChevronDown size={24} />
             </button>
           </div>
@@ -550,6 +552,7 @@ export default function ChatWidget() {
       <button
         ref={toggleBtnRef}
         onClick={() => setIsOpen(true)}
+        aria-label="Open client support chat"
         className={`fixed bottom-6 right-6 z-9990 group flex items-center justify-center w-14 h-14 md:w-16 md:h-16 rounded-[1.2rem] shadow-xl shadow-[#00A79D]/30 transition-all duration-500 bg-[#00A79D] hover:bg-teal-700 hover:-translate-y-1 cursor-pointer ${isOpen ? "scale-0 opacity-0 pointer-events-none rotate-90" : "scale-100 opacity-100 rotate-0"}`}
       >
         <MessageCircle className="text-white w-7 h-7 md:w-8 md:h-8 transition-transform duration-500 group-hover:scale-110" strokeWidth={2} />

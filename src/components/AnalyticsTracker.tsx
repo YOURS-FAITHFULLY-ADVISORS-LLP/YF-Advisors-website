@@ -111,9 +111,11 @@ function TrackerContent() {
 
     window.addEventListener('sectionchange', handleSectionChange);
 
-    // Track Page View on Route Change
+    // Track Page View on Route Change (deferred 3s to keep critical load path clear)
     entryTimeRef.current = Date.now();
-    sendEvent('page_view');
+    const initialTrackTimer = setTimeout(() => {
+      sendEvent('page_view');
+    }, 3000);
 
     // Setup CTA Button Click Event Listener
     const handleClick = (e: MouseEvent) => {
@@ -159,6 +161,7 @@ function TrackerContent() {
     window.addEventListener('beforeunload', handleUnload);
 
     return () => {
+      clearTimeout(initialTrackTimer);
       if (sectionDebounceTimer) clearTimeout(sectionDebounceTimer);
       window.removeEventListener('sectionchange', handleSectionChange);
       window.removeEventListener('click', handleClick);
