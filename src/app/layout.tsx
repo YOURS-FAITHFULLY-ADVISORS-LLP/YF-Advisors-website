@@ -1,15 +1,11 @@
 import type { Metadata, Viewport } from "next";
 import { Playfair_Display, Montserrat, Geist_Mono, Bodoni_Moda, Cormorant_Garamond } from "next/font/google";
-import dynamic from "next/dynamic";
 import "./globals.css";
 import StyledComponentsRegistry from "./registry";
 import AnalyticsTracker from "@/src/components/AnalyticsTracker";
 import SectionRouteObserver from "@/src/components/SectionRouteObserver";
 import SmoothScrolling from "@/src/components/SmoothScrolling";
-
-const ChatWidget = dynamic(() => import("@/src/components/chatbot"), {
-  ssr: false,
-});
+import ClientChatWidget from "@/src/components/ClientChatWidget";
 
 const playfair = Playfair_Display({
   variable: "--font-playfair",
@@ -75,7 +71,7 @@ export default function RootLayout({
           {/* WRAP CHILDREN WITH THE REGISTRY COMPONENT */}
           <StyledComponentsRegistry>
             {children}
-            <ChatWidget />
+            <ClientChatWidget />
           </StyledComponentsRegistry>
         </SmoothScrolling>
       </body>
