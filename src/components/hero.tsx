@@ -191,15 +191,10 @@ export default function Hero({ initialData }: { initialData?: HeroCMSData | null
           {/* ================= LEFT COLUMN: TYPOGRAPHY & CTA (Lifted Up) ================= */}
           <div className="lg:col-span-6 space-y-6 text-left -mt-4 lg:-mt-10">
             {/* Eyebrow Tag */}
-            <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.5 }}
-              className="inline-flex items-center gap-2 text-xs font-bold tracking-[0.22em] text-[#00A79D] uppercase"
-            >
+            <div className="inline-flex items-center gap-2 text-xs font-bold tracking-[0.22em] text-[#00A79D] uppercase">
               <span className="w-6 h-[2px] bg-[#00A79D] rounded-full" />
               <span>OUR EXPERTISE. YOUR GROWTH</span>
-            </motion.div>
+            </div>
 
             {/* Main Headline */}
             <h1
@@ -210,22 +205,12 @@ export default function Hero({ initialData }: { initialData?: HeroCMSData | null
             </h1>
 
             {/* Paragraph Subtitle */}
-            <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.2 }}
-              className="text-slate-600 text-base sm:text-lg leading-relaxed max-w-xl font-medium pt-1"
-            >
+            <p className="text-slate-600 text-base sm:text-lg leading-relaxed max-w-xl font-medium pt-1">
               {description}
-            </motion.p>
+            </p>
 
             {/* CTA Buttons */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.3 }}
-              className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 pt-4"
-            >
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 pt-4">
               {/* Connect Now Button */}
               <Link
                 href={buttonLink}
@@ -248,7 +233,7 @@ export default function Hero({ initialData }: { initialData?: HeroCMSData | null
                 <span>Our Services</span>
                 <PlayCircle className="w-4 h-4 text-slate-700 group-hover:scale-110 transition-transform" />
               </Link>
-            </motion.div>
+            </div>
           </div>
 
           {/* ================= RIGHT COLUMN: ISOMETRIC ECOSYSTEM ORBIT (Shifted Down) ================= */}
@@ -300,11 +285,8 @@ export default function Hero({ initialData }: { initialData?: HeroCMSData | null
 
             {/* Center Premium 3D Isometric Ecosystem Illustration (Floating, Non-Draggable) */}
             <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1, y: [0, -10, 0] }}
+              animate={{ y: [0, -10, 0] }}
               transition={{
-                opacity: { duration: 0.8 },
-                scale: { duration: 0.8 },
                 y: { duration: 5, repeat: Infinity, ease: "easeInOut" },
               }}
               className="relative w-64 h-64 sm:w-[380px] sm:h-[380px] rounded-full bg-gradient-to-tr from-teal-50/80 via-white to-blue-50/80 border border-teal-100/80 shadow-2xl flex items-center justify-center z-10 overflow-hidden group select-none pointer-events-none"
@@ -316,6 +298,8 @@ export default function Hero({ initialData }: { initialData?: HeroCMSData | null
                 width={380}
                 height={380}
                 priority
+                fetchPriority="high"
+                sizes="(max-width: 640px) 256px, 380px"
                 className="w-full h-full object-contain pointer-events-none select-none p-2 transform group-hover:scale-105 transition-transform duration-700"
               />
             </motion.div>
