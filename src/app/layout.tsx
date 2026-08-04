@@ -1,11 +1,17 @@
 import type { Metadata, Viewport } from "next";
 import { Playfair_Display, Montserrat } from "next/font/google";
 import "./globals.css";
+import dynamic from "next/dynamic";
 import StyledComponentsRegistry from "./registry";
-import AnalyticsTracker from "@/src/components/AnalyticsTracker";
-import SectionRouteObserver from "@/src/components/SectionRouteObserver";
 import SmoothScrolling from "@/src/components/SmoothScrolling";
 import ClientChatWidget from "@/src/components/ClientChatWidget";
+
+const AnalyticsTracker = dynamic(
+  () => import("@/src/components/AnalyticsTracker")
+);
+const SectionRouteObserver = dynamic(
+  () => import("@/src/components/SectionRouteObserver")
+);
 
 const playfair = Playfair_Display({
   variable: "--font-playfair",
@@ -111,13 +117,6 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-        <link
-          rel="preload"
-          href="/hero-3d-ecosystem.webp"
-          as="image"
-          type="image/webp"
-          fetchPriority="high"
-        />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}

@@ -1,9 +1,10 @@
 import dynamic from 'next/dynamic';
 import Navbar from '@/src/components/navbar';
 import Hero from '@/src/components/hero';
-import StatsSection from '@/src/components/StatSection';
 import Footer from '../components/footer';
 import { getHomepageData } from '@/src/lib/cms-server';
+
+const StatsSection = dynamic(() => import('@/src/components/StatSection'));
 
 const AboutUs = dynamic(() => import('../components/about-us'));
 const ServicesSection = dynamic(() => import('../components/services'));

@@ -71,3 +71,9 @@ button, input, select, textarea {
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
+
+/* Hero floating animation — CSS-only for instant LCP paint */
+@keyframes heroFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
