@@ -138,6 +138,12 @@ function computeItemBaseRotation(offsetX: number, offsetY: number, sizeX: number
   return { rotateX, rotateY };
 }
 
+function getOptimizedImgUrl(src: string): string {
+  if (!src) return src;
+  if (src.startsWith('/_next/image')) return src;
+  return `/_next/image?url=${encodeURIComponent(src)}&w=640&q=75`;
+}
+
 export default function DomeGallery({
   images = DEFAULT_IMAGES,
   fit = 0.5,
@@ -865,7 +871,7 @@ export default function DomeGallery({
                     }}
                   >
                     <img
-                      src={it.src}
+                      src={getOptimizedImgUrl(it.src)}
                       loading="lazy"
                       decoding="async"
                       fetchPriority="low"

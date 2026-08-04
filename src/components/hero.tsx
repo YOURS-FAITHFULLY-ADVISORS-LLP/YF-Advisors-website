@@ -58,6 +58,7 @@ export default function Hero({ initialData }: { initialData?: HeroCMSData | null
   const lenis = useLenis();
 
   useEffect(() => {
+    if (initialData) return;
     let isMounted = true;
     async function loadCMSData() {
       try {
@@ -76,7 +77,7 @@ export default function Hero({ initialData }: { initialData?: HeroCMSData | null
     return () => {
       isMounted = false;
     };
-  }, []);
+  }, [initialData]);
 
   const currentData = data || DEFAULT_HERO_DATA;
   const description = currentData.heroDescription || DEFAULT_HERO_DATA.heroDescription!;
@@ -201,15 +202,12 @@ export default function Hero({ initialData }: { initialData?: HeroCMSData | null
             </motion.div>
 
             {/* Main Headline */}
-            <motion.h1
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.1 }}
+            <h1
               className="text-4xl sm:text-5xl lg:text-[58px] leading-[1.12] font-serif font-extrabold text-[#0F172A] tracking-tight"
               suppressHydrationWarning
             >
               {renderFormattedTitle(rawTitle)}
-            </motion.h1>
+            </h1>
 
             {/* Paragraph Subtitle */}
             <motion.p
