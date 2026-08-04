@@ -122,6 +122,7 @@ const Navbar = () => {
           <Link
             href="/"
             onClick={(e) => handleLinkClick(e, "/")}
+            aria-label="YF Advisors Home"
             className="group relative z-50 flex items-center gap-2.5 py-2 shrink-0 cursor-pointer"
           >
             <div className="relative h-10 w-14 md:h-14 md:w-20 shrink-0">
@@ -134,7 +135,7 @@ const Navbar = () => {
               />
             </div>
 
-            <span className="font-bodoni italic text-xl md:text-2xl font-bold tracking-tight select-none whitespace-nowrap">
+            <span className="font-serif italic text-xl md:text-2xl font-bold tracking-tight select-none whitespace-nowrap">
               <span className="text-[#2E5E7E]">YF</span>{" "}
               <span className="text-[#0F172A]">Advisors</span>
               <span className="text-[#C9A227] not-italic ml-[1px]">.</span>

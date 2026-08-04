@@ -119,12 +119,14 @@ const BTLCarousel = ({ images }: { images: string[] }) => {
 
         <button 
           onClick={prevSlide}
+          aria-label="Previous Slide"
           className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/80 p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity shadow-md hover:bg-white z-10"
         >
           <ChevronLeft size={24} className="text-[#002B49]" />
         </button>
         <button 
           onClick={nextSlide}
+          aria-label="Next Slide"
           className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/80 p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity shadow-md hover:bg-white z-10"
         >
           <ChevronRight size={24} className="text-[#002B49]" />

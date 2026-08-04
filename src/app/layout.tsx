@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Playfair_Display, Montserrat, Bodoni_Moda } from "next/font/google";
+import { Playfair_Display, Montserrat } from "next/font/google";
 import "./globals.css";
 import StyledComponentsRegistry from "./registry";
 import AnalyticsTracker from "@/src/components/AnalyticsTracker";
@@ -9,14 +9,6 @@ import ClientChatWidget from "@/src/components/ClientChatWidget";
 
 const playfair = Playfair_Display({
   variable: "--font-playfair",
-  subsets: ["latin"],
-  weight: ["700"],
-  style: ["normal", "italic"],
-  display: "swap",
-});
-
-const bodoni = Bodoni_Moda({
-  variable: "--font-bodoni",
   subsets: ["latin"],
   weight: ["700"],
   style: ["normal", "italic"],
@@ -125,7 +117,7 @@ export default function RootLayout({
         />
       </head>
       <body
-        className={`${playfair.variable} ${bodoni.variable} ${montserrat.variable} antialiased`}
+        className={`${playfair.variable} ${montserrat.variable} antialiased`}
       >
         <SmoothScrolling>
           <AnalyticsTracker />

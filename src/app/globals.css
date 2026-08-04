@@ -19,7 +19,6 @@ html.lenis {
   --color-foreground: var(--foreground);
   --font-sans: var(--font-montserrat), sans-serif;
   --font-serif: var(--font-playfair), serif;
-  --font-bodoni: var(--font-bodoni), serif;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -45,10 +44,6 @@ body h1, body h2, body h3 {
 
 .font-serif {
   font-family: var(--font-playfair), serif !important;
-}
-
-.font-bodoni {
-  font-family: var(--font-bodoni), serif !important;
 }
 
 /* Nested elements in headings should inherit the serif font */
