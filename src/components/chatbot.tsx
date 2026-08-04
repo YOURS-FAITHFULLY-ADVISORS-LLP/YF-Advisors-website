@@ -384,9 +384,9 @@ export default function ChatWidget() {
       <div 
         ref={widgetRef}
         className={`
-          fixed z-9999 flex flex-col overflow-hidden bg-white/95 backdrop-blur-md shadow-2xl border border-white/20 ring-1 ring-black/5 transition-all duration-300 ease-in-out
+          fixed z-9999 flex flex-col overflow-hidden bg-white/95 shadow-2xl border border-white/20 ring-1 ring-black/5 transition-all duration-300 ease-in-out
           ${isOpen 
-            ? "opacity-100 pointer-events-auto translate-y-0 scale-100" 
+            ? "opacity-100 pointer-events-auto translate-y-0 scale-100 backdrop-blur-md" 
             : "opacity-0 pointer-events-none translate-y-10 scale-95"
           }
           /* Mobile: Full Screen, Dynamic Height */

@@ -17,10 +17,20 @@ const Navbar = () => {
   const lenis = useLenis();
 
   useEffect(() => {
+    let ticking = false;
     const handleScroll = () => {
-      setScrolled(window.scrollY > 20);
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          setScrolled((prev) => {
+            const isScrolledNow = window.scrollY > 20;
+            return prev !== isScrolledNow ? isScrolledNow : prev;
+          });
+          ticking = false;
+        });
+        ticking = true;
+      }
     };
-    window.addEventListener("scroll", handleScroll);
+    window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
@@ -37,7 +47,7 @@ const Navbar = () => {
     const handleResize = () => {
       if (window.innerWidth >= 1024) setIsMobileMenuOpen(false);
     };
-    window.addEventListener("resize", handleResize);
+    window.addEventListener("resize", handleResize, { passive: true });
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
@@ -95,8 +105,8 @@ const Navbar = () => {
         transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
         className={`fixed top-0 z-50 w-full transition-all duration-300 ${
           scrolled 
-            ? "py-2 bg-white/85 backdrop-blur-xl shadow-md border-b border-slate-200/50" 
-            : "py-3 md:py-4 bg-white/70 backdrop-blur-lg"
+            ? "py-2 bg-white/95 backdrop-blur-md shadow-md border-b border-slate-200/50" 
+            : "py-3 md:py-4 bg-white/80 backdrop-blur-sm"
         }`}
       >
         <div className="max-w-7xl mx-auto px-4 md:px-6 flex items-center justify-between gap-3">

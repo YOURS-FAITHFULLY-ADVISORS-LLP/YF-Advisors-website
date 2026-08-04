@@ -179,6 +179,7 @@ export default function DomeGallery({
   const movedRef = useRef(false);
   const inertiaRAF = useRef<number | null>(null);
   const pointerTypeRef = useRef<'mouse' | 'pen' | 'touch'>('mouse');
+  const gestureIntentRef = useRef<'horizontal' | 'vertical' | null>(null);
   const tapTargetRef = useRef<HTMLElement | null>(null);
   const openingRef = useRef(false);
   const openStartedAtRef = useRef(0);
@@ -345,8 +346,7 @@ export default function DomeGallery({
 
         const evt = event as PointerEvent;
         pointerTypeRef.current = (evt.pointerType as any) || 'mouse';
-        if (pointerTypeRef.current === 'touch') evt.preventDefault();
-        if (pointerTypeRef.current === 'touch') lockScroll();
+        gestureIntentRef.current = null;
         draggingRef.current = true;
         cancelTapRef.current = false;
         movedRef.current = false;
@@ -359,10 +359,36 @@ export default function DomeGallery({
         if (focusedElRef.current || !draggingRef.current || !startPosRef.current) return;
 
         const evt = event as PointerEvent;
-        if (pointerTypeRef.current === 'touch') evt.preventDefault();
 
         const dxTotal = evt.clientX - startPosRef.current.x;
         const dyTotal = evt.clientY - startPosRef.current.y;
+        const absX = Math.abs(dxTotal);
+        const absY = Math.abs(dyTotal);
+
+        if (pointerTypeRef.current === 'touch') {
+          // On touchmove, compare cumulative horizontal vs vertical delta before locking or preventing default
+          if (!gestureIntentRef.current) {
+            if (absX > 6 || absY > 6) {
+              if (absX >= absY) {
+                gestureIntentRef.current = 'horizontal';
+                lockScroll();
+              } else {
+                gestureIntentRef.current = 'vertical';
+                draggingRef.current = false;
+                startPosRef.current = null;
+                return;
+              }
+            }
+          }
+
+          if (gestureIntentRef.current === 'vertical') {
+            return;
+          }
+
+          if (gestureIntentRef.current === 'horizontal') {
+            if (evt.cancelable) evt.preventDefault();
+          }
+        }
 
         if (!movedRef.current) {
           const dist2 = dxTotal * dxTotal + dyTotal * dyTotal;
@@ -420,6 +446,7 @@ export default function DomeGallery({
 
           if (cancelTapRef.current) setTimeout(() => (cancelTapRef.current = false), 120);
           if (pointerTypeRef.current === 'touch') unlockScroll();
+          gestureIntentRef.current = null;
           if (movedRef.current) lastDragEndAt.current = performance.now();
           movedRef.current = false;
         }
@@ -785,7 +812,7 @@ export default function DomeGallery({
           ref={mainRef}
           className="absolute inset-0 grid place-items-center overflow-hidden select-none bg-transparent"
           style={{
-            touchAction: 'none',
+            touchAction: 'pan-y',
             WebkitUserSelect: 'none'
           }}
         >
@@ -842,6 +869,7 @@ export default function DomeGallery({
                   >
                     <img
                       src={it.src}
+                      loading="lazy"
                       draggable={false}
                       alt={it.alt}
                       className="w-full h-full object-cover pointer-events-none"

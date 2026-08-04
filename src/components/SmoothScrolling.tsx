@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import { ReactLenis } from "lenis/react";
 import "lenis/dist/lenis.css";
@@ -7,8 +8,15 @@ import "lenis/dist/lenis.css";
 export default function SmoothScrolling({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const isAdmin = pathname?.startsWith('/admin');
+  const [isTouchMobile, setIsTouchMobile] = useState<boolean | null>(null);
 
-  if (isAdmin) {
+  useEffect(() => {
+    const isCoarse = window.matchMedia("(pointer: coarse)").matches;
+    const isMobileWidth = window.innerWidth < 768;
+    setIsTouchMobile(isCoarse || isMobileWidth);
+  }, []);
+
+  if (isAdmin || isTouchMobile) {
     return <>{children}</>;
   }
 
@@ -20,7 +28,6 @@ export default function SmoothScrolling({ children }: { children: React.ReactNod
         easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
         smoothWheel: true,
         wheelMultiplier: 1.0,
-        touchMultiplier: 1.5,
         infinite: false,
       }}
     >
@@ -28,4 +35,5 @@ export default function SmoothScrolling({ children }: { children: React.ReactNod
     </ReactLenis>
   );
 }
+
 
