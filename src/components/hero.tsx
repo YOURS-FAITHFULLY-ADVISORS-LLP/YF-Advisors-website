@@ -253,10 +253,10 @@ export default function Hero({ initialData }: { initialData?: HeroCMSData | null
           </div>
 
           {/* ================= RIGHT COLUMN: ISOMETRIC ECOSYSTEM ORBIT (Shifted Down) ================= */}
-          <div className="lg:col-span-6 relative flex items-center justify-center min-h-[480px] sm:min-h-[560px] mt-8 sm:mt-12 lg:mt-16">
+          <div className="lg:col-span-6 relative flex items-center justify-center min-h-[440px] sm:min-h-[560px] mt-6 sm:mt-12 lg:mt-16 pointer-events-none sm:pointer-events-auto">
             {/* Concentric Orbiting Rings */}
-            <div className="absolute w-[360px] h-[360px] sm:w-[460px] sm:h-[460px] border border-dashed border-teal-300/60 rounded-full animate-[spin_60s_linear_infinite] pointer-events-none" />
-            <div className="absolute w-[260px] h-[260px] sm:w-[340px] sm:h-[340px] border border-dashed border-teal-200/50 rounded-full animate-[spin_40s_linear_infinite_reverse] pointer-events-none" />
+            <div className="absolute w-[340px] h-[340px] sm:w-[460px] sm:h-[460px] border border-dashed border-teal-300/60 rounded-full animate-[spin_60s_linear_infinite] pointer-events-none" />
+            <div className="absolute w-[240px] h-[240px] sm:w-[340px] sm:h-[340px] border border-dashed border-teal-200/50 rounded-full animate-[spin_40s_linear_infinite_reverse] pointer-events-none" />
 
             {/* ================= SVG ULTRA-SLIM HAIRLINE CONNECTION LINES & MOVING FLOW BEAMS ================= */}
             <svg
@@ -308,7 +308,7 @@ export default function Hero({ initialData }: { initialData?: HeroCMSData | null
                 scale: { duration: 0.8 },
                 y: { duration: 5, repeat: Infinity, ease: "easeInOut" },
               }}
-              className="relative w-72 h-72 sm:w-[380px] sm:h-[380px] rounded-full bg-gradient-to-tr from-teal-50/80 via-white to-blue-50/80 border border-teal-100/80 shadow-2xl flex items-center justify-center z-10 overflow-hidden group select-none pointer-events-auto"
+              className="relative w-64 h-64 sm:w-[380px] sm:h-[380px] rounded-full bg-gradient-to-tr from-teal-50/80 via-white to-blue-50/80 border border-teal-100/80 shadow-2xl flex items-center justify-center z-10 overflow-hidden group select-none pointer-events-none"
             >
               {/* 3D Ecosystem Render Image (Non-Draggable) */}
               <img
@@ -317,8 +317,6 @@ export default function Hero({ initialData }: { initialData?: HeroCMSData | null
                 draggable={false}
                 className="w-full h-full object-contain pointer-events-none select-none p-2 transform group-hover:scale-105 transition-transform duration-700"
               />
-
-
             </motion.div>
 
             {/* ================= 7 ORBITING FLOATING FEATURE CARDS ================= */}
@@ -327,9 +325,9 @@ export default function Hero({ initialData }: { initialData?: HeroCMSData | null
             <motion.div
               animate={{ y: [0, -6, 0] }}
               transition={{ duration: 3.5, repeat: Infinity, ease: "easeInOut" }}
-              className="absolute -top-3 left-0 sm:left-4 z-20"
+              className="absolute -top-3 left-0 sm:left-4 z-20 pointer-events-none"
             >
-              <div className="relative group bg-white/95 backdrop-blur-md rounded-2xl px-3.5 py-2.5 shadow-xl border border-slate-100 flex items-center gap-2.5 hover:scale-105 transition-all select-none">
+              <div className="relative group bg-white/95 sm:backdrop-blur-md rounded-2xl px-3.5 py-2.5 shadow-xl border border-slate-100 flex items-center gap-2.5 hover:scale-105 transition-all select-none">
                 <span className="absolute -bottom-1 -right-1 w-2.5 h-2.5 rounded-full bg-[#00A79D] border-2 border-white shadow-sm" />
                 <div className="w-8 h-8 rounded-xl bg-teal-50 text-[#00A79D] flex items-center justify-center shrink-0">
                   <FileText className="w-4 h-4" />
@@ -345,9 +343,9 @@ export default function Hero({ initialData }: { initialData?: HeroCMSData | null
             <motion.div
               animate={{ y: [0, 6, 0] }}
               transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-              className="absolute -top-2 right-0 sm:right-4 z-20"
+              className="absolute -top-2 right-0 sm:right-4 z-20 pointer-events-none"
             >
-              <div className="relative group bg-white/95 backdrop-blur-md rounded-2xl px-3.5 py-2.5 shadow-xl border border-slate-100 flex items-center gap-2.5 hover:scale-105 transition-all select-none">
+              <div className="relative group bg-white/95 sm:backdrop-blur-md rounded-2xl px-3.5 py-2.5 shadow-xl border border-slate-100 flex items-center gap-2.5 hover:scale-105 transition-all select-none">
                 <span className="absolute -bottom-1 -left-1 w-2.5 h-2.5 rounded-full bg-blue-600 border-2 border-white shadow-sm" />
                 <div className="w-8 h-8 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
                   <ShieldCheck className="w-4 h-4" />
@@ -363,9 +361,9 @@ export default function Hero({ initialData }: { initialData?: HeroCMSData | null
             <motion.div
               animate={{ x: [0, -5, 0] }}
               transition={{ duration: 4.2, repeat: Infinity, ease: "easeInOut" }}
-              className="absolute top-1/3 -left-4 sm:-left-6 z-20"
+              className="absolute top-1/3 -left-4 sm:-left-6 z-20 pointer-events-none"
             >
-              <div className="relative group bg-white/95 backdrop-blur-md rounded-2xl px-3.5 py-2.5 shadow-xl border border-slate-100 flex items-center gap-2.5 hover:scale-105 transition-all select-none">
+              <div className="relative group bg-white/95 sm:backdrop-blur-md rounded-2xl px-3.5 py-2.5 shadow-xl border border-slate-100 flex items-center gap-2.5 hover:scale-105 transition-all select-none">
                 <span className="absolute top-1/2 -right-1.5 -translate-y-1/2 w-2.5 h-2.5 rounded-full bg-emerald-600 border-2 border-white shadow-sm" />
                 <div className="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
                   <Users className="w-4 h-4" />
@@ -381,9 +379,9 @@ export default function Hero({ initialData }: { initialData?: HeroCMSData | null
             <motion.div
               animate={{ x: [0, 5, 0] }}
               transition={{ duration: 3.8, repeat: Infinity, ease: "easeInOut" }}
-              className="absolute top-1/3 -right-4 sm:-right-6 z-20"
+              className="absolute top-1/3 -right-4 sm:-right-6 z-20 pointer-events-none"
             >
-              <div className="relative group bg-white/95 backdrop-blur-md rounded-2xl px-3.5 py-2.5 shadow-xl border border-slate-100 flex items-center gap-2.5 hover:scale-105 transition-all select-none">
+              <div className="relative group bg-white/95 sm:backdrop-blur-md rounded-2xl px-3.5 py-2.5 shadow-xl border border-slate-100 flex items-center gap-2.5 hover:scale-105 transition-all select-none">
                 <span className="absolute top-1/2 -left-1.5 -translate-y-1/2 w-2.5 h-2.5 rounded-full bg-purple-600 border-2 border-white shadow-sm" />
                 <div className="w-8 h-8 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center shrink-0">
                   <Building2 className="w-4 h-4" />
@@ -399,9 +397,9 @@ export default function Hero({ initialData }: { initialData?: HeroCMSData | null
             <motion.div
               animate={{ y: [0, 6, 0] }}
               transition={{ duration: 3.6, repeat: Infinity, ease: "easeInOut" }}
-              className="absolute bottom-12 -left-2 sm:left-2 z-20"
+              className="absolute bottom-12 -left-2 sm:left-2 z-20 pointer-events-none"
             >
-              <div className="relative group bg-white/95 backdrop-blur-md rounded-2xl px-3.5 py-2.5 shadow-xl border border-slate-100 flex items-center gap-2.5 hover:scale-105 transition-all select-none">
+              <div className="relative group bg-white/95 sm:backdrop-blur-md rounded-2xl px-3.5 py-2.5 shadow-xl border border-slate-100 flex items-center gap-2.5 hover:scale-105 transition-all select-none">
                 <span className="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-cyan-600 border-2 border-white shadow-sm" />
                 <div className="w-8 h-8 rounded-xl bg-cyan-50 text-cyan-600 flex items-center justify-center shrink-0">
                   <BookOpen className="w-4 h-4" />
@@ -417,9 +415,9 @@ export default function Hero({ initialData }: { initialData?: HeroCMSData | null
             <motion.div
               animate={{ y: [0, -6, 0] }}
               transition={{ duration: 4.5, repeat: Infinity, ease: "easeInOut" }}
-              className="absolute bottom-12 -right-2 sm:right-2 z-20"
+              className="absolute bottom-12 -right-2 sm:right-2 z-20 pointer-events-none"
             >
-              <div className="relative group bg-white/95 backdrop-blur-md rounded-2xl px-3.5 py-2.5 shadow-xl border border-slate-100 flex items-center gap-2.5 hover:scale-105 transition-all select-none">
+              <div className="relative group bg-white/95 sm:backdrop-blur-md rounded-2xl px-3.5 py-2.5 shadow-xl border border-slate-100 flex items-center gap-2.5 hover:scale-105 transition-all select-none">
                 <span className="absolute -top-1 -left-1 w-2.5 h-2.5 rounded-full bg-indigo-600 border-2 border-white shadow-sm" />
                 <div className="w-8 h-8 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center shrink-0">
                   <BarChart3 className="w-4 h-4" />
@@ -435,9 +433,9 @@ export default function Hero({ initialData }: { initialData?: HeroCMSData | null
             <motion.div
               animate={{ y: [0, 5, 0] }}
               transition={{ duration: 3.2, repeat: Infinity, ease: "easeInOut" }}
-              className="absolute -bottom-4 z-20"
+              className="absolute -bottom-4 z-20 pointer-events-none"
             >
-              <div className="relative group bg-white/95 backdrop-blur-md rounded-2xl px-4 py-2.5 shadow-xl border border-slate-100 flex items-center gap-2.5 hover:scale-105 transition-all select-none">
+              <div className="relative group bg-white/95 sm:backdrop-blur-md rounded-2xl px-4 py-2.5 shadow-xl border border-slate-100 flex items-center gap-2.5 hover:scale-105 transition-all select-none">
                 <span className="absolute -top-1.5 left-1/2 -translate-x-1/2 w-2.5 h-2.5 rounded-full bg-amber-600 border-2 border-white shadow-sm" />
                 <div className="w-8 h-8 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center shrink-0">
                   <Percent className="w-4 h-4" />

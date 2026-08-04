@@ -67,29 +67,37 @@ const Navbar = () => {
     href: string
   ) => {
     setIsMobileMenuOpen(false);
+    document.body.style.overflow = "";
 
     if (href.includes("#")) {
-      const targetId = href.split("#")[1];
-      e.preventDefault();
-      if (lenis) {
-        lenis.scrollTo(`#${targetId}`, { offset: -80, duration: 1.2 });
-      } else {
-        const elem = document.getElementById(targetId);
-        if (elem) {
-          const headerOffset = 80;
-          const elementPosition = elem.getBoundingClientRect().top;
-          const offsetPosition = elementPosition + window.scrollY - headerOffset;
-          window.scrollTo({ top: offsetPosition, behavior: "smooth" });
-        }
+      const parts = href.split("#");
+      const targetPath = parts[0] || "/";
+      const targetId = parts[1];
+
+      // Only prevent default if we are currently on the target page
+      if (pathname === targetPath || (targetPath === "/" && pathname === "/")) {
+        e.preventDefault();
+        
+        setTimeout(() => {
+          document.body.style.overflow = "";
+          const elem = document.getElementById(targetId);
+          if (elem) {
+            const headerOffset = 80;
+            const elementPosition = elem.getBoundingClientRect().top;
+            const offsetPosition = elementPosition + window.scrollY - headerOffset;
+            window.scrollTo({ top: offsetPosition, behavior: "smooth" });
+          } else if (lenis) {
+            lenis.scrollTo(`#${targetId}`, { offset: -80, duration: 1.2 });
+          }
+        }, 50);
+        window.history.pushState(null, "", `#${targetId}`);
       }
-      window.history.pushState(null, "", `#${targetId}`);
     } else if (href === "/" && pathname === "/") {
       e.preventDefault();
-      if (lenis) {
-        lenis.scrollTo(0, { duration: 1.2 });
-      } else {
+      setTimeout(() => {
+        document.body.style.overflow = "";
         window.scrollTo({ top: 0, behavior: "smooth" });
-      }
+      }, 50);
       window.history.pushState(null, "", "/");
     }
   };

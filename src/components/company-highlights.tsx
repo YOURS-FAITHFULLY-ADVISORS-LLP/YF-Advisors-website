@@ -81,7 +81,7 @@ export default function CompanyHighlights() {
         </p>
       </div>
 
-      <div className="relative w-full h-[400px] sm:h-[520px] md:h-[620px] lg:h-[720px] rounded-2xl md:rounded-3xl overflow-hidden shadow-xl shadow-slate-200/50">
+      <div className="relative w-full h-[340px] sm:h-[480px] md:h-[620px] lg:h-[720px] rounded-2xl md:rounded-3xl overflow-hidden shadow-xl shadow-slate-200/50">
         <DomeGallery
           images={images}
           fit={0.85}
