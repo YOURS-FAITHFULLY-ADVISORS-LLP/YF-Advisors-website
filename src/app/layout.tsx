@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Playfair_Display, Montserrat, Geist_Mono, Bodoni_Moda, Cormorant_Garamond } from "next/font/google";
+import { Playfair_Display, Montserrat, Bodoni_Moda } from "next/font/google";
 import "./globals.css";
 import StyledComponentsRegistry from "./registry";
 import AnalyticsTracker from "@/src/components/AnalyticsTracker";
@@ -23,24 +23,10 @@ const bodoni = Bodoni_Moda({
   display: "swap",
 });
 
-const cormorant = Cormorant_Garamond({
-  variable: "--font-cormorant",
-  subsets: ["latin"],
-  weight: ["600"],
-  style: ["normal", "italic"],
-  display: "swap",
-});
-
 const montserrat = Montserrat({
   variable: "--font-montserrat",
   subsets: ["latin"],
   weight: ["400", "600", "700"],
-  display: "swap",
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
   display: "swap",
 });
 
@@ -63,7 +49,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${playfair.variable} ${bodoni.variable} ${cormorant.variable} ${montserrat.variable} ${geistMono.variable} antialiased`}
+        className={`${playfair.variable} ${bodoni.variable} ${montserrat.variable} antialiased`}
       >
         <SmoothScrolling>
           <AnalyticsTracker />

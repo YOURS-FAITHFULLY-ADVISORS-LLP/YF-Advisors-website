@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useRef, useEffect, useState } from "react";
+import Image from "next/image";
 import { motion, useInView, AnimatePresence } from "framer-motion";
 import { Check, ArrowRight, Smartphone, Laptop, Box, ChevronLeft, ChevronRight } from "lucide-react";
 
@@ -94,43 +95,42 @@ const BTLCarousel = ({ images }: { images: string[] }) => {
 
   return (
     <div className="relative w-full max-w-2xl mx-auto group">
-      {/* Fix: aspect-[16/9] -> aspect-video */}
+      {/* Aspect Ratio Container */}
       <div className="relative aspect-video w-full overflow-hidden rounded-2xl shadow-2xl border-4 border-white bg-slate-200">
         <AnimatePresence mode="wait">
-          <motion.img
+          <motion.div
             key={currentIndex}
-            src={images[currentIndex]}
-            onError={(e) => {
-              // Fallback to local asset if remote fails
-              const target = e.currentTarget;
-              const fallbackSrc = `/product/btl/image${(currentIndex % 5) + 1}.jpg`;
-              if (target.src !== fallbackSrc) {
-                target.src = fallbackSrc;
-              }
-            }}
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -20 }}
             transition={{ duration: 0.5 }}
-            className="w-full h-full object-cover"
-            alt={`BTL Execution ${currentIndex + 1}`}
-          />
+            className="relative w-full h-full"
+          >
+            <Image
+              src={images[currentIndex]}
+              alt={`BTL Execution ${currentIndex + 1}`}
+              fill
+              sizes="(max-width: 768px) 100vw, 672px"
+              className="object-cover"
+              loading="lazy"
+            />
+          </motion.div>
         </AnimatePresence>
 
         <button 
           onClick={prevSlide}
-          className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/80 p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity shadow-md hover:bg-white"
+          className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/80 p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity shadow-md hover:bg-white z-10"
         >
           <ChevronLeft size={24} className="text-[#002B49]" />
         </button>
         <button 
           onClick={nextSlide}
-          className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/80 p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity shadow-md hover:bg-white"
+          className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/80 p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity shadow-md hover:bg-white z-10"
         >
           <ChevronRight size={24} className="text-[#002B49]" />
         </button>
 
-        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
+        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 z-10">
           {images.map((_, i) => (
             <div 
               key={i} 
@@ -144,8 +144,16 @@ const BTLCarousel = ({ images }: { images: string[] }) => {
 };
 
 const ProductVideo = ({ src }: { src: string }) => {
+  const containerRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
-  const isInView = useInView(videoRef, { amount: 0.4 });
+  const isInView = useInView(containerRef, { amount: 0.1 });
+  const [shouldLoad, setShouldLoad] = useState(false);
+
+  useEffect(() => {
+    if (isInView && !shouldLoad) {
+      setShouldLoad(true);
+    }
+  }, [isInView, shouldLoad]);
 
   useEffect(() => {
     if (!videoRef.current) return;
@@ -157,14 +165,21 @@ const ProductVideo = ({ src }: { src: string }) => {
   }, [isInView]);
 
   return (
-    <video
-      ref={videoRef}
-      src={src}
-      muted
-      loop
-      playsInline
-      className="w-full h-full object-cover"
-    />
+    <div ref={containerRef} className="w-full h-full relative overflow-hidden">
+      {shouldLoad ? (
+        <video
+          ref={videoRef}
+          src={src}
+          muted
+          loop
+          playsInline
+          preload="metadata"
+          className="w-full h-full object-cover"
+        />
+      ) : (
+        <div className="w-full h-full bg-slate-200/50 animate-pulse" />
+      )}
+    </div>
   );
 };
 

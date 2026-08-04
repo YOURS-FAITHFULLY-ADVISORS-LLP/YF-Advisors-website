@@ -1,7 +1,16 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import DomeGallery from "./DomeGallery";
+import dynamic from "next/dynamic";
+
+const DomeGallery = dynamic(() => import("./DomeGallery"), {
+  ssr: false,
+  loading: () => (
+    <div className="w-full h-full bg-slate-100/80 rounded-2xl flex items-center justify-center animate-pulse">
+      <span className="text-xs text-slate-400 font-semibold tracking-widest uppercase">Loading Interactive 3D Gallery...</span>
+    </div>
+  ),
+});
 
 const DEFAULT_HIGHLIGHT_IMAGES = [
   {

@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from 'react';
+import Image from 'next/image';
 
 interface Testimonial {
     name: string;
@@ -115,9 +116,11 @@ const TestimonialCard = ({ card }: { card: Testimonial }) => (
         <div>
             <div className="flex gap-3 mb-4">
                 {card.profileImage ? (
-                    <img
+                    <Image
                         src={card.profileImage}
                         alt={card.name}
+                        width={48}
+                        height={48}
                         className="w-12 h-12 rounded-full object-cover shadow-sm shrink-0"
                     />
                 ) : (
