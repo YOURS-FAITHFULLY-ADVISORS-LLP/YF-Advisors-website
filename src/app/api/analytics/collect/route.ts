@@ -99,7 +99,7 @@ export async function POST(req: NextRequest) {
           browser: browser || 'Unknown',
           device: device || 'Unknown',
           os: os || 'Unknown',
-          language: language || navigator?.language || 'Unknown',
+          language: language || 'Unknown',
           timezone: timezone || 'Unknown',
           screenResolution: screenResolution || 'Unknown',
           referrer: referrer || 'Direct',

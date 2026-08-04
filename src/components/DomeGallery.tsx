@@ -639,10 +639,28 @@ export default function DomeGallery({
       height: tileR.height
     };
     el.style.visibility = 'hidden';
-    (el.style as any).zIndex = 0;
+    const finalWidth = openedImageWidth || `${frameR.width}px`;
+    const finalHeight = openedImageHeight || `${frameR.height}px`;
+
+    let targetW = frameR.width;
+    let targetH = frameR.height;
+
+    if (openedImageWidth || openedImageHeight) {
+      const tempDiv = document.createElement('div');
+      tempDiv.style.cssText = `position: absolute; width: ${finalWidth}; height: ${finalHeight}; visibility: hidden; pointer-events: none;`;
+      document.body.appendChild(tempDiv);
+      const tempR = tempDiv.getBoundingClientRect();
+      targetW = tempR.width;
+      targetH = tempR.height;
+      document.body.removeChild(tempDiv);
+    }
+
+    const centeredLeft = frameR.left - mainR.left + (frameR.width - targetW) / 2;
+    const centeredTop = frameR.top - mainR.top + (frameR.height - targetH) / 2;
+
     const overlay = document.createElement('div');
     overlay.className = 'enlarge';
-    overlay.style.cssText = `position:absolute; left:${frameR.left - mainR.left}px; top:${frameR.top - mainR.top}px; width:${frameR.width}px; height:${frameR.height}px; opacity:0; z-index:30; will-change:transform,opacity; transform-origin:top left; transition:transform ${enlargeTransitionMs}ms ease, opacity ${enlargeTransitionMs}ms ease; border-radius:${openedImageBorderRadius}; overflow:hidden; box-shadow:0 10px 30px rgba(0,0,0,.35);`;
+    overlay.style.cssText = `position:absolute; left:${centeredLeft}px; top:${centeredTop}px; width:${targetW}px; height:${targetH}px; opacity:0; z-index:30; will-change:transform,opacity; transform-origin:center center; transition:transform ${enlargeTransitionMs}ms cubic-bezier(0.16, 1, 0.3, 1), opacity ${enlargeTransitionMs}ms ease; border-radius:${openedImageBorderRadius}; overflow:hidden; box-shadow:0 20px 40px rgba(0,0,0,.4);`;
     const rawSrc = parent.dataset.src || (el.querySelector('img') as HTMLImageElement)?.src || '';
     const rawAlt = parent.dataset.alt || (el.querySelector('img') as HTMLImageElement)?.alt || '';
     const img = document.createElement('img');
@@ -651,55 +669,34 @@ export default function DomeGallery({
     img.style.cssText = `width:100%; height:100%; object-fit:cover; filter:${grayscale ? 'grayscale(1)' : 'none'};`;
     overlay.appendChild(img);
     viewerRef.current!.appendChild(overlay);
-    const tx0 = tileR.left - frameR.left;
-    const ty0 = tileR.top - frameR.top;
-    const sx0 = tileR.width / frameR.width;
-    const sy0 = tileR.height / frameR.height;
+
+    const overlayCenter = {
+      x: centeredLeft + targetW / 2,
+      y: centeredTop + targetH / 2
+    };
+    const tileCenter = {
+      x: tileR.left - mainR.left + tileR.width / 2,
+      y: tileR.top - mainR.top + tileR.height / 2
+    };
+
+    const tx0 = tileCenter.x - overlayCenter.x;
+    const ty0 = tileCenter.y - overlayCenter.y;
+    const sx0 = tileR.width / targetW;
+    const sy0 = tileR.height / targetH;
 
     const validSx0 = isFinite(sx0) && sx0 > 0 ? sx0 : 1;
     const validSy0 = isFinite(sy0) && sy0 > 0 ? sy0 : 1;
 
     overlay.style.transform = `translate(${tx0}px, ${ty0}px) scale(${validSx0}, ${validSy0})`;
-    setTimeout(() => {
-      if (!overlay.parentElement) return;
-      overlay.style.opacity = '1';
-      overlay.style.transform = 'translate(0px, 0px) scale(1, 1)';
-      rootRef.current?.setAttribute('data-enlarging', 'true');
-    }, 16);
-    const wantsResize = openedImageWidth || openedImageHeight;
-    if (wantsResize) {
-      const onFirstEnd = (ev: TransitionEvent) => {
-        if (ev.propertyName !== 'transform') return;
-        overlay.removeEventListener('transitionend', onFirstEnd);
-        const prevTransition = overlay.style.transition;
-        overlay.style.transition = 'none';
-        const tempWidth = openedImageWidth || `${frameR.width}px`;
-        const tempHeight = openedImageHeight || `${frameR.height}px`;
-        overlay.style.width = tempWidth;
-        overlay.style.height = tempHeight;
-        const newRect = overlay.getBoundingClientRect();
-        overlay.style.width = frameR.width + 'px';
-        overlay.style.height = frameR.height + 'px';
-        void overlay.offsetWidth;
-        overlay.style.transition = `left ${enlargeTransitionMs}ms ease, top ${enlargeTransitionMs}ms ease, width ${enlargeTransitionMs}ms ease, height ${enlargeTransitionMs}ms ease`;
-        const centeredLeft = frameR.left - mainR.left + (frameR.width - newRect.width) / 2;
-        const centeredTop = frameR.top - mainR.top + (frameR.height - newRect.height) / 2;
-        requestAnimationFrame(() => {
-          overlay.style.left = `${centeredLeft}px`;
-          overlay.style.top = `${centeredTop}px`;
-          overlay.style.width = tempWidth;
-          overlay.style.height = tempHeight;
-        });
-        const cleanupSecond = () => {
-          overlay.removeEventListener('transitionend', cleanupSecond);
-          overlay.style.transition = prevTransition;
-        };
-        overlay.addEventListener('transitionend', cleanupSecond, {
-          once: true
-        });
-      };
-      overlay.addEventListener('transitionend', onFirstEnd);
-    }
+
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        if (!overlay.parentElement) return;
+        overlay.style.opacity = '1';
+        overlay.style.transform = 'translate(0px, 0px) scale(1, 1)';
+        rootRef.current?.setAttribute('data-enlarging', 'true');
+      });
+    });
   };
 
   useEffect(() => {
